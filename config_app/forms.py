@@ -6,16 +6,16 @@ class ConfigParametersForm(forms.ModelForm):
     class Meta:
         model = ConfigParameters
         fields = [
-            'username',
-            'password',
+            'login_username',
+            'login_password',
             'secret',
             'network_ip',
-            'subnet',
+            'subnet_CIDR',
             'network_device_os',
             'discovery_protocol'
         ]
         widgets = {
-            'password': forms.PasswordInput(),
+            'login_password': forms.PasswordInput(),
             'secret': forms.PasswordInput(),
         }
 
