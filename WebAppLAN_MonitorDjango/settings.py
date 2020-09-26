@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     # custom models
     'config_app',
     'login_app',
-    'registration_app'
+    'registration_app',
+    'dashboard_app'
 ]
 
 MIDDLEWARE = [

@@ -14,7 +14,7 @@ def config_create_view(request):
     else:
         form = ConfigParametersForm()
 
-    return render(request, 'config_app/config_create.html', {'form': form})
+    return render(request, 'config_create.html', {'form': form})
 
 
 def config_detail_view(request):

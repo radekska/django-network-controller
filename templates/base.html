@@ -16,14 +16,13 @@
 
     {% endblock %}
 
+    {% block register %}
+
+    {% endblock %}
     {% if user.is_authenticated %}
         {% block content %}
         {% endblock %}
-        <p>Logout <a href="/logout">here</a></p>
-
-    {% else %}
-        <p>Login <a href="/login">here</a></p>
-
+        <p>Logout <a href="{% url 'logout' %}">here</a></p>
     {% endif %}
 </div>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"

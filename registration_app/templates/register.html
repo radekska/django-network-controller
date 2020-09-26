@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block register %}
+    <html lang="en" class="h-100">
+    <body class="h-100">
+
+    <div class="container h-100">
+        <div class="row h-100 justify-content-center align-items-center">
+            <div class="col-10 col-md-8 col-lg-6">
+                <!-- Form -->
+                <form class="form-example" action="" method="post"> {% csrf_token %}
+                    <p class="description">Register an account by filling fields below</p>
+                    <!-- Input fields -->
+                    {% if form.errors %}
+                        {% for error in form.errors.username %}
+                            <div class="alert alert-danger" style=" padding-top: 10px; padding-bottom: 0">
+                                <p><strong>{{ error }}</strong></p></div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="username">Username:</label>
+                        <input type="text" class="form-control username" id="username" placeholder="Username..."
+                               name="username">
+                    </div>
+                    {% if form.errors %}
+                        {% for error in form.errors.password1 %}
+                            <div class="alert alert-danger" style=" padding-top: 10px; padding-bottom: 0">
+                                <p><strong>{{ error }}</strong></p></div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="password">Password:</label>
+                        <input type="password" class="form-control password" id="password1" placeholder="Password..."
+                               name="password1">
+                    </div>
+                    {% if form.errors %}
+                        {% for error in form.errors.password2 %}
+                            <div class="alert alert-danger" style=" padding-top: 10px; padding-bottom: 0">
+                                <p><strong>{{ error }}</strong></p></div>
+                        {% endfor %}
+                    {% endif %}
+                    <div class="form-group">
+                        <label for="password">Confirm Password:</label>
+                        <input type="password" class="form-control password" id="password2"
+                               placeholder="Confirm Password..."
+                               name="password2">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-customized">Register</button>
+
+                </form>
+                <!-- Form end -->
+            </div>
+        </div>
+    </div>{% endblock %}
