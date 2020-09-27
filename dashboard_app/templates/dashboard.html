@@ -1,10 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>Welocme to your dashborad</h1>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block dashboard %}
+
+    <div class="container-fluid">
+        <div class="wrapper">
+            <div class="row">
+                <div class="col-sm-2 col-md-3 sidebar">
+                    <div class="sidebar-wrapper">
+                        <div class="logo">
+                            <a target="_blank" href="{% url 'dashboard' %}"
+                               class="simple-text logo-mini">
+                                NM
+                            </a>
+                            <a target="_blank" href="{% url 'dashboard' %}"
+                               class="simple-text logo-normal">
+                                Dashboard
+                            </a>
+                        </div>
+
+                        <ul class="nav">
+                            <li class=" active ">
+                                <a href="">
+                                    <i class="tim-icons icon-globe-2"></i>
+                                    <p>Visualize Network</p>
+                                </a>
+                            </li>
+                            <li class="">
+                                <a href="">
+                                    <i class="tim-icons icon-settings-gear-63"></i>
+                                    <p>Manage Network</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+                {% block visualize_network %}
+                {% endblock %}
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

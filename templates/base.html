@@ -1,30 +1,218 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="perfect-scrollbar-off">
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link rel="stylesheet" type="text/css" href="{% static 'config_app/css/bootstrap.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'config_app/css/black-dashboard.css' %}">
 
 <head>
-    <meta charset="UTF-8">
-    <title>Web LAN Monitor </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+
+    <title>
+        Network Monitor App
+    </title>
+
+    <!--     Fonts and icons     -->
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+
+    <!-- Nucleo Icons -->
+    <link href="{% static '/config_app/css/nucleo-icons.css' %}" rel="stylesheet">
+    <!-- CSS Files -->
+    <link href="{% static '/config_app/css/black-dashboard.css' %}" rel="stylesheet">
+    <!-- CSS Just for demo purpose, don't include it in your project -->
+    <link href="{% static '/config_app/demo/demo.css' %}" rel="stylesheet">
+
+    <!-- Specific Page CSS goes HERE  -->
+
+
+    <style type="text/css">/* Chart.js */
+    @-webkit-keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    @keyframes chartjs-render-animation {
+        from {
+            opacity: 0.99
+        }
+        to {
+            opacity: 1
+        }
+    }
+
+    .chartjs-render-monitor {
+        -webkit-animation: chartjs-render-animation 0.001s;
+        animation: chartjs-render-animation 0.001s;
+    }</style>
 </head>
 <body>
-<div class="justify-content-center">
-    {% block login %}
 
-    {% endblock %}
+<div class="wrapper">
+    <div class="main-panel">
+        <nav class="navbar navbar-expand-lg navbar-absolute navbar-transparent">
+            <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navigation">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="search-bar input-group">
+                        </li>
+                    </ul>
+                    <a class="navbar-brand" href="javascript:void(0)">Network Monitor App</a>
+                </div>
+            </div>
+        </nav>
+        <div class="content">
 
-    {% block register %}
+            {% block login %}
+            {% endblock %}
 
-    {% endblock %}
-    {% if user.is_authenticated %}
-        {% block content %}
-        {% endblock %}
-        <p>Logout <a href="{% url 'logout' %}">here</a></p>
-    {% endif %}
+            {% block register %}
+            {% endblock %}
+
+            {% block dashboard %}
+            {% endblock %}
+
+
+
+            {% if user.is_authenticated %}
+                {% block content %}
+                {% endblock %}
+                <p>Logout <a href="{% url 'logout' %}">here</a></p>
+            {% endif %}
+        </div>
+    </div>
 </div>
+
+
+<!-- Static assets -->
+
+
+<!--   Core JS Files   -->
+<script src="{% static '/config_app/js/core/jquery.min.js' %}"></script>
+<script src="{% static '/config_app/js/core/popper.min.js' %}"></script>
+<script src="{% static '/config_app/js/core/bootstrap.min.js' %}"></script>
+<script src="{% static '/config_app/js/plugins/perfect-scrollbar.jquery.min.js' %}"></script>
+<!-- Control Center for Black Dashboard: parallax effects, scripts for the example pages etc -->
+<script src="{% static '/config_app/js/black-dashboard.js' %}"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $().ready(function () {
+            $sidebar = $('.sidebar');
+            $navbar = $('.navbar');
+            $main_panel = $('.main-panel');
+
+            $full_page = $('.full-page');
+
+            $sidebar_responsive = $('body > .navbar-collapse');
+            sidebar_mini_active = true;
+            white_color = false;
+
+            window_width = $(window).width();
+
+            fixed_plugin_open = $('.sidebar .sidebar-wrapper .nav li.active a p').html();
+
+
+            $('.fixed-plugin a').click(function (event) {
+                if ($(this).hasClass('switch-trigger')) {
+                    if (event.stopPropagation) {
+                        event.stopPropagation();
+                    } else if (window.event) {
+                        window.event.cancelBubble = true;
+                    }
+                }
+            });
+
+            $('.fixed-plugin .background-color span').click(function () {
+                $(this).siblings().removeClass('active');
+                $(this).addClass('active');
+
+                var new_color = $(this).data('color');
+
+                if ($sidebar.length != 0) {
+                    $sidebar.attr('data', new_color);
+                }
+
+                if ($main_panel.length != 0) {
+                    $main_panel.attr('data', new_color);
+                }
+
+                if ($full_page.length != 0) {
+                    $full_page.attr('filter-color', new_color);
+                }
+
+                if ($sidebar_responsive.length != 0) {
+                    $sidebar_responsive.attr('data', new_color);
+                }
+            });
+
+            $('.switch-sidebar-mini input').on("switchChange.bootstrapSwitch", function () {
+                var $btn = $(this);
+
+                if (sidebar_mini_active == true) {
+                    $('body').removeClass('sidebar-mini');
+                    sidebar_mini_active = false;
+                    blackDashboard.showSidebarMessage('Sidebar mini deactivated...');
+                } else {
+                    $('body').addClass('sidebar-mini');
+                    sidebar_mini_active = true;
+                    blackDashboard.showSidebarMessage('Sidebar mini activated...');
+                }
+
+                // we simulate the window Resize so the charts will get updated in realtime.
+                var simulateWindowResize = setInterval(function () {
+                    window.dispatchEvent(new Event('resize'));
+                }, 180);
+
+                // we stop the simulation of Window Resize after the animations are completed
+                setTimeout(function () {
+                    clearInterval(simulateWindowResize);
+                }, 1000);
+            });
+
+            $('.switch-change-color input').on("switchChange.bootstrapSwitch", function () {
+                var $btn = $(this);
+
+                if (white_color == true) {
+
+                    $('body').addClass('change-background');
+                    setTimeout(function () {
+                        $('body').removeClass('change-background');
+                        $('body').removeClass('white-content');
+                    }, 900);
+                    white_color = false;
+                } else {
+
+                    $('body').addClass('change-background');
+                    setTimeout(function () {
+                        $('body').removeClass('change-background');
+                        $('body').addClass('white-content');
+                    }, 900);
+
+                    white_color = true;
+                }
+
+
+            });
+
+            $('.light-badge').click(function () {
+                $('body').addClass('white-content');
+            });
+
+            $('.dark-badge').click(function () {
+                $('body').removeClass('white-content');
+            });
+        });
+    });
+</script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
         integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
         crossorigin="anonymous"></script>

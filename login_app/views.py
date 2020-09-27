@@ -10,7 +10,7 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('/configcreate')
+            return redirect('/dashboard')
         else:
             error_message = 'Invalid credentials!'
             return render(request, 'login.html', {'error_message': error_message})
