@@ -1,0 +1,80 @@
+{% extends 'dashboard.html' %}
+
+{% block configure_network %}
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h1 class="card-title">Configuration list details</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+
+                            {% if parameters_list %}
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Password</th>
+                                        <th scope="col">Secret</th>
+                                        <th scope="col">Network IP</th>
+                                        <th scope="col">CIDR</th>
+                                        <th scope="col">Device OS</th>
+                                        <th scope="col">Discovery protocol(s)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for parameter_row in parameters_list %}
+                                        <tr>
+                                            <th scope="row">{{ parameter_row.id }}</th>
+                                            <td>{{ parameter_row.login_username }}</td>
+                                            <td>{{ parameter_row.login_password }}</td>
+                                            <td>{{ parameter_row.secret }}</td>
+                                            <td>{{ parameter_row.network_ip }}</td>
+                                            <td>{{ parameter_row.subnet_CIDR }}</td>
+                                            <td>{{ parameter_row.network_device_os }}</td>
+                                            <td>{{ parameter_row.discovery_protocol }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <h5>No data found.</h5>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h1 class="card-title">Add Configuration</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+
+                            <h1>provide configuration details</h1>
+                            <form method="post"> {% csrf_token %}
+                                {{ form.as_p }}
+                                <input type='submit' value='Save'/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+{% endblock %}
+

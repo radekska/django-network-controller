@@ -23,8 +23,6 @@
     <link href="{% static '/config_app/css/nucleo-icons.css' %}" rel="stylesheet">
     <!-- CSS Files -->
     <link href="{% static '/config_app/css/black-dashboard.css' %}" rel="stylesheet">
-    <!-- CSS Just for demo purpose, don't include it in your project -->
-    <link href="{% static '/config_app/demo/demo.css' %}" rel="stylesheet">
 
     <!-- Specific Page CSS goes HERE  -->
 
@@ -51,7 +49,8 @@
     .chartjs-render-monitor {
         -webkit-animation: chartjs-render-animation 0.001s;
         animation: chartjs-render-animation 0.001s;
-    }</style>
+    }
+    </style>
 </head>
 <body>
 
@@ -64,7 +63,7 @@
                         <li class="search-bar input-group">
                         </li>
                     </ul>
-                    <a class="navbar-brand" href="javascript:void(0)">Network Monitor App</a>
+                    <a class="navbar-brand" href="{% url 'dashboard' %}">Network Monitor App</a>
                 </div>
             </div>
         </nav>
@@ -79,13 +78,6 @@
             {% block dashboard %}
             {% endblock %}
 
-
-
-            {% if user.is_authenticated %}
-                {% block content %}
-                {% endblock %}
-                <p>Logout <a href="{% url 'logout' %}">here</a></p>
-            {% endif %}
         </div>
     </div>
 </div>

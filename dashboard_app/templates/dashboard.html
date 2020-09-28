@@ -5,7 +5,10 @@
     <div class="container-fluid">
         <div class="wrapper">
             <div class="row">
+
+
                 <div class="col-sm-2 col-md-3 sidebar">
+
                     <div class="sidebar-wrapper">
                         <div class="logo">
                             <a target="_blank" href="{% url 'dashboard' %}"
@@ -19,23 +22,45 @@
                         </div>
 
                         <ul class="nav">
-                            <li class=" active ">
-                                <a href="">
+
+                            <li class="">
+                                <a href="{% url 'visualize' %}" role="tab">
                                     <i class="tim-icons icon-globe-2"></i>
                                     <p>Visualize Network</p>
                                 </a>
                             </li>
-                            <li class="">
-                                <a href="">
-                                    <i class="tim-icons icon-settings-gear-63"></i>
+                            <li>
+                                <a href="{% url 'manage_network' %}" role="tab">
+                                    <i class="tim-icons icon-molecule-40"></i>
                                     <p>Manage Network</p>
                                 </a>
                             </li>
 
+                            <li>
+                                <a href="{% url 'config_network' %}">
+                                    <i class="tim-icons icon-settings-gear-63"></i>
+                                    <p>Configure Network</p>
+                                </a>
+                            </li>
+
+                            <li>
+                                <a href="{% url 'logout' %}">
+                                    <i class="tim-icons icon-user-run"></i>
+                                    <p>Logout</p>
+                                </a>
+                            </li>
                         </ul>
+
                     </div>
                 </div>
-                {% block visualize_network %}
+
+                {% block visualize %}
+                {% endblock %}
+
+                {% block manage_network %}
+                {% endblock %}
+
+                {% block configure_network %}
                 {% endblock %}
 
             </div>

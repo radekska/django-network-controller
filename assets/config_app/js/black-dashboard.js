@@ -46,11 +46,11 @@ var seq2 = 0,
   durations2 = 500;
 
 (function() {
-  var isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
+  var isWindows = navigator.platform.indexOf('Win') > -1;
 
   if (isWindows) {
     // if we are on windows OS we activate the perfectScrollbar function
-    if ($('.main-panel').length != 0) {
+    if ($('.main-panel').length !== 0) {
       var ps = new PerfectScrollbar('.main-panel', {
         wheelSpeed: 2,
         wheelPropagation: true,
@@ -59,7 +59,7 @@ var seq2 = 0,
       });
     }
 
-    if ($('.sidebar .sidebar-wrapper').length != 0) {
+    if ($('.sidebar .sidebar-wrapper').length !== 0) {
 
       var ps1 = new PerfectScrollbar('.sidebar .sidebar-wrapper');
       $('.table-responsive').each(function() {
@@ -144,7 +144,7 @@ $(document).ready(function() {
 $(document).on('click', '.navbar-toggle', function() {
   var $toggle = $(this);
 
-  if (blackDashboard.misc.navbar_menu_visible == 1) {
+  if (blackDashboard.misc.navbar_menu_visible === 1) {
     $html.removeClass('nav-open');
     blackDashboard.misc.navbar_menu_visible = 0;
     setTimeout(function() {
@@ -176,7 +176,7 @@ $(window).resize(function() {
   // reset the seq for charts drawing animations
   seq = seq2 = 0;
 
-  if ($full_screen_map.length == 0 && $('.bd-docs').length == 0) {
+  if ($full_screen_map.length === 0 && $('.bd-docs').length === 0) {
     var isExpanded = $navbar.find('[data-toggle="collapse"]').attr("aria-expanded");
     if ($navbar.hasClass('bg-white') && $(window).width() > 991) {
       $navbar.removeClass('bg-white').addClass('navbar-transparent');
@@ -186,20 +186,21 @@ $(window).resize(function() {
   }
 });
 
+
 blackDashboard = {
   misc: {
     navbar_menu_visible: 0
   },
 
   initMinimizeSidebar: function() {
-    if ($('.sidebar-mini').length != 0) {
+    if ($('.sidebar-mini').length !== 0) {
       sidebar_mini_active = true;
     }
 
     $('#minimizeSidebar').click(function() {
       var $btn = $(this);
 
-      if (sidebar_mini_active == true) {
+      if (sidebar_mini_active === true) {
         $('body').removeClass('sidebar-mini');
         sidebar_mini_active = false;
         blackDashboard.showSidebarMessage('Sidebar mini deactivated...');

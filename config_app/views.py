@@ -4,17 +4,23 @@ from .forms import ConfigParametersForm
 
 
 # Create your views here.
-def config_create_view(request):
+def config_network_view(request):
+    context = dict()
+
     if request.method == 'POST':
-        form = ConfigParametersForm(request.POST or None)
-
+        form = ConfigParametersForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/configview/')
-    else:
-        form = ConfigParametersForm()
+            instance = form.save(commit=False)
+            instance.user = request.user
+            instance.save()
 
-    return render(request, 'config_create.html', {'form': form})
+    else:
+        context = {
+            'parameters_list': ConfigParameters.objects.filter(user=request.user),
+            'form': ConfigParametersForm()
+        }
+
+    return render(request, 'config_network.html', context)
 
 
 def config_detail_view(request):
