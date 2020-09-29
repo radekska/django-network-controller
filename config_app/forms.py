@@ -10,7 +10,7 @@ class ConfigParametersForm(forms.ModelForm):
             'login_password',
             'secret',
             'network_ip',
-            'subnet_CIDR',
+            'subnet_cidr',
             'network_device_os',
             'discovery_protocol'
         ]
@@ -18,9 +18,3 @@ class ConfigParametersForm(forms.ModelForm):
             'login_password': forms.PasswordInput(),
             'secret': forms.PasswordInput(),
         }
-
-
-
-
-
-

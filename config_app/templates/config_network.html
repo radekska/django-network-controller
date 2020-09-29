@@ -3,7 +3,7 @@
 {% block configure_network %}
     <div class="row">
         <div class="col-12">
-            <div class="card">
+            <div class="card w-auto">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
@@ -52,22 +52,122 @@
                 </div>
             </div>
 
-            <div class="card">
+            <div class="card text-center w-auto">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
                             <h1 class="card-title">Add Configuration</h1>
+                            {% if form.errors %}
+                                {% for field in form %}
+
+                                    {% for error in field.errors %}
+                                        <h2 class="card-category">
+                                            <span class="text-danger">{{ field.name }} - {{ error }}</span>
+                                        </h2>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
                         </div>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
+                            <form class="form-example" action="" method="post"> {% csrf_token %}
 
-                            <h1>provide configuration details</h1>
-                            <form method="post"> {% csrf_token %}
-                                {{ form.as_p }}
-                                <input type='submit' value='Save'/>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="login_username">Login Username</label>
+                                    </div>
+
+                                    <div class="col">
+
+                                        <label for="login_password">Login Password</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+
+                                        <input type="text" class="form-control" id="login_username"
+                                               placeholder="Login username" name="login_username">
+                                    </div>
+
+                                    <div class="col">
+
+                                        <input type="password" class="form-control" id="login_password"
+                                               placeholder="Login Password"
+                                               name="login_password">
+                                    </div>
+
+
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="secret">Secret Password</label>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="network_ip">Network IP</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+
+                                        <input type="password" class="form-control" id="secret"
+                                               placeholder="Secret Password" name="secret">
+                                    </div>
+
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="network_ip"
+                                               placeholder="Network IP"
+                                               name="network_ip">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="subnet_cidr">Subnet CIDR</label>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="network_device_os">Device(s) Operating System</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+
+                                        <input type="number" step="1" value="0" class="form-control" id="subnet_cidr"
+                                               placeholder="Subnet CIDR" name="subnet_cidr">
+                                    </div>
+
+                                    <div class="col">
+                                        <select class="form-control" name="network_device_os" id="network_device_os">
+                                            {% for os in device_os %}
+                                                <option>{{ os }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="discovery_protocol">Discovery Protocol(s)</label>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <div class="col">
+                                        <select class="form-control" name="discovery_protocol" id="discovery_protocol">
+                                            {% for protocol in protocols %}
+                                                <option>{{ protocol }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="col">
+                                        <button type="submit" class="btn btn-primary">Add</button>
+                                    </div>
+                                </div>
                             </form>
                         </div>
                     </div>

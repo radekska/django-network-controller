@@ -1,25 +1,27 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from .models import ConfigParameters
 from .forms import ConfigParametersForm
+from .static import discovery_protocols, device_os
 
 
 # Create your views here.
 def config_network_view(request):
-    context = dict()
+    form = ConfigParametersForm(request.POST or None)
 
     if request.method == 'POST':
-        form = ConfigParametersForm(request.POST)
         if form.is_valid():
             instance = form.save(commit=False)
             instance.user = request.user
             instance.save()
 
-    else:
-        context = {
-            'parameters_list': ConfigParameters.objects.filter(user=request.user),
-            'form': ConfigParametersForm()
-        }
+    context = {
+        'parameters_list': ConfigParameters.objects.filter(user=request.user),
+        'form': form,
+        'protocols': discovery_protocols,
+        'device_os': device_os
+    }
 
+    print(request.POST)
     return render(request, 'config_network.html', context)
 
 
