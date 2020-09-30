@@ -13,16 +13,15 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+import dashboard_app.urls
+
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-from config_app.views import config_detail_view, config_network_view
 from login_app.views import login_view, logout_view
 from registration_app.views import registration_view
-from dashboard_app.views import dashboard_view
-from visualize_app.views import visualize_view
-from manage_app.views import manage_network_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -32,12 +31,8 @@ urlpatterns = [
     path('logout/', logout_view, name='logout'),
     path('registration/', registration_view, name='registration'),
 
-    path('dashboard/', dashboard_view, name='dashboard'),
-    path('visualize/', visualize_view, name='visualize'),
-    path('manage_network/', manage_network_view, name='manage_network'),
+    path('dashboard/', include('dashboard_app.urls')),
 
-    path('configview/', config_detail_view, name='configview'),
-    path('config_network/', config_network_view, name='config_network'),
 
     # Built in path to login view
     # path('', include('django.contrib.auth.urls')),

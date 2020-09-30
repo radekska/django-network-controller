@@ -15,7 +15,7 @@ def login_view(request):
             error_message = 'Invalid credentials!'
             return render(request, 'login.html', {'error_message': error_message})
 
-    elif request.method == 'GET' and request.user.is_authenticated:
+    elif request.user.is_authenticated:
         return redirect('/dashboard')
 
     return render(request, 'login.html', {})

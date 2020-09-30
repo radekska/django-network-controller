@@ -1,6 +1,7 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 
-# Create your views here.
-def visualize_view(request):
+@login_required(redirect_field_name='')
+def visualize_network_view(request):
     return render(request, 'visualize.html', {})

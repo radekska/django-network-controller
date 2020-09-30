@@ -1,10 +1,16 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
 from .models import ConfigParameters
 from .forms import ConfigParametersForm
-from .static import discovery_protocols, device_os
+
+from .backend.static import discovery_protocol, device_os
+from .backend.initial_config import Config
+from .backend.parse_model import parse_config
 
 
 # Create your views here.
+@login_required(redirect_field_name='')
 def config_network_view(request):
     form = ConfigParametersForm(request.POST or None)
 
@@ -14,22 +20,27 @@ def config_network_view(request):
             instance.user = request.user
             instance.save()
 
+    if 'delete_all' in request.POST:
+        ConfigParameters.objects.all().delete()
+        form = ConfigParametersForm()
+
+    elif 'run_config' in request.POST:
+        form = ConfigParametersForm()
+        object_id = request.POST.get('id')
+        print('here')
+        config, login_params = parse_config(object_id)
+        initial_config = Config(config, login_params)
+        print('there')
+        cf_output = initial_config.conf_disc_proto()
+        print(cf_output)
+        for output in cf_output:
+            print(output)
+
     context = {
         'parameters_list': ConfigParameters.objects.filter(user=request.user),
         'form': form,
-        'protocols': discovery_protocols,
-        'device_os': device_os
+        'protocol': discovery_protocol,
+        'device_os': device_os.keys(),
     }
 
-    print(request.POST)
     return render(request, 'config_network.html', context)
-
-
-def config_detail_view(request):
-    config_obj = ConfigParameters.objects.all()
-
-    context = {
-        'config_obj': config_obj[0]
-    }
-
-    return render(request, 'config_app/config_detail.html', context)

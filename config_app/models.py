@@ -15,4 +15,4 @@ class ConfigParameters(models.Model):
     subnet_cidr = models.IntegerField(validators=(MinValueValidator(0), MaxValueValidator(32)))
 
     network_device_os = models.CharField(max_length=50)
-    discovery_protocol = models.CharField(max_length=50)
+    discovery_protocol = models.CharField( max_length=50)

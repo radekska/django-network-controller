@@ -1,65 +1,16 @@
 {% extends 'dashboard.html' %}
 
 {% block configure_network %}
-    <div class="row">
-        <div class="col-12">
-            <div class="card w-auto">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">Configuration list details</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
 
-                            {% if parameters_list %}
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Username</th>
-                                        <th scope="col">Password</th>
-                                        <th scope="col">Secret</th>
-                                        <th scope="col">Network IP</th>
-                                        <th scope="col">CIDR</th>
-                                        <th scope="col">Device OS</th>
-                                        <th scope="col">Discovery protocol(s)</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for parameter_row in parameters_list %}
-                                        <tr>
-                                            <th scope="row">{{ parameter_row.id }}</th>
-                                            <td>{{ parameter_row.login_username }}</td>
-                                            <td>{{ parameter_row.login_password }}</td>
-                                            <td>{{ parameter_row.secret }}</td>
-                                            <td>{{ parameter_row.network_ip }}</td>
-                                            <td>{{ parameter_row.subnet_CIDR }}</td>
-                                            <td>{{ parameter_row.network_device_os }}</td>
-                                            <td>{{ parameter_row.discovery_protocol }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <h5>No data found.</h5>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card text-center w-auto">
+    <div class="row" style="width: 700px">
+        <div class="col">
+            <div class="card text-center w-100">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
                             <h1 class="card-title">Add Configuration</h1>
                             {% if form.errors %}
                                 {% for field in form %}
-
                                     {% for error in field.errors %}
                                         <h2 class="card-category">
                                             <span class="text-danger">{{ field.name }} - {{ error }}</span>
@@ -135,12 +86,14 @@
                                 <div class="form-group row">
                                     <div class="col">
 
-                                        <input type="number" step="1" value="0" class="form-control" id="subnet_cidr"
+                                        <input type="number" step="1" value="0" class="form-control"
+                                               id="subnet_cidr"
                                                placeholder="Subnet CIDR" name="subnet_cidr">
                                     </div>
 
                                     <div class="col">
-                                        <select class="form-control" name="network_device_os" id="network_device_os">
+                                        <select class="form-control" name="network_device_os"
+                                                id="network_device_os">
                                             {% for os in device_os %}
                                                 <option>{{ os }}</option>
                                             {% endfor %}
@@ -150,7 +103,7 @@
 
                                 <div class="row">
                                     <div class="col">
-                                        <label for="discovery_protocol">Discovery Protocol(s)</label>
+                                        <label for="discovery_protocol">Discovery Protocol</label>
                                     </div>
                                     <div class="col">
                                     </div>
@@ -158,10 +111,9 @@
 
                                 <div class="form-group row">
                                     <div class="col">
-                                        <select class="form-control" name="discovery_protocol" id="discovery_protocol">
-                                            {% for protocol in protocols %}
-                                                <option>{{ protocol }}</option>
-                                            {% endfor %}
+                                        <select class="form-control" name="discovery_protocol"
+                                                id="discovery_protocol">
+                                            <option>{{ protocol }}</option>
                                         </select>
                                     </div>
                                     <div class="col">
@@ -174,7 +126,117 @@
                 </div>
             </div>
 
+            <div class="card w-auto">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h1 class="card-title">Configuration list details</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+
+                            {% if parameters_list %}
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Username</th>
+                                        <th scope="col">Password</th>
+                                        <th scope="col">Secret</th>
+                                        <th scope="col">Network IP</th>
+                                        <th scope="col">CIDR</th>
+                                        <th scope="col">Device OS</th>
+                                        <th scope="col">Discovery protocol(s)</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for parameter_row in parameters_list %}
+                                        <tr>
+                                            <th scope="row">{{ parameter_row.id }}</th>
+                                            <td>{{ parameter_row.login_username }}</td>
+                                            <td>{{ parameter_row.login_password }}</td>
+                                            <td>{{ parameter_row.secret }}</td>
+                                            <td>{{ parameter_row.network_ip }}</td>
+                                            <td>{{ parameter_row.subnet_CIDR }}</td>
+                                            <td>{{ parameter_row.network_device_os }}</td>
+                                            <td>{{ parameter_row.discovery_protocol }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <h1 class="card-category">
+                                    <span class="text-danger" style="font-size: 15px">No data found.</span>
+                                </h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    {% if parameters_list %}
+
+                    <div class="row">
+                        <div class=" col-sm">
+                            <form class="form" action="" method="post"> {% csrf_token %}
+                                <input type="submit" name="delete_all" value="Delete All"
+                                       class="btn btn-primary btn-customized">
+                            </form>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="card w-auto">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h1 class="card-title">Run Discovery Configuration</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <form class="form" action="" method="post"> {% csrf_token %}
+                                <div class="row">
+                                    {% if parameters_list %}
+                                        <div class="col">
+                                            <label for="id">Provide Configuration ID: </label>
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" name="id" id="id">
+                                                {% for parameter in parameters_list %}
+                                                    <option>{{ parameter.id }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <input type="submit" name="run_config" value="Run" class="btn btn-primary">
+                                        </div>
+                                        </div>
+                                    {% else %}
+                                        <div class="col">
+                                            <h1 class="card-category">
+                                                <span class="text-danger" style="font-size: 15px">No data found.</span>
+                                            </h1>
+                                        </div>
+                                    {% endif %}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
+
+
+    </div>
     </div>
 {% endblock %}
 

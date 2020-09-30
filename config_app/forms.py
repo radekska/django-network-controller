@@ -17,4 +17,5 @@ class ConfigParametersForm(forms.ModelForm):
         widgets = {
             'login_password': forms.PasswordInput(),
             'secret': forms.PasswordInput(),
+
         }
