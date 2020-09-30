@@ -14,6 +14,7 @@ class Config:
     def __connect_and_configure(self, host, config_commands):
         output = list()
         login_params = self.login_params['netmiko']
+
         try:
             with netmiko.ConnectHandler(ip=host, **login_params) as net_connect:
                 net_connect.enable(cmd='enable 15')
@@ -27,6 +28,7 @@ class Config:
     def conf_disc_proto(self):
         threads_list = list()
         que = Queue()
+
         config_commands = [
             'lldp run',
         ]
@@ -35,6 +37,7 @@ class Config:
             connect_thread = threading.Thread(
                 target=lambda q, args: q.put(self.__connect_and_configure(host, config_commands)),
                 args=(que, [host, config_commands]))
+
             connect_thread.start()
             threads_list.append(connect_thread)
 
@@ -53,6 +56,7 @@ class Config:
             device = driver(hostname=host, **login_params)
             connect_thread = threading.Thread(
                 target=lambda q, args: q.put(general_functions.connect_and_get_neighbors(device)), args=(que, device,))
+
             connect_thread.start()
             threads_list.append(connect_thread)
 

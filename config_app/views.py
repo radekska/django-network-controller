@@ -27,11 +27,11 @@ def config_network_view(request):
     elif 'run_config' in request.POST:
         form = ConfigParametersForm()
         object_id = request.POST.get('id')
-        print('here')
+
         config, login_params = parse_config(object_id)
         initial_config = Config(config, login_params)
-        print('there')
         cf_output = initial_config.conf_disc_proto()
+
         print(cf_output)
         for output in cf_output:
             print(output)

@@ -29,8 +29,8 @@ def parse_config(object_id):
     config["ip_range"]["network_ip"] = config_obj.network_ip
     config["ip_range"]["subnet"] = config_obj.subnet_cidr
 
-    config["system"]["network_dev_os"] = config_obj.network_device_os
-    config["system"]["discovery_proto"] = device_os.get(config_obj.discovery_protocol, 'cisco_ios')
+    config["system"]["network_dev_os"] = device_os.get(config_obj.network_device_os , 'cisco_ios')
+    config["system"]["discovery_proto"] = config_obj.discovery_protocol
 
     login_params_napalm = {'username': config['user'].get('username'), 'password': config['user'].get('password'),
                            'optional_args': {'secret': config['user'].get('secret')}}
