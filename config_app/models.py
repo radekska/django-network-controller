@@ -16,3 +16,8 @@ class ConfigParameters(models.Model):
 
     network_device_os = models.CharField(max_length=50)
     discovery_protocol = models.CharField( max_length=50)
+
+
+class AvailableDevices(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
+    network_address = models.GenericIPAddressField(protocol='both', unpack_ipv4=True)

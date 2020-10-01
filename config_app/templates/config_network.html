@@ -160,7 +160,7 @@
                                             <td>{{ parameter_row.login_password }}</td>
                                             <td>{{ parameter_row.secret }}</td>
                                             <td>{{ parameter_row.network_ip }}</td>
-                                            <td>{{ parameter_row.subnet_CIDR }}</td>
+                                            <td>{{ parameter_row.subnet_cidr }}</td>
                                             <td>{{ parameter_row.network_device_os }}</td>
                                             <td>{{ parameter_row.discovery_protocol }}</td>
                                         </tr>
@@ -179,14 +179,14 @@
                 <div class="card-footer">
                     {% if parameters_list %}
 
-                    <div class="row">
-                        <div class=" col-sm">
-                            <form class="form" action="" method="post"> {% csrf_token %}
-                                <input type="submit" name="delete_all" value="Delete All"
-                                       class="btn btn-primary btn-customized">
-                            </form>
+                        <div class="row">
+                            <div class=" col-sm">
+                                <form class="form" action="" method="post"> {% csrf_token %}
+                                    <input type="submit" name="delete_all" value="Delete All"
+                                           class="btn btn-primary btn-customized">
+                                </form>
+                            </div>
                         </div>
-                    </div>
                     {% endif %}
 
                 </div>
@@ -198,6 +198,49 @@
                     <div class="row">
                         <div class="col">
                             <h1 class="card-title">Run Discovery Configuration</h1>
+                            <h1 class="card-category">
+                                <div class="row justify-content-between">
+                                    {% if not available_hosts %}
+                                        <div class="col-6">
+                                            <span class="text-danger" style="font-size: 15px">No Available Devices - check your conenctivity.</span>
+                                        </div>
+
+                                        <div class="col-4">
+                                            <form class="form" action="" method="post"> {% csrf_token %}
+                                                <input type="submit" name="available_hosts" value="Check"
+                                                       class="btn btn-primary">
+                                            </form>
+                                        </div>
+                                    {% else %}
+                                        <div class="col-6">
+                                            <h4> Available Devices</h4>
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+                            </h1>
+                            <div class="row">
+                                <div class="col">
+                                    {% if available_hosts %}
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Network Device IP</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for host in available_hosts %}
+                                                <tr>
+                                                    <th scope="row">{{ host.id }}</th>
+                                                    <td>{{ host.network_address }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% endif %}
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -205,8 +248,19 @@
                     <div class="row">
                         <div class="col">
                             <form class="form" action="" method="post"> {% csrf_token %}
+                                {% if error_logging_message %}
+                                    <div class="row">
+                                        <div class="col align-self-center">
+                                        <span class="text-danger"
+                                              style="font-size: 15px">{{ error_logging_message }}</span>
+                                        </div>
+                                    </div>
+                                {% endif %}
+
                                 <div class="row">
-                                    {% if parameters_list %}
+
+
+                                    {% if parameters_list and available_hosts %}
                                         <div class="col">
                                             <label for="id">Provide Configuration ID: </label>
                                         </div>
@@ -220,12 +274,6 @@
                                         <div class="col">
                                             <input type="submit" name="run_config" value="Run" class="btn btn-primary">
                                         </div>
-                                        </div>
-                                    {% else %}
-                                        <div class="col">
-                                            <h1 class="card-category">
-                                                <span class="text-danger" style="font-size: 15px">No data found.</span>
-                                            </h1>
                                         </div>
                                     {% endif %}
                             </form>

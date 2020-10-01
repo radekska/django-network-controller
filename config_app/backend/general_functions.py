@@ -58,12 +58,12 @@ def get_thread_output(que_object, threads_list):
     return thread_outputs
 
 
-def connect_and_get_neighbors(device):
+def connect_and_get_output(device):
     try:
         device.open()
         output = device.get_lldp_neighbors_detail()
         device.close()
-    except:
+    except Exception:
         pass
     else:
         json_output = json.dumps(output, indent=5)
