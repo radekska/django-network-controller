@@ -2,15 +2,15 @@
 
 {% block configure_network %}
 
-    <div class="row" style="width: 700px">
+    <div class="row" style="width: 900px">
         <div class="col">
             <div class="card text-center w-100">
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Add Configuration</h1>
-                            {% if form.errors %}
-                                {% for field in form %}
+                            <h1 class="card-title">Add Initial Configuration</h1>
+                            {% if config_parameters_form.errors %}
+                                {% for field in config_parameters_form %}
                                     {% for error in field.errors %}
                                         <h2 class="card-category">
                                             <span class="text-danger">{{ field.name }} - {{ error }}</span>
@@ -117,7 +117,143 @@
                                         </select>
                                     </div>
                                     <div class="col">
-                                        <button type="submit" class="btn btn-primary">Add</button>
+                                        <input type="submit" name="add_initial_config" value="Add"
+                                               class="btn btn-primary btn-customized">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card text-center w-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h1 class="card-title">Add SNMPv3 Configuration</h1>
+                            {% if snmp_config_parameters_form.errors %}
+                                {% for field in snmp_config_parameters_form %}
+                                    {% for error in field.errors %}
+                                        <h2 class="card-category">
+                                            <span class="text-danger">{{ field.name }} - {{ error }}</span>
+                                        </h2>
+                                    {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+                            <form class="form-example" action="" method="post"> {% csrf_token %}
+                                <div class="row">
+                                    <div class="col">
+                                        <h4>Mandatory Fields</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="group_name">Group Name</label>
+                                    </div>
+
+                                    <div class="col">
+
+                                        <label for="snmp_user">SNMP User</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+
+                                        <input type="text" class="form-control" id="group_name"
+                                               placeholder="Group Name" name="group_name">
+                                    </div>
+
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="snmp_user"
+                                               placeholder="SNMP User"
+                                               name="snmp_user">
+                                    </div>
+
+
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="snmp_password">SNMP Password</label>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="snmp_encrypt_key">SNMP Encrypt Key</label>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+                                        <input type="password" class="form-control" id="snmp_password"
+                                               placeholder="SNMP Password" name="snmp_password">
+                                    </div>
+
+                                    <div class="col">
+                                        <input type="password" class="form-control" id="snmp_encrypt_key"
+                                               placeholder="SNMP Encrypt Key"
+                                               name="snmp_encrypt_key">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="snmp_host">SNMP Host</label>
+                                    </div>
+                                    <div class="col">
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col">
+
+                                        <input type="text" class="form-control" id="snmp_host"
+                                               placeholder="SNMP Host"
+                                               name="snmp_host">
+                                    </div>
+                                    <div class="col">
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <h4>Optional Fields</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <label for="server_location">Server Location</label>
+                                    </div>
+
+                                    <div class="col">
+                                        <label for="contact_details">Contact Details</label>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="server_location"
+                                               placeholder="Server Location"
+                                               name="server_location">
+                                    </div>
+                                    <div class="col">
+                                        <input type="text" class="form-control" id="contact_details"
+                                               placeholder="Contact Details"
+                                               name="contact_details">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="squaredThree" style="margin: 20px">
+                                            <input type="checkbox" class="form-check-input" id="enable_traps"
+                                                   name="enable_traps">
+                                            <label class="form-check-label" for="enable_traps">Enable Traps</label>
+                                        </div>
+                                    </div>
+                                    <div class="col">
+                                        <input type="submit" name="add_snmp_config" value="Add"
+                                               class="btn btn-primary btn-customized" style="margin: 20px">
                                     </div>
                                 </div>
                             </form>
@@ -130,7 +266,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Configuration list details</h1>
+                            <h1 class="card-title">Initial Configuration List Details</h1>
                         </div>
                     </div>
                 </div>
@@ -138,7 +274,7 @@
                     <div class="row">
                         <div class="col">
 
-                            {% if parameters_list %}
+                            {% if initial_config_parameters_list %}
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -153,7 +289,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for parameter_row in parameters_list %}
+                                    {% for parameter_row in initial_config_parameters_list %}
                                         <tr>
                                             <th scope="row">{{ parameter_row.id }}</th>
                                             <td>{{ parameter_row.login_username }}</td>
@@ -177,12 +313,81 @@
                 </div>
 
                 <div class="card-footer">
-                    {% if parameters_list %}
+                    {% if initial_config_parameters_list %}
 
                         <div class="row">
                             <div class=" col-sm">
                                 <form class="form" action="" method="post"> {% csrf_token %}
-                                    <input type="submit" name="delete_all" value="Delete All"
+                                    <input type="submit" name="initial_delete_all" value="Delete All"
+                                           class="btn btn-primary btn-customized">
+                                </form>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+            <div class="card w-auto">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h1 class="card-title">SNMPv3 Configuration List Details</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col">
+
+                            {% if snmp_config_parameters_list %}
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Group Name</th>
+                                        <th scope="col">SNMP User</th>
+                                        <th scope="col">SNMP Password</th>
+                                        <th scope="col">SNMP Encrypt Key</th>
+                                        <th scope="col">SNMP Host</th>
+                                        <th scope="col">Contact Details</th>
+                                        <th scope="col">Server Location</th>
+                                        <th scope="col">Enable Traps</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for parameter_row in snmp_config_parameters_list %}
+                                        <tr>
+                                            <th scope="row">{{ parameter_row.id }}</th>
+                                            <td>{{ parameter_row.group_name }}</td>
+                                            <td>{{ parameter_row.snmp_user }}</td>
+                                            <td>{{ parameter_row.snmp_password }}</td>
+                                            <td>{{ parameter_row.snmp_encrypt_key }}</td>
+                                            <td>{{ parameter_row.snmp_host }}</td>
+                                            <td>{{ parameter_row.server_location }}</td>
+                                            <td>{{ parameter_row.contact_details }}</td>
+                                            <td>{{ parameter_row.enable_traps }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            {% else %}
+                                <h1 class="card-category">
+                                    <span class="text-danger" style="font-size: 15px">No data found.</span>
+                                </h1>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    {% if snmp_config_parameters_list %}
+
+                        <div class="row">
+                            <div class=" col-sm">
+                                <form class="form" action="" method="post"> {% csrf_token %}
+                                    <input type="submit" name="snmp_delete_all" value="Delete All"
                                            class="btn btn-primary btn-customized">
                                 </form>
                             </div>
@@ -200,20 +405,22 @@
                             <h1 class="card-title">Run Discovery Configuration</h1>
                             <h1 class="card-category">
                                 <div class="row justify-content-between">
+
                                     {% if not available_hosts %}
                                         <div class="col-6">
                                             <span class="text-danger" style="font-size: 15px">No Available Devices - check your conenctivity.</span>
                                         </div>
 
+
+                                    {% else %}
+                                        <div class="col-6">
+                                            <h4> Available Devices</h4>
+                                        </div>
                                         <div class="col-4">
                                             <form class="form" action="" method="post"> {% csrf_token %}
                                                 <input type="submit" name="available_hosts" value="Check"
                                                        class="btn btn-primary">
                                             </form>
-                                        </div>
-                                    {% else %}
-                                        <div class="col-6">
-                                            <h4> Available Devices</h4>
                                         </div>
                                     {% endif %}
 
@@ -260,13 +467,13 @@
                                 <div class="row">
 
 
-                                    {% if parameters_list and available_hosts %}
+                                    {% if initial_config_parameters_list and available_hosts %}
                                         <div class="col">
                                             <label for="id">Provide Configuration ID: </label>
                                         </div>
                                         <div class="col">
                                             <select class="form-control" name="id" id="id">
-                                                {% for parameter in parameters_list %}
+                                                {% for parameter in initial_config_parameters_list %}
                                                     <option>{{ parameter.id }}</option>
                                                 {% endfor %}
                                             </select>
@@ -283,8 +490,6 @@
             </div>
         </div>
 
-
-    </div>
     </div>
 {% endblock %}
 

@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
-from .models import ConfigParameters
-from .forms import ConfigParametersForm
+from .models import ConfigParameters, SNMPConfigParameters
+from .forms import ConfigParametersForm, SNMPConfigParametersForm
 from .models import AvailableDevices
 from .backend.static import discovery_protocol, device_os
 from .backend.initial_config import ConnectionManager
@@ -14,24 +14,40 @@ from .backend.general_functions import ping_all
 # Create your views here.
 @login_required(redirect_field_name='')
 def config_network_view(request):
-    form = ConfigParametersForm(request.POST or None)
-    user = User.objects.filter(username=request.user)[0]
     print(request.POST)
 
-    if request.method == 'POST':
-        if form.is_valid():
-            instance = form.save(commit=False)
+    error_logging_message = None
+    config_parameters_form = None
+    snmp_config_parameters_form = None
+
+    user = User.objects.filter(username=request.user)[0]
+
+    if 'add_initial_config' in request.POST:
+        config_parameters_form = ConfigParametersForm(request.POST or None)
+        if config_parameters_form.is_valid():
+            instance = config_parameters_form.save(commit=False)
             instance.user = request.user
             instance.save()
 
-    if 'delete_all' in request.POST:
+    if 'add_snmp_config' in request.POST:
+        snmp_config_parameters_form = SNMPConfigParametersForm(request.POST or None)
+        if snmp_config_parameters_form.is_valid():
+            instance = snmp_config_parameters_form.save(commit=False)
+            instance.user = request.user
+            instance.save()
+
+    elif 'initial_delete_all' in request.POST:
         AvailableDevices.objects.all().delete()
         ConfigParameters.objects.all().delete()
-        form = ConfigParametersForm()
+        config_parameters_form = ConfigParametersForm()
+
+    elif 'snmp_delete_all' in request.POST:
+        SNMPConfigParameters.objects.all().delete()
+        snmp_config_parameters_form = SNMPConfigParametersForm()
 
     elif 'run_config' in request.POST:
         available_hosts = list()
-        form = ConfigParametersForm()
+        config_parameters_form = ConfigParametersForm()
         object_id = request.POST.get('id')
 
         config, login_params = parse_config(object_id)
@@ -48,6 +64,7 @@ def config_network_view(request):
             error_logging_message = 'Invalid Logging Credentials!'
 
     elif 'available_hosts' in request.POST:
+        AvailableDevices.objects.all().delete()
         object_id = ConfigParameters.objects.first().id
         config, _ = parse_config(object_id)
 
@@ -58,9 +75,11 @@ def config_network_view(request):
             new_host.save()
 
     context = {
-        'parameters_list': ConfigParameters.objects.filter(user=request.user),
+        'initial_config_parameters_list': ConfigParameters.objects.filter(user=request.user),
+        'snmp_config_parameters_list': SNMPConfigParameters.objects.filter(user=request.user),
         'available_hosts': AvailableDevices.objects.filter(user=request.user),
-        'form': form,
+        'config_parameters_form': config_parameters_form,
+        'snmp_config_parameters_form': snmp_config_parameters_form,
         'protocol': discovery_protocol,
         'device_os': device_os.keys(),
         'error_logging_message': error_logging_message
