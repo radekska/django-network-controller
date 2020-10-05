@@ -7,16 +7,15 @@ from .forms import ConfigParametersForm, SNMPConfigParametersForm
 from .models import AvailableDevices
 from .backend.static import discovery_protocol, device_os
 from .backend.initial_config import ConnectionManager
-from .backend.parse_model import parse_config
+from .backend.parse_model import parse_initial_config, parse_snmp_config
 from .backend.general_functions import ping_all
 
 
 # Create your views here.
 @login_required(redirect_field_name='')
 def config_network_view(request):
-    print(request.POST)
-
-    error_logging_message = None
+    error_status_message = None
+    success_status_message = None
     config_parameters_form = None
     snmp_config_parameters_form = None
 
@@ -45,28 +44,48 @@ def config_network_view(request):
         SNMPConfigParameters.objects.all().delete()
         snmp_config_parameters_form = SNMPConfigParametersForm()
 
-    elif 'run_config' in request.POST:
+    elif 'run_initial_config' in request.POST:
         available_hosts = list()
         config_parameters_form = ConfigParametersForm()
-        object_id = request.POST.get('id')
+        object_id = dict(request.POST).get('id')[0]
 
-        config, login_params = parse_config(object_id)
+        config, login_params = parse_initial_config(object_id)
 
         for host in AvailableDevices.objects.all():
             available_hosts.append(host.network_address)
 
-        initial_config = ConnectionManager(config, login_params, available_hosts)
+        connection = ConnectionManager(config, login_params, available_hosts)
+        commands = ['lldp run']
+        output = connection.connect_and_configure_multiple(commands)
 
-        commands = ['lldp run', 'int lo0', 'ip address 1.1.1.1 255.255.255.255']
-        cf_output = initial_config.connect_and_configure_multiple(commands)
+        if output is None:
+            error_status_message = 'Check your connection or logging credentials.'
+        else:
+            success_status_message = 'Initial Configuration Completed.'
 
-        if cf_output is None:
-            error_logging_message = 'Invalid Logging Credentials!'
+    elif 'run_snmp_config' in request.POST:
+        object_ids = dict(request.POST).get('id')
+        initial_cf_obj_id = object_ids[0]
+        snmp_cf_obj_id = object_ids[1]
+        available_hosts = list()
+
+        config, login_params = parse_initial_config(initial_cf_obj_id)
+        snmp_config_commands = parse_snmp_config(snmp_cf_obj_id)
+
+        for host in AvailableDevices.objects.all():
+            available_hosts.append(host.network_address)
+
+        connection = ConnectionManager(config, login_params, available_hosts)
+        output = connection.connect_and_configure_multiple(snmp_config_commands)
+        if output is None:
+            error_status_message = 'Check your connection or logging credentials.'
+        else:
+            success_status_message = 'SNMPv3 Configuration Completed.'
 
     elif 'available_hosts' in request.POST:
         AvailableDevices.objects.all().delete()
         object_id = ConfigParameters.objects.first().id
-        config, _ = parse_config(object_id)
+        config, _ = parse_initial_config(object_id)
 
         available_hosts = ping_all(config)
 
@@ -82,7 +101,8 @@ def config_network_view(request):
         'snmp_config_parameters_form': snmp_config_parameters_form,
         'protocol': discovery_protocol,
         'device_os': device_os.keys(),
-        'error_logging_message': error_logging_message
+        'error_status_message': error_status_message,
+        'success_status_message': success_status_message,
     }
 
     return render(request, 'config_network.html', context)

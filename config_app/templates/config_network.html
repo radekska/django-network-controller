@@ -1,11 +1,23 @@
 {% extends 'dashboard.html' %}
 
 {% block configure_network %}
+    {% if success_status_message %}
+        <div class="alert alert-success alert-dismissible" style="width: 870px">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Success!</strong> {{ success_status_message}}
+        </div>
+    {% elif error_status_message %}
+        <div class="alert alert-danger alert-dismissible" style="width: 870px">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Error!</strong> {{ error_status_message }}
+        </div>
+    {% endif %}
 
     <div class="row" style="width: 900px">
         <div class="col">
             <div class="card text-center w-100">
                 <div class="card-header">
+
                     <div class="row">
                         <div class="col">
                             <h1 class="card-title">Add Initial Configuration</h1>
@@ -402,7 +414,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Run Discovery Configuration</h1>
+                            <h1 class="card-title">Run Configurations</h1>
                             <h1 class="card-category">
                                 <div class="row justify-content-between">
 
@@ -455,21 +467,27 @@
                     <div class="row">
                         <div class="col">
                             <form class="form" action="" method="post"> {% csrf_token %}
-                                {% if error_logging_message %}
+                                {% if error_status_message %}
                                     <div class="row">
                                         <div class="col align-self-center">
                                         <span class="text-danger"
-                                              style="font-size: 15px">{{ error_logging_message }}</span>
+                                              style="font-size: 15px">{{ error_status_message }}</span>
+                                        </div>
+                                    </div>
+                                {% elif success_status_message %}
+                                    <div class="row">
+                                        <div class="col align-self-center">
+                                        <span class="text-success"
+                                              style="font-size: 15px">{{ success_status_message }}</span>
                                         </div>
                                     </div>
                                 {% endif %}
 
-                                <div class="row">
 
-
-                                    {% if initial_config_parameters_list and available_hosts %}
+                                {% if initial_config_parameters_list and available_hosts %}
+                                    <div class="row">
                                         <div class="col">
-                                            <label for="id">Provide Configuration ID: </label>
+                                            <label for="id">Provide Initial Configuration ID: </label>
                                         </div>
                                         <div class="col">
                                             <select class="form-control" name="id" id="id">
@@ -479,17 +497,41 @@
                                             </select>
                                         </div>
                                         <div class="col">
-                                            <input type="submit" name="run_config" value="Run" class="btn btn-primary">
+                                            <input type="submit" name="run_initial_config" value="Run"
+                                                   class="btn btn-primary">
                                         </div>
+                                    </div>
+                                {% endif %}
+                                {#                            </form>#}
+                                {#                            <form class="form" action="" method="post"> {% csrf_token %}#}
+
+                                {% if snmp_config_parameters_list and available_hosts %}
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="id">Provide SNMP Configuration ID: </label>
                                         </div>
-                                    {% endif %}
+                                        <div class="col">
+                                            <select class="form-control" name="id" id="id">
+                                                {% for parameter in snmp_config_parameters_list %}
+                                                    <option>{{ parameter.id }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+                                            <input type="submit" name="run_snmp_config" value="Run"
+                                                   class="btn btn-primary">
+                                        </div>
+                                    </div>
+                                {% endif %}
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
 
+
+        </div>
     </div>
+
 {% endblock %}
 
