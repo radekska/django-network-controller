@@ -30,7 +30,6 @@ def parse_initial_config(object_id):
     config["ip_range"]["subnet"] = config_obj.subnet_cidr
 
     config["system"]["network_dev_os"] = device_os.get(config_obj.network_device_os, 'cisco_ios')
-    config["system"]["discovery_proto"] = config_obj.discovery_protocol
 
     login_params_napalm = {'username': config['user'].get('username'), 'password': config['user'].get('password'),
                            'optional_args': {'secret': config['user'].get('secret')}}
@@ -77,5 +76,6 @@ def parse_snmp_config(object_id):
     return configure_commands
 
 
-def remove_snmp_config(commands):
+def remove_snmp_config(object_id):
+    commands = parse_snmp_config(object_id)
     return ["no {command}".format(command=command) for command in commands]

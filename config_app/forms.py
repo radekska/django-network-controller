@@ -12,7 +12,6 @@ class ConfigParametersForm(forms.ModelForm):
             'network_ip',
             'subnet_cidr',
             'network_device_os',
-            'discovery_protocol'
         ]
         widgets = {
             'login_password': forms.PasswordInput(),

@@ -1,16 +1,26 @@
 {% extends 'dashboard.html' %}
+{% load static %}
 
 {% block configure_network %}
+
+
     {% if success_status_message %}
         <div class="alert alert-success alert-dismissible" style="width: 870px">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Success!</strong> {{ success_status_message}}
+            <strong>Success!</strong> {{ success_status_message }}
+        </div>
+
+    {% elif warning_status_message %}
+        <div class="alert alert-warning alert-dismissible" style="width: 870px">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <strong>Warning!</strong> {{ warning_status_message }}
         </div>
     {% elif error_status_message %}
         <div class="alert alert-danger alert-dismissible" style="width: 870px">
             <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
             <strong>Error!</strong> {{ error_status_message }}
         </div>
+
     {% endif %}
 
     <div class="row" style="width: 900px">
@@ -20,7 +30,7 @@
 
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Add Initial Configuration</h1>
+                            <h1 class="card-title">Add Access Configuration</h1>
                             {% if config_parameters_form.errors %}
                                 {% for field in config_parameters_form %}
                                     {% for error in field.errors %}
@@ -115,22 +125,17 @@
 
                                 <div class="row">
                                     <div class="col">
-                                        <label for="discovery_protocol">Discovery Protocol</label>
-                                    </div>
-                                    <div class="col">
                                     </div>
                                 </div>
 
                                 <div class="form-group row">
                                     <div class="col">
-                                        <select class="form-control" name="discovery_protocol"
-                                                id="discovery_protocol">
-                                            <option>{{ protocol }}</option>
-                                        </select>
                                     </div>
                                     <div class="col">
-                                        <input type="submit" name="add_initial_config" value="Add"
+                                        <input type="submit" name="add_access_config" value="Add"
                                                class="btn btn-primary btn-customized">
+                                    </div>
+                                    <div class="col">
                                     </div>
                                 </div>
                             </form>
@@ -257,10 +262,11 @@
                                 </div>
                                 <div class="row">
                                     <div class="col">
-                                        <div class="squaredThree" style="margin: 20px">
-                                            <input type="checkbox" class="form-check-input" id="enable_traps"
+                                        <div class="custom-control custom-checkbox" style="padding: 20px">
+                                            <input type="checkbox" class="custom-control-input" id="enable_traps"
                                                    name="enable_traps">
-                                            <label class="form-check-label" for="enable_traps">Enable Traps</label>
+                                            <label class="custom-control-label" for="enable_traps">Enable
+                                                Traps</label>
                                         </div>
                                     </div>
                                     <div class="col">
@@ -278,7 +284,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Initial Configuration List Details</h1>
+                            <h1 class="card-title">Access Configuration List Details</h1>
                         </div>
                     </div>
                 </div>
@@ -286,7 +292,7 @@
                     <div class="row">
                         <div class="col">
 
-                            {% if initial_config_parameters_list %}
+                            {% if access_config_parameters_list %}
                                 <table class="table">
                                     <thead>
                                     <tr>
@@ -297,11 +303,10 @@
                                         <th scope="col">Network IP</th>
                                         <th scope="col">CIDR</th>
                                         <th scope="col">Device OS</th>
-                                        <th scope="col">Discovery protocol(s)</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for parameter_row in initial_config_parameters_list %}
+                                    {% for parameter_row in access_config_parameters_list %}
                                         <tr>
                                             <th scope="row">{{ parameter_row.id }}</th>
                                             <td>{{ parameter_row.login_username }}</td>
@@ -310,7 +315,6 @@
                                             <td>{{ parameter_row.network_ip }}</td>
                                             <td>{{ parameter_row.subnet_cidr }}</td>
                                             <td>{{ parameter_row.network_device_os }}</td>
-                                            <td>{{ parameter_row.discovery_protocol }}</td>
                                         </tr>
                                     {% endfor %}
                                     </tbody>
@@ -325,13 +329,13 @@
                 </div>
 
                 <div class="card-footer">
-                    {% if initial_config_parameters_list %}
+                    {% if access_config_parameters_list %}
 
                         <div class="row">
                             <div class=" col-sm">
                                 <form class="form" action="" method="post"> {% csrf_token %}
-                                    <input type="submit" name="initial_delete_all" value="Delete All"
-                                           class="btn btn-primary btn-customized">
+                                    <input type="submit" name="access_delete_all" value="Delete All"
+                                           class="btn btn btn-danger">
                                 </form>
                             </div>
                         </div>
@@ -400,7 +404,7 @@
                             <div class=" col-sm">
                                 <form class="form" action="" method="post"> {% csrf_token %}
                                     <input type="submit" name="snmp_delete_all" value="Delete All"
-                                           class="btn btn-primary btn-customized">
+                                           class="btn btn btn-danger">
                                 </form>
                             </div>
                         </div>
@@ -414,13 +418,13 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Run Configurations</h1>
+                            <h1 class="card-title">Run SNMPv3 Configurations</h1>
                             <h1 class="card-category">
                                 <div class="row justify-content-between">
 
                                     {% if not available_hosts %}
                                         <div class="col-6">
-                                            <span class="text-danger" style="font-size: 15px">No Available Devices - check your conenctivity.</span>
+                                            <span class="text-danger" style="font-size: 15px">No Available Devices - check your connectivity.</span>
                                         </div>
 
 
@@ -428,13 +432,9 @@
                                         <div class="col-6">
                                             <h4> Available Devices</h4>
                                         </div>
-                                        <div class="col-4">
-                                            <form class="form" action="" method="post"> {% csrf_token %}
-                                                <input type="submit" name="available_hosts" value="Check"
-                                                       class="btn btn-primary">
-                                            </form>
-                                        </div>
+
                                     {% endif %}
+
 
                                 </div>
                             </h1>
@@ -467,48 +467,32 @@
                     <div class="row">
                         <div class="col">
                             <form class="form" action="" method="post"> {% csrf_token %}
-                                {% if error_status_message %}
-                                    <div class="row">
-                                        <div class="col align-self-center">
-                                        <span class="text-danger"
-                                              style="font-size: 15px">{{ error_status_message }}</span>
-                                        </div>
-                                    </div>
-                                {% elif success_status_message %}
-                                    <div class="row">
-                                        <div class="col align-self-center">
-                                        <span class="text-success"
-                                              style="font-size: 15px">{{ success_status_message }}</span>
-                                        </div>
-                                    </div>
-                                {% endif %}
-
-
-                                {% if initial_config_parameters_list and available_hosts %}
+                                {% if access_config_parameters_list %}
                                     <div class="row">
                                         <div class="col">
-                                            <label for="id">Provide Initial Configuration ID: </label>
+                                            <label for="id">Access Configuration ID: </label>
                                         </div>
                                         <div class="col">
                                             <select class="form-control" name="id" id="id">
-                                                {% for parameter in initial_config_parameters_list %}
+                                                {% for parameter in access_config_parameters_list %}
                                                     <option>{{ parameter.id }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
-                                        <div class="col">
-                                            <input type="submit" name="run_initial_config" value="Run"
-                                                   class="btn btn-primary">
+                                        <div class="col-sm">
+                                            <span class="text-warning" id="scanning_span"
+                                                  style="font-size: 15px"></span>
+                                            <input type="submit" name="available_hosts" value="Scan Network"
+                                                   class="btn btn-primary btn-block" onclick="ScanningLabel();">
                                         </div>
+
+
                                     </div>
                                 {% endif %}
-                                {#                            </form>#}
-                                {#                            <form class="form" action="" method="post"> {% csrf_token %}#}
-
                                 {% if snmp_config_parameters_list and available_hosts %}
                                     <div class="row">
                                         <div class="col">
-                                            <label for="id">Provide SNMP Configuration ID: </label>
+                                            <label for="id">SNMPv3 Configuration ID: </label>
                                         </div>
                                         <div class="col">
                                             <select class="form-control" name="id" id="id">
@@ -517,21 +501,24 @@
                                                 {% endfor %}
                                             </select>
                                         </div>
-                                        <div class="col">
-                                            <input type="submit" name="run_snmp_config" value="Run"
-                                                   class="btn btn-primary">
+                                        <div class="col-sm">
+                                            <span class="text-warning" id="configure_span"
+                                                  style="font-size: 15px"></span>
+                                            <input type="submit" name="run_snmp_config" value="Configure SNMP"
+                                                   class="btn btn-primary btn-block" onclick="ConfiguringSNMP();">
                                         </div>
                                     </div>
+
                                 {% endif %}
                             </form>
+
                         </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
+
 
 {% endblock %}
 
