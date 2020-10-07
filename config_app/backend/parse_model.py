@@ -1,5 +1,5 @@
 from config_app.models import ConfigParameters, SNMPConfigParameters
-from config_app.backend.static import device_os
+from config_app.backend.static import device_os_napalm
 
 
 def parse_initial_config(object_id):
@@ -29,7 +29,7 @@ def parse_initial_config(object_id):
     config["ip_range"]["network_ip"] = config_obj.network_ip
     config["ip_range"]["subnet"] = config_obj.subnet_cidr
 
-    config["system"]["network_dev_os"] = device_os.get(config_obj.network_device_os, 'cisco_ios')
+    config["system"]["network_dev_os"] = device_os_napalm.get(config_obj.network_device_os, 'ios')
 
     login_params_napalm = {'username': config['user'].get('username'), 'password': config['user'].get('password'),
                            'optional_args': {'secret': config['user'].get('secret')}}
@@ -50,8 +50,6 @@ def parse_snmp_config(object_id):
     snmp_config = SNMPConfigParameters.objects.filter(id=object_id)[0]
     basic_command = "snmp-server"
 
-    configure_commands.append("{basic_command} enable".format(basic_command=basic_command))
-
     if snmp_config.enable_traps:
         configure_commands.append("{basic_command} enable traps".format(basic_command=basic_command))
     if snmp_config.server_location:
@@ -69,11 +67,14 @@ def parse_snmp_config(object_id):
             basic_command=basic_command, user=snmp_config.snmp_user, group=snmp_config.group_name,
             password=snmp_config.snmp_password, encrypt_key=snmp_config.snmp_encrypt_key))
 
-    configure_commands.append("{basic_command} host {host} version 3 {user}".format(basic_command=basic_command,
-                                                                                    host=snmp_config.snmp_host,
-                                                                                    user=snmp_config.snmp_user))
+    configure_commands.append("{basic_command} host {host} version 3 priv {user}".format(basic_command=basic_command,
+                                                                                         host=snmp_config.snmp_host,
 
-    return configure_commands
+                                                                                         user=snmp_config.snmp_user))
+    napalm_configure_commands = '\n'.join([str(config) for config in configure_commands])
+    napalm_configure_commands += '\n'
+
+    return napalm_configure_commands
 
 
 def remove_snmp_config(object_id):

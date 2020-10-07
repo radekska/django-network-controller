@@ -63,8 +63,8 @@ def connect_and_get_output(device):
         device.open()
         output = device.get_lldp_neighbors_detail()
         device.close()
-    except Exception:
-        pass
+    except Exception as exception:
+        print(exception)
     else:
         json_output = json.dumps(output, indent=5)
         return json_output

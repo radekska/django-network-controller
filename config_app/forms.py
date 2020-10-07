@@ -24,6 +24,8 @@ class SNMPConfigParametersForm(forms.ModelForm):
     server_location = forms.CharField(required=False)
     contact_details = forms.CharField(required=False)
     enable_traps = forms.BooleanField(required=False)
+    snmp_password = forms.CharField(min_length=8)
+    snmp_encrypt_key = forms.CharField(min_length=8)
 
     class Meta:
         model = SNMPConfigParameters
