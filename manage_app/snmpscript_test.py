@@ -1,22 +1,34 @@
-from pysnmp.hlapi import *
+from easysnmp import Session
 
-iterator = getCmd(SnmpEngine(),
-                  UsmUserData('rskalban', 'cisco123',
-                              'cisco123',
-                              authProtocol=usmHMACMD5AuthProtocol,
-                              privProtocol=usmAesCfb128Protocol),
+# Create an SNMP session to be used for all our requests
+session = Session(hostname='192.168.8.129', community='test_1', version=2)
 
-                  UdpTransportTarget(('192.168.8.129', 161)),
-                  ContextData(),
-                  ObjectType(ObjectIdentity('SNMPv2-MIB', 'sysUpTime', 0)))
+# You may retrieve an individual OID using an SNMP GET
+location = session.get('sysLocation.0')
 
-errorIndication, errorStatus, errorIndex, varBinds = next(iterator)
+# You may also specify the OID as a tuple (name, index)
+# Note: the index is specified as a string as it can be of other types than
+# just a regular integer
+contact = session.get(('sysContact', '0'))
 
-if errorIndication:  # SNMP engine errors
-    print(errorIndication)
-else:
-    if errorStatus:  # SNMP agent errors
-        print('%s at %s' % (errorStatus.prettyPrint(), varBinds[int(errorIndex) - 1] if errorIndex else '?'))
-    else:
-        for varBind in varBinds:  # SNMP response contents
-            print(' = '.join([x.prettyPrint() for x in varBind]))
+# And of course, you may use the numeric OID too
+description = session.get('.1.3.6.1.2.1.1.1.0')
+
+# Set a variable using an SNMP SET
+# session.set('sysLocation.0', 'The SNMP Lab')
+
+# Perform an SNMP walk
+system_items = session.walk('ipTrafficStats')
+
+# Each returned item can be used normally as its related type (str or int)
+# but also has several extended attributes with SNMP-specific information
+for item in system_items:
+    print('{oid}.{oid_index} {snmp_type} = {value}'.format(
+        oid=item.oid,
+        oid_index=item.oid_index,
+        snmp_type=item.snmp_type,
+        value=item.value
+    ))
+
+# TO DO - easy snmp dziala elegancko, pobiera poszczegolne MIBy.
+# Teraz tylko zastanowic sie jak fajnie to wszystko ubrac w Manage Network tab...
