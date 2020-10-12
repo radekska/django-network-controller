@@ -18,3 +18,15 @@ device_os_napalm = {
 }
 
 discovery_protocol = 'LLDP'
+
+snmp_auth_protocols = (
+    'md5',
+    'sha'
+)
+snmp_privacy_protocols = (
+    'aes 128',
+    'aes 192',
+    'aes 256',
+    '3des',
+    'des'
+)

@@ -5,10 +5,10 @@ from django.contrib.auth.models import User
 from .models import ConfigParameters, SNMPConfigParameters
 from .forms import ConfigParametersForm, SNMPConfigParametersForm
 from .models import AvailableDevices
-from .backend.static import discovery_protocol, device_os_napalm
+from .backend.static import discovery_protocol, device_os_napalm, snmp_auth_protocols, snmp_privacy_protocols
 from .backend.initial_config import ConfigManager
 from .backend.parse_model import parse_initial_config, parse_snmp_config
-from .backend.general_functions import ping_all
+from .backend.utils import ping_all
 
 
 @login_required(redirect_field_name='')
@@ -108,6 +108,8 @@ def config_network_view(request):
         'warning_status_message': warning_status_message,
         'success_status_message_list': success_status_message_list,
         'error_status_message_list': error_status_message_list,
+        'auth_protocols': snmp_auth_protocols,
+        'privacy_protocols': snmp_privacy_protocols,
     }
 
     return render(request, 'config_network.html', context)

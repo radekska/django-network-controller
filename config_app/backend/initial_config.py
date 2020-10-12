@@ -1,6 +1,6 @@
 import napalm
 import threading
-from config_app.backend import general_functions
+from config_app.backend import utils
 from queue import Queue
 
 
@@ -46,7 +46,7 @@ class ConfigManager:
             connect_thread.start()
             threads_list.append(connect_thread)
 
-        conf_output = general_functions.get_thread_output(connection_que, threads_list)
+        conf_output = utils.get_thread_output(connection_que, threads_list)
         return conf_output
 
     def get_command_output(self):
@@ -59,12 +59,12 @@ class ConfigManager:
         for host in self.available_hosts:
             device = driver(hostname=host, **login_params)
             connect_thread = threading.Thread(
-                target=lambda in_que, args: in_que.put(general_functions.connect_and_get_output(device)),
+                target=lambda in_que, args: in_que.put(utils.connect_and_get_output(device)),
                 args=(connection_que, device,))
 
             connect_thread.start()
             threads_list.append(connect_thread)
 
-        command_output = general_functions.get_thread_output(connection_que, threads_list)
+        command_output = utils.get_thread_output(connection_que, threads_list)
         command_output = list(filter(lambda data: data is not None, command_output))
         return command_output

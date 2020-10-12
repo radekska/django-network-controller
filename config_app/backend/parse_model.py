@@ -63,8 +63,9 @@ def parse_snmp_config(object_id):
         "{basic_command} group {group} v3 priv".format(basic_command=basic_command, group=snmp_config.group_name))
 
     configure_commands.append(
-        "{basic_command} user {user} {group} v3 auth md5 {password} priv aes 128 {encrypt_key}".format(
+        "{basic_command} user {user} {group} v3 auth {auth_protocol} {password} priv {privacy_protocol} {encrypt_key}".format(
             basic_command=basic_command, user=snmp_config.snmp_user, group=snmp_config.group_name,
+            auth_protocol=snmp_config.snmp_auth_protocol, privacy_protocol=snmp_config.snmp_privacy_protocol,
             password=snmp_config.snmp_password, encrypt_key=snmp_config.snmp_encrypt_key))
 
     configure_commands.append("{basic_command} host {host} version 3 priv {user}".format(basic_command=basic_command,

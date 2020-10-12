@@ -37,7 +37,9 @@ class SNMPConfigParametersForm(forms.ModelForm):
             'snmp_user',
             'snmp_password',
             'snmp_encrypt_key',
-            'snmp_host'
+            'snmp_host',
+            'snmp_auth_protocol',
+            'snmp_privacy_protocol'
         ]
         widgets = {
             'snmp_password': forms.PasswordInput(),

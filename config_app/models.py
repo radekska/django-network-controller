@@ -29,6 +29,8 @@ class SNMPConfigParameters(models.Model):
     group_name = models.CharField(max_length=50)
     snmp_user = models.CharField(max_length=50)
     snmp_password = models.CharField(max_length=50)
+    snmp_auth_protocol = models.CharField(max_length=10, default=None, null=True)
+    snmp_privacy_protocol = models.CharField(max_length=10, default=None, null=True)
     snmp_encrypt_key = models.CharField(max_length=50)
     snmp_host = models.GenericIPAddressField(protocol='both', unpack_ipv4=True)
 
