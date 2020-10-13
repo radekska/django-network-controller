@@ -9,6 +9,7 @@ from .backend.static import discovery_protocol, device_os_napalm, snmp_auth_prot
 from .backend.initial_config import ConfigManager
 from .backend.parse_model import parse_initial_config, parse_snmp_config
 from .backend.utils import ping_all
+from WebAppLAN_MonitorDjango.utils import get_available_devices
 
 
 @login_required(redirect_field_name='')
@@ -63,19 +64,25 @@ def config_network_view(request):
 
         config, login_params = parse_initial_config(access_cf_obj_id)
 
-        available_hosts = [host.network_address for host in AvailableDevices.objects.all()]
+        available_hosts = get_available_devices()
         connection = ConfigManager(config, login_params, available_hosts)
 
         snmp_config_commands = parse_snmp_config(snmp_cf_obj_id)
 
         if 'run_snmp_config' in request.POST:
             output = connection.connect_and_configure_multiple(config_commands=snmp_config_commands)
+
         else:
             output = connection.connect_and_configure_multiple(config_commands=snmp_config_commands,
                                                                type_of_change='rollback')
 
         error_status_message_list = list(filter(lambda conn: conn[2] == 'error', output))
         success_status_message_list = list(filter(lambda conn: conn[2] == 'success', output))
+        available_hosts = [host[0] for host in success_status_message_list]
+
+        AvailableDevices.objects.all().delete()
+        for available_host in available_hosts:
+            AvailableDevices.objects.create(user=user, network_address=available_host)
 
     elif 'available_hosts' in request.POST:
         object_id = dict(request.POST).get('id')[0]
