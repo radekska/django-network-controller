@@ -28,4 +28,7 @@ def manage_network_view(request):
         'devices_details_output': devices_details_output
     }
 
+    # TO DO - rozbudować dalej te klasy dodac im wiecej parametrow,
+    # dlubac w oidach i mibach no i wiadomo później tabelka na manage app i lecimy daleeej :D
+
     return render(request, 'manage_network.html', context)
