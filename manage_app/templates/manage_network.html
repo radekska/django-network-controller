@@ -16,13 +16,45 @@
                     <div class="row">
                         <div class="col">
 
-                            {# TO DO#}
                             <form class="form-example" action="" method="post"> {% csrf_token %}
                                 <div class="col">
                                     <input type="submit" name="get_devices_details" value="Get Devices"
                                            class="btn btn-primary btn-customized" style="margin: 20px">
                                 </div>
                             </form>
+
+                            <div class="row">
+                                <div class="col">
+
+
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Device Name</th>
+                                            <th scope="col">No. Interfaces</th>
+                                            <th scope="col">Location</th>
+                                            <th scope="col">Contact</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for device in devices_details_output %}
+                                            <tr>
+                                                <th scope="row">{{ device.id }}</th>
+                                                <td>{{ device.system_name }}</td>
+                                                <td>{{ device.if_number }}</td>
+                                                <td>{{ device.system_location }}</td>
+                                                <td>{{ device.system_contact }}</td>
+{#                                                # TO DO = przekminic jak i co zamiesicic w tabeli manage networks, potem#}
+{#                                                dodac funkcjonalnosc w stylu kilk na hostname po czym pojawia ci sie#}
+{#                                                nowy card box na dole na przyklad ktory pokazuje wszystkie detale i#}
+{#                                                parametry urzadzenia, interfejsow itp#}
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

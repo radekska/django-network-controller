@@ -11,7 +11,7 @@ location = session.get('sysLocation.0')
 # You may also specify the OID as a tuple (name, index)
 # Note: the index is specified as a string as it can be of other types than
 # just a regular integer
-contact = session.get(('ifAdminStatus', 1 ))
+contact = session.get(('ipAdEntNetMask'))
 
 # And of course, you may use the numeric OID too
 description = session.get('.1.3.6.1.2.1.1.1.0')
@@ -20,17 +20,19 @@ description = session.get('.1.3.6.1.2.1.1.1.0')
 # session.set('sysLocation.0', 'The SNMP Lab')
 
 # Perform an SNMP walk
-system_items = session.walk('ifMIB')
+print(contact)
+system_items = session.walk('ipAdEntIfIndex')
+print(system_items)
+print(list(sorted(system_items, key=lambda ip: ip.value)))
 
 # Each returned item can be used normally as its related type (str or int)
 # but also has several extended attributes with SNMP-specific information
 
-print(contact)
 
 # int_desc = list(filter(lambda snmp_var: snmp_var.oid == 'ifDescr', system_items))
-# print(int_desc)
-for item in system_items:
-    print(item)
+# # print(int_desc)
+# for item in system_items:
+#     print(item)
 
 # TO DO - easy snmp dziala elegancko, pobiera poszczegolne MIBy.
 # Teraz tylko zastanowic sie jak fajnie to wszystko ubrac w Manage Network tab...

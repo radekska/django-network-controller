@@ -42,6 +42,7 @@ class DeviceSystem_:
 
 class DeviceInterface_:
     def __init__(self, number, session):
+        self.interface_idx = session.get(('ifName', number)).oid_index
         self.interface_name = session.get(('ifName', number)).value
         self.interface_description = session.get(('ifDescr', number)).value
         self.interface_type = session.get(('ifType', number)).value
@@ -51,6 +52,11 @@ class DeviceInterface_:
         self.interface_admin_status = session.get(('ifAdminStatus', number)).value
         self.interface_operational_status = session.get(('ifOperStatus', number)).value
 
+        self.interface_ip = None
+        ip_addresses = session.walk('ipAdEntIfIndex')
+        for snmp_query in ip_addresses:
+            if snmp_query.value == self.interface_idx:
+                self.interface_ip = snmp_query.oid_index
 
 
 class Device:
