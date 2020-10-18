@@ -21,18 +21,26 @@ description = session.get('.1.3.6.1.2.1.1.1.0')
 
 # Perform an SNMP walk
 print(contact)
-system_items = session.walk('ipAdEntIfIndex')
-print(system_items)
-print(list(sorted(system_items, key=lambda ip: ip.value)))
+system_items = session.walk('sysUpTime')
+# print(system_items)
 
 # Each returned item can be used normally as its related type (str or int)
 # but also has several extended attributes with SNMP-specific information
 
 
 # int_desc = list(filter(lambda snmp_var: snmp_var.oid == 'ifDescr', system_items))
-# # print(int_desc)
+# print(int_desc)
+
+for item in system_items:
+    print(item)
+
 # for item in system_items:
-#     print(item)
+#     mac_addr = ['{:02x}'.format(int(ord(val))) for val in item.value]
+#     for i in range(2, 6, 3):
+#         mac_addr.insert(i, '.')
+#
+#     mac_addr = ''.join(mac_addr)
+#     print(mac_addr)
 
 # TO DO - easy snmp dziala elegancko, pobiera poszczegolne MIBy.
 # Teraz tylko zastanowic sie jak fajnie to wszystko ubrac w Manage Network tab...

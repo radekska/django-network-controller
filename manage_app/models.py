@@ -7,9 +7,13 @@ class DeviceModel(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 
     system_description = models.CharField(max_length=1000, default=None)
+    system_version = models.CharField(max_length=50, default=None, null=True)
+    system_image = models.CharField(max_length=50, default=None, null=True)
+    system_type = models.CharField(max_length=50, default=None, null=True)
     system_contact = models.CharField(max_length=50, default=None)
     system_name = models.CharField(max_length=50, default=None)
     system_location = models.CharField(max_length=50, default=None)
+    system_up_time = models.CharField(max_length=100, default=None, null=True)
     if_number = models.IntegerField(default=None, null=True)
 
 

@@ -17,13 +17,21 @@
 // });
 //
 
-function ScanningLabel(){
+function ScanningLabel() {
     $("#scanning_span").text('Scanning Network...')
 }
-function ConfiguringSNMP(){
+
+function ConfiguringSNMP() {
     $("#configure_span").text('Configuring SNMPv3...')
 }
-function RemoveSNMPConfig(){
+
+function RemoveSNMPConfig() {
     $("#remove_span").text('Removing SNMPv3 Configs...')
 }
+
+// function ShowDeviceDetails() {
+//     $("#remove_span").text('Removing SNMPv3 Configs...')
+//
+// }
+
 

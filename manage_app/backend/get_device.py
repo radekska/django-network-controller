@@ -38,6 +38,7 @@ class DeviceSystem_:
         self.system_contact = session.get(('sysContact', 0)).value
         self.system_name = session.get(('sysName', 0)).value
         self.system_location = session.get(('sysLocation', 0)).value
+        self.system_up_time = session.get(('sysUpTime', 0)).value
 
 
 class DeviceInterface_:

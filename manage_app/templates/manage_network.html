@@ -1,4 +1,5 @@
 {% extends 'dashboard.html' %}
+{% load static %}
 
 {% block manage_network %}
 
@@ -8,21 +9,20 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h1 class="card-title">Manage Network</h1>
+                            <h1 class="card-title">Manage Network Devices</h1>
                         </div>
+
+                        <form class="form" action="" method="post"> {% csrf_token %}
+                            <div class="col">
+                                <input type="submit" name="get_devices_details" value="Get Devices"
+                                       class="btn btn-primary btn-customized" style="margin: 20px">
+                            </div>
+                        </form>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
                         <div class="col">
-
-                            <form class="form-example" action="" method="post"> {% csrf_token %}
-                                <div class="col">
-                                    <input type="submit" name="get_devices_details" value="Get Devices"
-                                           class="btn btn-primary btn-customized" style="margin: 20px">
-                                </div>
-                            </form>
-
                             <div class="row">
                                 <div class="col">
 
@@ -33,22 +33,41 @@
                                             <th scope="col">ID</th>
                                             <th scope="col">Device Name</th>
                                             <th scope="col">No. Interfaces</th>
+                                            <th scope="col">System Type</th>
+                                            <th scope="col">System Image</th>
+                                            <th scope="col">System Version</th>
                                             <th scope="col">Location</th>
                                             <th scope="col">Contact</th>
                                         </tr>
                                         </thead>
+
                                         <tbody>
                                         {% for device in devices_details_output %}
                                             <tr>
                                                 <th scope="row">{{ device.id }}</th>
-                                                <td>{{ device.system_name }}</td>
+                                                <form class="form" id="form-id-{{ device.id }}" action=""
+                                                      method="post"> {% csrf_token %}
+                                                    <td><a href="javascript:"
+                                                           onclick="document.getElementById('form-id-{{ device.id }}').submit();">
+                                                        {{ device.system_name }}</a>
+                                                        <input type="hidden" name="get_device_details"
+                                                               value="{{ device.id }}">
+                                                        <input type="hidden" name="get_device_details"
+                                                               value="{{ device.system_name }}">
+                                                    </td>
+
+                                                </form>
+
                                                 <td>{{ device.if_number }}</td>
+                                                <td>{{ device.system_type }}</td>
+                                                <td>{{ device.system_image }}</td>
+                                                <td>{{ device.system_version }}</td>
                                                 <td>{{ device.system_location }}</td>
                                                 <td>{{ device.system_contact }}</td>
-{#                                                # TO DO = przekminic jak i co zamiesicic w tabeli manage networks, potem#}
-{#                                                dodac funkcjonalnosc w stylu kilk na hostname po czym pojawia ci sie#}
-{#                                                nowy card box na dole na przyklad ktory pokazuje wszystkie detale i#}
-{#                                                parametry urzadzenia, interfejsow itp#}
+                                                {#                                                # TO DO = przekminic jak i co zamiesicic w tabeli manage networks, potem#}
+                                                {#                                                dodac funkcjonalnosc w stylu kilk na hostname po czym pojawia ci sie#}
+                                                {#                                                nowy card box na dole na przyklad ktory pokazuje wszystkie detale i#}
+                                                {#                                                parametry urzadzenia, interfejsow itp#}
                                             </tr>
                                         {% endfor %}
                                         </tbody>
@@ -58,6 +77,79 @@
                         </div>
                     </div>
                 </div>
+
+            </div>
+            {% if device_detail_output %}
+                <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col">
+                            <h3 class="card-title"> Device - {{ device_detail_output.system_name }} </h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="device_details" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="system-tab" data-toggle="tab" href="#system" role="tab"
+                               aria-controls="home" aria-selected="true">System</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="interfaces-tab" data-toggle="tab" href="#interfaces" role="tab"
+                               aria-controls="profile" aria-selected="false">Interfaces</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="others-tab" data-toggle="tab" href="#others-tab" role="tab"
+                               aria-controls="contact" aria-selected="false">Others</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="device_details_content">
+
+                        <div class="tab-pane fade show active" id="system" role="tabpanel" aria-labelledby="system-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col">
+                                            <p><b>Version</b> : {{ device_detail_output.system_version }}</p>
+                                            <p><b>Image</b> : {{ device_detail_output.system_image }}</p>
+                                            <p><b>Type</b> : {{ device_detail_output.system_type }}</p>
+                                            <p><b>Contact</b> : {{ device_detail_output.system_contact }}</p>
+                                            <p><b>Location</b> : {{ device_detail_output.system_location }}</p>
+                                            <p><b>System Up From</b> : {{ device_detail_output.system_up_time }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="interfaces" role="tabpanel" aria-labelledby="interfaces-tab">
+                            {% for interface in device_interfaces_output %}
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"> Interface Details - {{ interface.interface_description }} </h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="card">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p><b>MAC</b> : {{ interface.interface_physical_addr }}</p>
+                                                    <p><b>IP Address</b> : {{ interface.interface_ip }}</p>
+                                                    <p><b>MTU : {{ interface.interface_mtu }} bytes</p>
+                                                    <p><b>Bandwidth</b> : {{ interface.interface_speed }} Kbits/sec</p>
+                                                    <p><b>Admin Status</b> : {{ interface.interface_admin_status }}</p>
+                                                    <p><b>Operational Status</b>
+                                                        : {{ interface.interface_operational_staus }}</p>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">...</div>
+                    </div>
+                </div>
+            {% endif %}
             </div>
 
 {% endblock %}
