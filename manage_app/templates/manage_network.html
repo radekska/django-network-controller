@@ -84,7 +84,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col">
-                            <h3 class="card-title"> Device - {{ device_detail_output.system_name }} </h3>
+                            <h3 class="card-title"> Device Details </h3>
                         </div>
                     </div>
                 </div>
@@ -99,7 +99,7 @@
                                aria-controls="profile" aria-selected="false">Interfaces</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="others-tab" data-toggle="tab" href="#others-tab" role="tab"
+                            <a class="nav-link" id="others-tab" data-toggle="tab" href="#others" role="tab"
                                aria-controls="contact" aria-selected="false">Others</a>
                         </li>
                     </ul>
@@ -107,6 +107,9 @@
 
                         <div class="tab-pane fade show active" id="system" role="tabpanel" aria-labelledby="system-tab">
                             <div class="card">
+                                <div class="card-header">
+                                    <h3 class="card-title"><b>System Details</b></h3>
+                                </div>
                                 <div class="card-body">
                                     <div class="row">
                                         <div class="col">
@@ -125,15 +128,15 @@
                             {% for interface in device_interfaces_output %}
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title"> Interface Details - {{ interface.interface_description }} </h3>
+                                        <h3 class="card-title"><b>{{ interface.interface_description }} </b></h3>
                                     </div>
                                     <div class="card-body">
                                         <div class="card">
                                             <div class="row">
                                                 <div class="col">
-                                                    <p><b>MAC</b> : {{ interface.interface_physical_addr }}</p>
+                                                    <p><b>MAC Address</b> : {{ interface.interface_physical_addr }}</p>
                                                     <p><b>IP Address</b> : {{ interface.interface_ip }}</p>
-                                                    <p><b>MTU : {{ interface.interface_mtu }} bytes</p>
+                                                    <p><b>MTU</b> : {{ interface.interface_mtu }} bytes</p>
                                                     <p><b>Bandwidth</b> : {{ interface.interface_speed }} Kbits/sec</p>
                                                     <p><b>Admin Status</b> : {{ interface.interface_admin_status }}</p>
                                                     <p><b>Operational Status</b>
@@ -146,7 +149,34 @@
                                 </div>
                             {% endfor %}
                         </div>
-                        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">...</div>
+                        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
+
+                            <div class="card">
+
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col">
+                                            {% if device_detail_output %}
+                                                <h3 class="card-title" style="padding-top: 20px">
+                                                    <b>{{ device_detail_output.system_name }}</b>
+                                                </h3>
+                                            {% endif %}
+                                        </div>
+                                        <form class="form" action="" method="post"> {% csrf_token %}
+                                            <div class="col">
+                                                <input type="submit" name="run_ssh_session" value="SSH Session"
+                                                       class="btn btn-primary btn-customized" style="margin: 20px">
+                                                <input type="hidden" name="run_ssh_session"
+                                                       value="{{ device_detail_output.id }}">
+
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             {% endif %}

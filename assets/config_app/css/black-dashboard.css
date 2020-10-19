@@ -17343,7 +17343,7 @@ table.tablesorter thead tr .headerSortDown {
     background: -webkit-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
     background: -o-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
     background: -moz-linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
-    background: linear-gradient(0deg, #ba54f5 0%, #e14eca 100%);
+    background: linear-gradient(0deg, #6ebae6 0%, #4e59e1 100%);
     height: calc(100vh - 90px);
     width: 230px;
     position: fixed;

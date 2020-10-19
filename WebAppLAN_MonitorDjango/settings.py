@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'registration_app',
     'dashboard_app',
     'visualize_app',
-    'manage_app'
+    'manage_app',
 ]
 
 MIDDLEWARE = [

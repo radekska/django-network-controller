@@ -6,12 +6,16 @@ from config_app.models import SNMPConfigParameters, AvailableDevices
 from manage_app.models import DeviceModel, DeviceInterface
 from .backend.get_device import DeviceManager
 from .backend.parse_model import parse_and_save_to_database
+from .backend.webssh import main
 from WebAppLAN_MonitorDjango.utils import get_available_devices
+
+ssh_session = None
 
 
 # Create your views here.
 @login_required(redirect_field_name='')
 def manage_network_view(request):
+    global ssh_session
     device_details_output = None
     device_interfaces_output = None
 
@@ -36,7 +40,14 @@ def manage_network_view(request):
         device_details_output = DeviceModel.objects.filter(id=device_id)[0]
         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
 
+    elif 'run_ssh_session' in request.POST:
+        ssh_session = main.main()
+        ssh_session.start()
+        # TO DO - aktualnie przy pomocy asyncio z głównego procesu django "forkuje" się subproces ktory stawia
+        # clienta ssh, niestety glowny watek caly czas sie kreci - trzeba przekminic jak zforkowac clienta ssha zeby
+        # to ładnie zagrało a potem zastanowic sie jak wpakowac tego klienta do mannage_app - do zrobienia
     context = {
+        'ssh_session': ssh_session,
         'device_detail_output': device_details_output,
         'device_interfaces_output': device_interfaces_output,
         'devices_details_output': DeviceModel.objects.all(),
