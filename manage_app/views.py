@@ -20,7 +20,7 @@ def manage_network_view(request):
     device_interfaces_output = None
 
     user = User.objects.filter(username=request.user)[0]
-    snmp_config_id = 1
+    snmp_config_id = 2
 
     request_post_dict = dict(request.POST)
     print(request.POST)
@@ -39,13 +39,16 @@ def manage_network_view(request):
         device_id = request_post_dict.get('get_device_details')[0]
         device_details_output = DeviceModel.objects.filter(id=device_id)[0]
         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
+        print(device_interfaces_output.first().interface_in_errors)
 
-    elif 'run_ssh_session' in request.POST:
-        ssh_session = main.main()
-        ssh_session.start()
-        # TO DO - aktualnie przy pomocy asyncio z głównego procesu django "forkuje" się subproces ktory stawia
-        # clienta ssh, niestety glowny watek caly czas sie kreci - trzeba przekminic jak zforkowac clienta ssha zeby
-        # to ładnie zagrało a potem zastanowic sie jak wpakowac tego klienta do mannage_app - do zrobienia
+    # TO DO!!!
+    # elif 'run_ssh_session' in request.POST:
+    #     ssh_session = main.main()
+    #     ssh_session.start()
+    #     # TO DO - aktualnie przy pomocy asyncio z głównego procesu django "forkuje" się subproces ktory stawia
+    #     # clienta ssh, niestety glowny watek caly czas sie kreci - trzeba przekminic jak zforkowac clienta ssha zeby
+    #     # to ładnie zagrało a potem zastanowic sie jak wpakowac tego klienta do mannage_app - do zrobienia
+
     context = {
         'ssh_session': ssh_session,
         'device_detail_output': device_details_output,
@@ -53,8 +56,5 @@ def manage_network_view(request):
         'devices_details_output': DeviceModel.objects.all(),
         'devices_interfaces_output': DeviceInterface.objects.all()
     }
-
-    # TO DO - rozbudować dalej te klasy dodac im wiecej parametrow,
-    # dlubac w oidach i mibach no i wiadomo później tabelka na manage app i lecimy daleeej :D
 
     return render(request, 'manage_network.html', context)

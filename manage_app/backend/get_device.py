@@ -53,6 +53,11 @@ class DeviceInterface_:
         self.interface_admin_status = session.get(('ifAdminStatus', number)).value
         self.interface_operational_status = session.get(('ifOperStatus', number)).value
 
+        self.interface_in_unicast_packets = session.get(('ifInUcastPkts', number)).value
+        self.interface_in_errors = session.get(('ifInErrors', number)).value
+        self.interface_out_unicast_packets = session.get(('ifOutUcastPkts', number)).value
+        self.interface_out_errors = session.get(('ifOutErrors', number)).value
+
         self.interface_ip = None
         ip_addresses = session.walk('ipAdEntIfIndex')
         for snmp_query in ip_addresses:

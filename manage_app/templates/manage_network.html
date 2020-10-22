@@ -32,12 +32,12 @@
                                         <tr>
                                             <th scope="col">ID</th>
                                             <th scope="col">Device Name</th>
+                                            <th scope="col">Device Type</th>
                                             <th scope="col">No. Interfaces</th>
-                                            <th scope="col">System Type</th>
-                                            <th scope="col">System Image</th>
+                                            <th scope="col">Software</th>
                                             <th scope="col">System Version</th>
                                             <th scope="col">Location</th>
-                                            <th scope="col">Contact</th>
+                                            <th scope="col">Administrator</th>
                                         </tr>
                                         </thead>
 
@@ -57,10 +57,9 @@
                                                     </td>
 
                                                 </form>
-
+                                                <td>{{ device.device_type }}</td>
                                                 <td>{{ device.if_number }}</td>
                                                 <td>{{ device.system_type }}</td>
-                                                <td>{{ device.system_image }}</td>
                                                 <td>{{ device.system_version }}</td>
                                                 <td>{{ device.system_location }}</td>
                                                 <td>{{ device.system_contact }}</td>
@@ -81,105 +80,135 @@
             </div>
             {% if device_detail_output %}
                 <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h3 class="card-title"> Device Details </h3>
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h3 class="card-title"> Device Details </h3>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body">
-                    <ul class="nav nav-tabs" id="device_details" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="system-tab" data-toggle="tab" href="#system" role="tab"
-                               aria-controls="home" aria-selected="true">System</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="interfaces-tab" data-toggle="tab" href="#interfaces" role="tab"
-                               aria-controls="profile" aria-selected="false">Interfaces</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" id="others-tab" data-toggle="tab" href="#others" role="tab"
-                               aria-controls="contact" aria-selected="false">Others</a>
-                        </li>
-                    </ul>
-                    <div class="tab-content" id="device_details_content">
+                    <div class="card-body">
+                        <ul class="nav nav-tabs" id="device_details" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="system-tab" data-toggle="tab" href="#system" role="tab"
+                                   aria-controls="home" aria-selected="true">System</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="interfaces-tab" data-toggle="tab" href="#interfaces" role="tab"
+                                   aria-controls="profile" aria-selected="false">Interfaces</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="logs-tab" data-toggle="tab" href="#logs" role="tab"
+                                   aria-controls="profile" aria-selected="false">Traps and Events</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="others-tab" data-toggle="tab" href="#others" role="tab"
+                                   aria-controls="contact" aria-selected="false">Others</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content" id="device_details_content">
 
-                        <div class="tab-pane fade show active" id="system" role="tabpanel" aria-labelledby="system-tab">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="card-title"><b>System Details</b></h3>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col">
-                                            <p><b>Version</b> : {{ device_detail_output.system_version }}</p>
-                                            <p><b>Image</b> : {{ device_detail_output.system_image }}</p>
-                                            <p><b>Type</b> : {{ device_detail_output.system_type }}</p>
-                                            <p><b>Contact</b> : {{ device_detail_output.system_contact }}</p>
-                                            <p><b>Location</b> : {{ device_detail_output.system_location }}</p>
-                                            <p><b>System Up From</b> : {{ device_detail_output.system_up_time }}</p>
+                            <div class="tab-pane fade show active" id="system" role="tabpanel"
+                                 aria-labelledby="system-tab">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="card-title"><b>{{ device_detail_output.device_type }} System Details</b></h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col">
+                                                <p><b>Version</b> : {{ device_detail_output.system_version }}</p>
+                                                <p><b>Image</b> : {{ device_detail_output.system_image }}</p>
+                                                <p><b>Type</b> : {{ device_detail_output.system_type }}</p>
+                                                <p><b>Contact</b> : {{ device_detail_output.system_contact }}</p>
+                                                <p><b>Location</b> : {{ device_detail_output.system_location }}</p>
+                                                <p><b>System Up From</b> : {{ device_detail_output.system_up_time }}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="tab-pane fade" id="interfaces" role="tabpanel" aria-labelledby="interfaces-tab">
-                            {% for interface in device_interfaces_output %}
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title"><b>{{ interface.interface_description }} </b></h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="card">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <p><b>MAC Address</b> : {{ interface.interface_physical_addr }}</p>
-                                                    <p><b>IP Address</b> : {{ interface.interface_ip }}</p>
-                                                    <p><b>MTU</b> : {{ interface.interface_mtu }} bytes</p>
-                                                    <p><b>Bandwidth</b> : {{ interface.interface_speed }} Kbits/sec</p>
-                                                    <p><b>Admin Status</b> : {{ interface.interface_admin_status }}</p>
-                                                    <p><b>Operational Status</b>
-                                                        : {{ interface.interface_operational_staus }}</p>
-
+                            <div class="tab-pane fade" id="interfaces" role="tabpanel" aria-labelledby="interfaces-tab">
+                                {% for interface in device_interfaces_output %}
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h3 class="card-title"><b>{{ interface.interface_description }} </b></h3>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="card">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h5><b>MAC Address</b>: {{ interface.interface_physical_addr }}
+                                                        </h5>
+                                                        <h5><b>IP Address</b> : {{ interface.interface_ip }}</h5>
+                                                        <h5><b>Bandwidth</b> : {{ interface.interface_speed }} Kbits/sec
+                                                        </h5>
+                                                        <h5><b>Admin Status</b> : {{ interface.interface_admin_status }}
+                                                        </h5>
+                                                        <h5><b>Operational Status</b>
+                                                            : {{ interface.interface_operational_staus }}</h5>
+                                                    </div>
+                                                    <div class="col">
+                                                        <h5><b>Input Unicast
+                                                            Packets</b>: {{ interface.interface_in_unicast_packets }}
+                                                        </h5>
+                                                        <h5><b>Output Unicast
+                                                            Packets</b>: {{ interface.interface_out_unicast_packets }}
+                                                        </h5>
+                                                        <h5><b>Input Errors</b> : {{ interface.interface_in_errors }}
+                                                        </h5>
+                                                        <h5><b>Output Errors</b> : {{ interface.interface_out_errors }}
+                                                        </h5>
+                                                        <h5><b>MTU</b> : {{ interface.interface_mtu }} bytes</h5>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
+                                {% endfor %}
+                            </div>
+                            <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
+                                <div class="card">
+                                    <div class="card-header"></div>
+
+                                    <div class="card-body"></div>
                                 </div>
-                            {% endfor %}
-                        </div>
-                        <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
+                            </div>
+                            <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
 
-                            <div class="card">
+                                <div class="card">
 
-                                <div class="card-header">
-                                    <div class="row">
-                                        <div class="col">
-                                            {% if device_detail_output %}
-                                                <h3 class="card-title" style="padding-top: 20px">
-                                                    <b>{{ device_detail_output.system_name }}</b>
-                                                </h3>
-                                            {% endif %}
-                                        </div>
-                                        <form class="form" action="" method="post"> {% csrf_token %}
+                                    <div class="card-header">
+                                        <div class="row">
                                             <div class="col">
-                                                <input type="submit" name="run_ssh_session" value="SSH Session"
-                                                       class="btn btn-primary btn-customized" style="margin: 20px">
-                                                <input type="hidden" name="run_ssh_session"
-                                                       value="{{ device_detail_output.id }}">
-
+                                                {% if device_detail_output %}
+                                                    <h3 class="card-title" style="padding-top: 20px">
+                                                        <b>{{ device_detail_output.system_name }}</b>
+                                                    </h3>
+                                                {% endif %}
                                             </div>
-                                        </form>
+                                            <form class="form" action="" method="post"> {% csrf_token %}
+                                                <div class="col">
+                                                    <input type="submit" name="run_ssh_session" value="SSH Session"
+                                                           class="btn btn-primary btn-customized" style="margin: 20px">
+                                                    <input type="hidden" name="run_ssh_session"
+                                                           value="{{ device_detail_output.id }}">
+
+                                                </div>
+                                            </form>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="card-body">
+                                    <div class="card-body">
+                                        <div class="row">
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             {% endif %}
-            </div>
+        </div>
 
 {% endblock %}

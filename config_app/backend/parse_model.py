@@ -50,6 +50,8 @@ def parse_snmp_config(object_id):
     snmp_config = SNMPConfigParameters.objects.filter(id=object_id)[0]
     basic_command = "snmp-server"
 
+    configure_commands.append("lldp run")
+
     if snmp_config.enable_traps:
         configure_commands.append("{basic_command} enable traps".format(basic_command=basic_command))
     if snmp_config.server_location:
@@ -72,6 +74,7 @@ def parse_snmp_config(object_id):
                                                                                          host=snmp_config.snmp_host,
 
                                                                                          user=snmp_config.snmp_user))
+
     napalm_configure_commands = '\n'.join([str(config) for config in configure_commands])
     napalm_configure_commands += '\n'
 

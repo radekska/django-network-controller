@@ -28,6 +28,7 @@ def make_handlers(loop, options):
 
 def make_app(handlers, settings):
     settings.update(default_handler_class=NotFoundHandler)
+    print(settings)
     return tornado.web.Application(handlers, **settings)
 
 
@@ -58,9 +59,11 @@ def main():
         server_settings.update(ssl_options=ssl_ctx)
         app_listen(app, options.sslport, options.ssladdress, server_settings)
 
-    return loop
+    loop.start()
+    # return loop
     # loop.close()
 
+
 #
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()

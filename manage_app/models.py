@@ -15,6 +15,7 @@ class DeviceModel(models.Model):
     system_location = models.CharField(max_length=50, default=None)
     system_up_time = models.CharField(max_length=100, default=None, null=True)
     if_number = models.IntegerField(default=None, null=True)
+    device_type = models.CharField(max_length=10, default=None, null=True)
 
 
 class DeviceInterface(models.Model):
@@ -29,3 +30,9 @@ class DeviceInterface(models.Model):
     interface_admin_status = models.CharField(max_length=10, default=None)
     interface_operational_status = models.CharField(max_length=10, default=None)
     interface_ip = models.CharField(max_length=50, default=None, null=True)
+
+    interface_in_unicast_packets = models.CharField(max_length=50, default=None, null=True)
+    interface_in_errors = models.CharField(max_length=20, default=None, null=True)
+    interface_out_unicast_packets = models.CharField(max_length=50, default=None, null=True)
+    interface_out_errors = models.CharField(max_length=20, default=None, null=True)
+
