@@ -2,7 +2,7 @@ from threading import Thread
 from queue import Queue
 from easysnmp import Session
 from config_app.backend.utils import get_thread_output
-from manage_app.backend import parse_model
+from manage_app.backend import parse_model, static
 from manage_app.models import DeviceModel, DeviceInterface
 
 
@@ -58,6 +58,9 @@ class DeviceInterface_:
         self.interface_out_unicast_packets = session.get(('ifOutUcastPkts', number)).value
         self.interface_out_errors = session.get(('ifOutErrors', number)).value
 
+        self.lldp_neighbor_name = None
+        self.lldp_neighbor_interface = None
+
         self.interface_ip = None
         ip_addresses = session.walk('ipAdEntIfIndex')
         for snmp_query in ip_addresses:
@@ -67,6 +70,59 @@ class DeviceInterface_:
 
 class Device:
     def __init__(self, session):
-        self.system = DeviceSystem_(session)
-        self.if_number = int(session.get(('ifNumber', 0)).value)
-        self.interfaces = [DeviceInterface_(number, session) for number in range(1, self.if_number + 1)]
+        self.session = session
+        self.system = DeviceSystem_(self.session)
+        self.if_number = int(self.session.get(('ifNumber', 0)).value)
+        self.interfaces = [DeviceInterface_(number, self.session) for number in range(1, self.if_number + 1)]
+        self.lldp_data = self.__get_lldp_entries()
+
+    def __get_lldp_entries(self):
+
+        lldp_remote_systems_data = self.session.walk(static.lldp_defined_values['lldpRemoteSystemsData'])
+
+        lldp_remote_query = {
+            'lldp_local_hostname': self.system.system_name,
+            'lldp_neighbor_interfaces': list(),
+            'lldp_neighbor_hostnames': list(),
+
+        }
+
+        for item in lldp_remote_systems_data:
+            if static.lldp_defined_values['lldpNeighborInterface'] in item.oid:
+                lldp_remote_query['lldp_neighbor_interfaces'].append(item.value)
+            elif static.lldp_defined_values['lldpNeighborHostName'] in item.oid:
+                lldp_remote_query['lldp_neighbor_hostnames'].append(item.value)
+
+        lldp_neighbor_correlation = list(
+            zip(lldp_remote_query['lldp_neighbor_interfaces'], lldp_remote_query['lldp_neighbor_hostnames']))
+
+        lldp_neighbor_correlation.append(self.system.system_name)
+        # TO DO - skonczyc korelacje lldp, pozniej napisac funkcje formatujaca pod graph.jsona i core visual tab zrobiony,
+        # jeszcze mozna sie pobawic z wyswietlaniem informacji LLDP podczas klikania na urzadzenie na network tabie
+        print(lldp_neighbor_correlation)
+
+    def __add_lldp_entries(self):
+        lldp_data = list()
+
+        for interface_no in range(self.if_number):
+            lldp_neighbor_name = self.session.get(
+                static.lldp_defined_values['lldpNeighborHostName'].replace('x', str(interface_no))).value
+            lldp_neighbor_interface = self.session.get(
+                static.lldp_defined_values['lldpNeighborInterface'].replace('x', str(interface_no))).value
+
+            lldp_local_interface = self.session.get(
+                static.lldp_defined_values['lldpLocalInterface'].replace('x', str(
+                    interface_no))).value
+
+            lldp_query = {
+                'lldp_local_name': self.system.system_name,
+                'lldp_local_interface': lldp_local_interface if lldp_local_interface != 'NOSUCHINSTANCE' else None,
+                'lldp_neighbor_name': lldp_neighbor_name if lldp_neighbor_name != 'NOSUCHINSTANCE' else None,
+                'lldp_neighbor_interface': lldp_neighbor_interface if lldp_neighbor_interface != 'NOSUCHINSTANCE' else None,
+
+            }
+            print(self.system.system_name)
+            if all(lldp_query.values()) is True:
+                lldp_data.append(lldp_query)
+
+        return lldp_data

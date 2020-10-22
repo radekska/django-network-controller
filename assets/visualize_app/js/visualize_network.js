@@ -183,11 +183,9 @@
                 .selectAll("line")
                 .data(graph.links)
                 .enter().append("line")
-                .attr("stroke", function (d) {
-                    return color(parseInt(d.value));
-                })
+                .attr("stroke", "#547cf5")
                 .attr("stroke-width", function (d) {
-                    return Math.sqrt(parseInt(d.value));
+                    return Math.sqrt(parseInt(d.value) / 2);
                 });
 
             var node = svg.append("g")
@@ -219,7 +217,7 @@
                 .attr("width", 64)
                 .attr("height", 64)
                 .attr("x", -16)
-                .attr("y", -16)
+                .attr("y", -25)
                 .attr("fill", function (d) {
                     return color(d.group);
                 });
@@ -229,7 +227,7 @@
                 .attr("fill", "#ba54f5")
                 .attr("dx", 12)
                 .attr("dy", ".35em")
-                .attr("x", -45)
+                .attr("x", -125)
                 .attr("y", -12)
                 .text(function (d) {
                     return d.id

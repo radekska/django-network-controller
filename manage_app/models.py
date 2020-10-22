@@ -36,3 +36,6 @@ class DeviceInterface(models.Model):
     interface_out_unicast_packets = models.CharField(max_length=50, default=None, null=True)
     interface_out_errors = models.CharField(max_length=20, default=None, null=True)
 
+    lldp_neighbor_name = models.CharField(max_length=50, default=None, null=True)
+    lldp_neighbor_interface = models.CharField(max_length=30, default=None, null=True)
+
