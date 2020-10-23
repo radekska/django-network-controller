@@ -34,6 +34,43 @@ def parse_up_time(system_ticks):
     return dt
 
 
+def save_to_database_lldp_data(lldp_neighbor_details):
+    current_device = DeviceModel.objects.filter(system_name=lldp_neighbor_details['lldp_local_hostname'])[0]
+    current_interfaces = DeviceInterface.objects.filter(device_model=current_device)
+
+    current_interface = current_interfaces.filter(interface_description=lldp_neighbor_details['lldp_local_interface'])[
+        0]
+    current_interface.lldp_neighbor_hostname = lldp_neighbor_details['lldp_neighbor_hostname']
+    current_interface.lldp_neighbor_interface = lldp_neighbor_details['lldp_neighbor_interface']
+
+    current_interface.save()
+
+
+def format_lldp_data(devices):
+    all_lldp_data = dict()
+    for device in devices:
+        for key, value in device.lldp_data.items():
+            all_lldp_data.setdefault(key, []).append(value)
+
+    for device in devices:
+        lldp_local_hostname = device.system.system_name  # CoreSwitch1
+        lldp_neighbor_correlations = all_lldp_data[lldp_local_hostname][0]
+
+        for lldp_neighbor_interface, lldp_neighbor_hostname in lldp_neighbor_correlations.items():
+            lldp_neighbor = all_lldp_data[lldp_neighbor_hostname]
+
+            for iner_lldp_neighbor_intf, iner_lldp_neighbor_host in lldp_neighbor[0].items():
+                if iner_lldp_neighbor_host == lldp_local_hostname:
+                    lldp_neighbor_details = {
+                        'lldp_local_hostname': lldp_local_hostname,
+                        'lldp_local_interface': iner_lldp_neighbor_intf,
+                        'lldp_neighbor_interface': lldp_neighbor_interface,
+                        'lldp_neighbor_hostname': lldp_neighbor_hostname
+
+                    }
+                    save_to_database_lldp_data(lldp_neighbor_details)
+
+
 def parse_and_save_to_database(devices, user):
     for device in devices:
         splitted_system_description = device.system.system_description.split(',')
@@ -88,3 +125,6 @@ def parse_and_save_to_database(devices, user):
         real_inf_number = dev_model.if_number - len(list(filter(lambda item: len(item) > 0, matched_list)))
         dev_model.if_number = real_inf_number
         dev_model.save()
+
+    format_lldp_data(devices)
+

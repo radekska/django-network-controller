@@ -3,7 +3,6 @@ from queue import Queue
 from easysnmp import Session
 from config_app.backend.utils import get_thread_output
 from manage_app.backend import parse_model, static
-from manage_app.models import DeviceModel, DeviceInterface
 
 
 class DeviceManager:
@@ -81,10 +80,8 @@ class Device:
         lldp_remote_systems_data = self.session.walk(static.lldp_defined_values['lldpRemoteSystemsData'])
 
         lldp_remote_query = {
-            'lldp_local_hostname': self.system.system_name,
             'lldp_neighbor_interfaces': list(),
             'lldp_neighbor_hostnames': list(),
-
         }
 
         for item in lldp_remote_systems_data:
@@ -93,36 +90,15 @@ class Device:
             elif static.lldp_defined_values['lldpNeighborHostName'] in item.oid:
                 lldp_remote_query['lldp_neighbor_hostnames'].append(item.value)
 
-        lldp_neighbor_correlation = list(
-            zip(lldp_remote_query['lldp_neighbor_interfaces'], lldp_remote_query['lldp_neighbor_hostnames']))
+        lldp_neighbor_correlation = zip(lldp_remote_query['lldp_neighbor_interfaces'],
+                                        lldp_remote_query['lldp_neighbor_hostnames'])
+        lldp_final_correlation = dict()
 
-        lldp_neighbor_correlation.append(self.system.system_name)
-        # TO DO - skonczyc korelacje lldp, pozniej napisac funkcje formatujaca pod graph.jsona i core visual tab zrobiony,
-        # jeszcze mozna sie pobawic z wyswietlaniem informacji LLDP podczas klikania na urzadzenie na network tabie
-        print(lldp_neighbor_correlation)
+        for lldp_neighbor_interface, lldp_neigbor_hostname in lldp_neighbor_correlation:
+            lldp_final_correlation[lldp_neighbor_interface] = lldp_neigbor_hostname
 
-    def __add_lldp_entries(self):
-        lldp_data = list()
+        lldp_final_query = {
+            self.system.system_name: lldp_final_correlation
+        }
 
-        for interface_no in range(self.if_number):
-            lldp_neighbor_name = self.session.get(
-                static.lldp_defined_values['lldpNeighborHostName'].replace('x', str(interface_no))).value
-            lldp_neighbor_interface = self.session.get(
-                static.lldp_defined_values['lldpNeighborInterface'].replace('x', str(interface_no))).value
-
-            lldp_local_interface = self.session.get(
-                static.lldp_defined_values['lldpLocalInterface'].replace('x', str(
-                    interface_no))).value
-
-            lldp_query = {
-                'lldp_local_name': self.system.system_name,
-                'lldp_local_interface': lldp_local_interface if lldp_local_interface != 'NOSUCHINSTANCE' else None,
-                'lldp_neighbor_name': lldp_neighbor_name if lldp_neighbor_name != 'NOSUCHINSTANCE' else None,
-                'lldp_neighbor_interface': lldp_neighbor_interface if lldp_neighbor_interface != 'NOSUCHINSTANCE' else None,
-
-            }
-            print(self.system.system_name)
-            if all(lldp_query.values()) is True:
-                lldp_data.append(lldp_query)
-
-        return lldp_data
+        return lldp_final_query
