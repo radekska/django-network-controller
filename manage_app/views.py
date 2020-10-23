@@ -39,7 +39,6 @@ def manage_network_view(request):
         device_id = request_post_dict.get('get_device_details')[0]
         device_details_output = DeviceModel.objects.filter(id=device_id)[0]
         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
-        print(device_interfaces_output.first().interface_in_errors)
 
     # TO DO!!!
     # elif 'run_ssh_session' in request.POST:

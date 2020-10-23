@@ -143,13 +143,13 @@
         // ########
         // # MAIN #
         // ########
-        var svg = d3.select("svg");
-
         width = window.innerWidth || document.documentElement.clientWidth;
         height = window.innerHeight || document.documentElement.clientHeight ;
 
-        d3.select("svg").attr("height", height)
-        d3.select("svg").attr("width", width * 0.7)
+        var svg = d3.select("svg");
+
+        d3.select("svg").attr("height", height * 0.9)
+        d3.select("svg").attr("width", width * 0.785)
 
         var color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -232,6 +232,8 @@
                 .text(function (d) {
                     return d.id
                 });
+
+            node.append("form");
 
             node.append("title")
                 .text(function (d) {
