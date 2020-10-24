@@ -26,4 +26,5 @@ def visualize_network_view(request):
         'lldp_neighbor_details': device_interfaces
     }
 
+    print(device_interfaces, type(device_interfaces))
     return render(request, 'visualize.html', context)

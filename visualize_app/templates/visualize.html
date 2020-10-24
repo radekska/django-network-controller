@@ -4,13 +4,22 @@
     {% if lldp_neighbor_details and device_model %}
         <div class="container">
             <div class="row">
-                <div class="col">
-                    <div class="card text-center w-100">
+                <div class="col" style="padding-left: 35px;">
+                    <div class="card" >
                         <div class="card-header">
-                            <h1 class="card-title"> Neighbors Correlation Details - {{ device_model.system_name }} </h1>
+                                <h1 class="card-title"> Neighbors Correlation Details -
+                                    <b>{{ device_model.system_name }} #{{ device_model.id }}</b></h1>
                         </div>
                         <div class="card-body">
-                            asdasdasdasd
+
+                            <div class="row">
+                                {% for neighbor in lldp_neighbor_details %}
+                                    <div class="col">
+                                        <p><b>Neighbor Hostname #{{ neighbor.id }}</b> : {{ neighbor.lldp_neighbor_hostname }}</p>
+                                        <p><b>Neighbor Interface</b> : {{ neighbor.lldp_neighbor_interface }}</p>
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>

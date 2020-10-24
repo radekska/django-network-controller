@@ -35,7 +35,7 @@ class DeviceSystem_:
     def __init__(self, session):
         self.system_description = session.get(('sysDescr', 0)).value
         self.system_contact = session.get(('sysContact', 0)).value
-        self.system_name = session.get(('sysName', 0)).value
+        self.full_system_name = session.get(('sysName', 0)).value
         self.system_location = session.get(('sysLocation', 0)).value
         self.system_up_time = session.get(('sysUpTime', 0)).value
 
@@ -98,7 +98,7 @@ class Device:
             lldp_final_correlation[lldp_neighbor_interface] = lldp_neigbor_hostname
 
         lldp_final_query = {
-            self.system.system_name: lldp_final_correlation
+            self.system.full_system_name: lldp_final_correlation
         }
 
         return lldp_final_query

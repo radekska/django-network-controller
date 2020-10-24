@@ -35,7 +35,7 @@ def parse_up_time(system_ticks):
 
 
 def save_to_database_lldp_data(lldp_neighbor_details):
-    current_device = DeviceModel.objects.filter(system_name=lldp_neighbor_details['lldp_local_hostname'])[0]
+    current_device = DeviceModel.objects.filter(full_system_name=lldp_neighbor_details['lldp_local_hostname'])[0]
     current_interfaces = DeviceInterface.objects.filter(device_model=current_device)
 
     current_interface = current_interfaces.filter(interface_description=lldp_neighbor_details['lldp_local_interface'])[
@@ -53,7 +53,7 @@ def format_lldp_data(devices):
             all_lldp_data.setdefault(key, []).append(value)
 
     for device in devices:
-        lldp_local_hostname = device.system.system_name  # CoreSwitch1
+        lldp_local_hostname = device.system.full_system_name  # CoreSwitch1
         lldp_neighbor_correlations = all_lldp_data[lldp_local_hostname][0]
 
         for lldp_neighbor_interface, lldp_neighbor_hostname in lldp_neighbor_correlations.items():
@@ -86,7 +86,7 @@ def parse_and_save_to_database(devices, user):
             'system_version': splitted_system_description[2].replace('Version', '').strip(),
             'system_contact': device.system.system_contact,
             'full_system_name': device.system.full_system_name,
-            'system_name': device.system.system_name,
+            'system_name': device.system.full_system_name.split('.')[0],
             'system_location': device.system.system_location,
             'system_up_time': parse_up_time(device.system.system_up_time),
             'if_number': device.if_number,

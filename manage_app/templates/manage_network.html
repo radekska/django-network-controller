@@ -53,13 +53,13 @@
                                                             <input type="hidden" name="get_device_details"
                                                                    value="{{ device.id }}">
                                                             <input type="hidden" name="get_device_details"
-                                                                   value="{{ device.system_name }}">
+                                                                   value="{{ device.full_system_name }}">
                                                         </td>
 
                                                     </form>
                                                     <td>{{ device.device_type }}</td>
                                                     <td>{{ device.if_number }}</td>
-                                                    <td>{{ device.system_type }}</td>
+                                                    <td>{{ device.system_image }}</td>
                                                     <td>{{ device.system_version }}</td>
                                                     <td>{{ device.system_location }}</td>
                                                     <td>{{ device.system_contact }}</td>
@@ -117,6 +117,7 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col">
+                                                    <p><b>System Name</b> : {{ device_detail_output.full_system_name }}</p>
                                                     <p><b>Version</b> : {{ device_detail_output.system_version }}</p>
                                                     <p><b>Image</b> : {{ device_detail_output.system_image }}</p>
                                                     <p><b>Type</b> : {{ device_detail_output.system_type }}</p>
@@ -191,7 +192,7 @@
                                                 <div class="col">
                                                     {% if device_detail_output %}
                                                         <h3 class="card-title" style="padding-top: 20px">
-                                                            <b>{{ device_detail_output.system_name }}</b>
+                                                            <b>{{ device_detail_output.full_system_name }}</b>
                                                         </h3>
                                                     {% endif %}
                                                 </div>
