@@ -38,525 +38,528 @@
             {% endfor %}
         </div>
     {% endif %}
-    <div class="row" style="width: 900px">
-        <div class="col">
-            <div class="card text-center w-100">
-                <div class="card-header">
-
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">Add Access Configuration</h1>
-                            {% if config_parameters_form.errors %}
-                                {% for field in config_parameters_form %}
-                                    {% for error in field.errors %}
-                                        <h2 class="card-category">
-                                            <span class="text-danger">{{ field.name }} - {{ error }}</span>
-                                        </h2>
-                                    {% endfor %}
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <form class="form-example" action="" method="post"> {% csrf_token %}
-
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="login_username">Login Username</label>
-                                    </div>
-
-                                    <div class="col">
-
-                                        <label for="login_password">Login Password</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-
-                                        <input type="text" class="form-control" id="login_username"
-                                               placeholder="Login username" name="login_username">
-                                    </div>
-
-                                    <div class="col">
-
-                                        <input type="password" class="form-control" id="login_password"
-                                               placeholder="Login Password"
-                                               name="login_password">
-                                    </div>
-
-
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="secret">Secret Password</label>
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="network_ip">Network IP</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-
-                                        <input type="password" class="form-control" id="secret"
-                                               placeholder="Secret Password" name="secret">
-                                    </div>
-
-                                    <div class="col">
-                                        <input type="text" class="form-control" id="network_ip"
-                                               placeholder="Network IP"
-                                               name="network_ip">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="subnet_cidr">Subnet CIDR</label>
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="network_device_os">Device(s) Operating System</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-
-                                        <input type="number" step="1" value="0" class="form-control"
-                                               id="subnet_cidr"
-                                               placeholder="Subnet CIDR" name="subnet_cidr">
-                                    </div>
-
-                                    <div class="col">
-                                        <select class="form-control" name="network_device_os"
-                                                id="network_device_os">
-                                            {% for os in device_os %}
-                                                <option>{{ os }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col">
-                                    </div>
-                                </div>
-
-                                <div class="form-group row">
-                                    <div class="col">
-                                    </div>
-                                    <div class="col">
-                                        <input type="submit" name="add_access_config" value="Add"
-                                               class="btn btn-primary btn-customized">
-                                    </div>
-                                    <div class="col">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card text-center w-100">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">Add SNMPv3 Configuration</h1>
-                            {% if snmp_config_parameters_form.errors %}
-                                {% for field in snmp_config_parameters_form %}
-                                    {% for error in field.errors %}
-                                        <h2 class="card-category">
-                                            <span class="text-danger">{{ field.name }} - {{ error }}</span>
-                                        </h2>
-                                    {% endfor %}
-                                {% endfor %}
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <form class="form-example" action="" method="post"> {% csrf_token %}
-                                <div class="row">
-                                    <div class="col">
-                                        <h4>Mandatory Fields</h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="group_name">Group Name</label>
-                                    </div>
-
-                                    <div class="col">
-
-                                        <label for="snmp_user">SNMP User</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-
-                                        <input type="text" class="form-control" id="group_name"
-                                               placeholder="Group Name" name="group_name">
-                                    </div>
-
-                                    <div class="col">
-                                        <input type="text" class="form-control" id="snmp_user"
-                                               placeholder="SNMP User"
-                                               name="snmp_user">
-                                    </div>
-
-
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="snmp_password">SNMP Password</label>
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="snmp_encrypt_key">SNMP Encrypt Key</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <input type="password" class="form-control" id="snmp_password"
-                                               placeholder="SNMP Password" name="snmp_password">
-                                    </div>
-
-                                    <div class="col">
-                                        <input type="password" class="form-control" id="snmp_encrypt_key"
-                                               placeholder="SNMP Encrypt Key"
-                                               name="snmp_encrypt_key">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="snmp_host">SNMP Host</label>
-                                    </div>
-                                    <div class="col">
-                                        <label for="snmp_auth_protocol">SNMP Auth Protocol</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <input type="text" class="form-control" id="snmp_host"
-                                               placeholder="SNMP Host"
-                                               name="snmp_host">
-                                    </div>
-                                    <div class="col">
-                                        <select class="form-control" name="snmp_auth_protocol"
-                                                id="snmp_auth_protocol">
-                                            {% for protocol in auth_protocols %}
-                                                <option>{{ protocol|upper }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="snmp_privacy_protocol">SNMP Privacy Protocol</label>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <div class="col">
-                                        <select class="form-control" name="snmp_privacy_protocol"
-                                                id="snmp_privacy_protocol">
-                                            {% for protocol in privacy_protocols %}
-                                                <option>{{ protocol|upper }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col">
-
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <h4>Optional Fields</h4>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <label for="server_location">Server Location</label>
-                                    </div>
-
-                                    <div class="col">
-                                        <label for="contact_details">Contact Details</label>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <input type="text" class="form-control" id="server_location"
-                                               placeholder="Server Location"
-                                               name="server_location">
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="form-control" id="contact_details"
-                                               placeholder="Contact Details"
-                                               name="contact_details">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col">
-                                        <div class="custom-control custom-checkbox" style="padding: 20px">
-                                            <input type="checkbox" class="custom-control-input" id="enable_traps"
-                                                   name="enable_traps">
-                                            <label class="custom-control-label" for="enable_traps">Enable
-                                                Traps</label>
-                                        </div>
-                                    </div>
-                                    <div class="col">
-                                        <input type="submit" name="add_snmp_config" value="Add"
-                                               class="btn btn-primary btn-customized" style="margin: 20px">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="card w-auto">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">Access Configuration List Details</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-
-                            {% if access_config_parameters_list %}
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Username</th>
-                                        <th scope="col">Password</th>
-                                        <th scope="col">Secret</th>
-                                        <th scope="col">Network IP</th>
-                                        <th scope="col">CIDR</th>
-                                        <th scope="col">Device OS</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for parameter_row in access_config_parameters_list %}
-                                        <tr>
-                                            <th scope="row">{{ parameter_row.id }}</th>
-                                            <td>{{ parameter_row.login_username }}</td>
-                                            <td>{{ parameter_row.login_password }}</td>
-                                            <td>{{ parameter_row.secret }}</td>
-                                            <td>{{ parameter_row.network_ip }}</td>
-                                            <td>{{ parameter_row.subnet_cidr }}</td>
-                                            <td>{{ parameter_row.network_device_os }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <h1 class="card-category">
-                                    <span class="text-danger" style="font-size: 15px">No data found.</span>
-                                </h1>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card-footer">
-                    {% if access_config_parameters_list %}
+    <div class="container">
+        <div class="row" style="width: 900px">
+            <div class="col">
+                <div class="card text-center w-100">
+                    <div class="card-header">
 
                         <div class="row">
-                            <div class=" col-sm">
-                                <form class="form" action="" method="post"> {% csrf_token %}
-                                    <input type="submit" name="access_delete_all" value="Delete All"
-                                           class="btn btn btn-danger">
-                                </form>
-                            </div>
-                        </div>
-                    {% endif %}
-
-                </div>
-
-            </div>
-
-            <div class="card w-auto">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">SNMPv3 Configuration List Details</h1>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-
-                            {% if snmp_config_parameters_list %}
-                                <table class="table">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Group Name</th>
-                                        <th scope="col">SNMP User</th>
-                                        <th scope="col">SNMP Password</th>
-                                        <th scope="col">SNMP Encrypt Key</th>
-                                        <th scope="col">SNMP Host</th>
-                                        <th scope="col">Contact Details</th>
-                                        <th scope="col">Server Location</th>
-                                        <th scope="col">Enable Traps</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    {% for parameter_row in snmp_config_parameters_list %}
-                                        <tr>
-                                            <th scope="row">{{ parameter_row.id }}</th>
-                                            <td>{{ parameter_row.group_name }}</td>
-                                            <td>{{ parameter_row.snmp_user }}</td>
-                                            <td>{{ parameter_row.snmp_password }}</td>
-                                            <td>{{ parameter_row.snmp_encrypt_key }}</td>
-                                            <td>{{ parameter_row.snmp_host }}</td>
-                                            <td>{{ parameter_row.server_location }}</td>
-                                            <td>{{ parameter_row.contact_details }}</td>
-                                            <td>{{ parameter_row.enable_traps }}</td>
-                                        </tr>
+                            <div class="col">
+                                <h1 class="card-title">Add Access Configuration</h1>
+                                {% if config_parameters_form.errors %}
+                                    {% for field in config_parameters_form %}
+                                        {% for error in field.errors %}
+                                            <h2 class="card-category">
+                                                <span class="text-danger">{{ field.name }} - {{ error }}</span>
+                                            </h2>
+                                        {% endfor %}
                                     {% endfor %}
-                                    </tbody>
-                                </table>
-                            {% else %}
-                                <h1 class="card-category">
-                                    <span class="text-danger" style="font-size: 15px">No data found.</span>
-                                </h1>
-                            {% endif %}
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="card-footer">
-                    {% if snmp_config_parameters_list %}
-
+                    <div class="card-body">
                         <div class="row">
-                            <div class=" col-sm">
-                                <form class="form" action="" method="post"> {% csrf_token %}
-                                    <input type="submit" name="snmp_delete_all" value="Delete All"
-                                           class="btn btn btn-danger">
-                                </form>
-                            </div>
-                        </div>
-                    {% endif %}
+                            <div class="col">
+                                <form class="form-example" action="" method="post"> {% csrf_token %}
 
-                </div>
-
-            </div>
-
-            <div class="card w-auto">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">Run SNMPv3 Configurations</h1>
-                            <h1 class="card-category">
-                                <div class="row justify-content-between">
-
-                                    {% if not available_hosts %}
-                                        <div class="col-6">
-                                            <span class="text-danger" style="font-size: 15px">No Available Devices - check your connectivity.</span>
-                                        </div>
-
-
-                                    {% else %}
-                                        <div class="col-6">
-                                            <h4> Available Devices</h4>
-                                        </div>
-
-                                    {% endif %}
-
-
-                                </div>
-                            </h1>
-                            <div class="row">
-                                <div class="col">
-                                    {% if available_hosts %}
-                                        <table class="table">
-                                            <thead>
-                                            <tr>
-                                                <th scope="col">ID</th>
-                                                <th scope="col">Network Device IP</th>
-                                            </tr>
-                                            </thead>
-                                            <tbody>
-                                            {% for host in available_hosts %}
-                                                <tr>
-                                                    <th scope="row">{{ host.id }}</th>
-                                                    <td>{{ host.network_address }}</td>
-                                                </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <form class="form" action="" method="post"> {% csrf_token %}
-                                {% if access_config_parameters_list %}
                                     <div class="row">
                                         <div class="col">
-                                            <label for="id">Access Configuration ID: </label>
+                                            <label for="login_username">Login Username</label>
+                                        </div>
+
+                                        <div class="col">
+
+                                            <label for="login_password">Login Password</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+
+                                            <input type="text" class="form-control" id="login_username"
+                                                   placeholder="Login username" name="login_username">
+                                        </div>
+
+                                        <div class="col">
+
+                                            <input type="password" class="form-control" id="login_password"
+                                                   placeholder="Login Password"
+                                                   name="login_password">
+                                        </div>
+
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="secret">Secret Password</label>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="network_ip">Network IP</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+
+                                            <input type="password" class="form-control" id="secret"
+                                                   placeholder="Secret Password" name="secret">
+                                        </div>
+
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="network_ip"
+                                                   placeholder="Network IP"
+                                                   name="network_ip">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="subnet_cidr">Subnet CIDR</label>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="network_device_os">Device(s) Operating System</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+
+                                            <input type="number" step="1" value="0" class="form-control"
+                                                   id="subnet_cidr"
+                                                   placeholder="Subnet CIDR" name="subnet_cidr">
+                                        </div>
+
+                                        <div class="col">
+                                            <select class="form-control" name="network_device_os"
+                                                    id="network_device_os">
+                                                {% for os in device_os %}
+                                                    <option>{{ os }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <div class="col">
+                                        </div>
+                                        <div class="col">
+                                            <input type="submit" name="add_access_config" value="Add"
+                                                   class="btn btn-primary btn-customized">
+                                        </div>
+                                        <div class="col">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card text-center w-100">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="card-title">Add SNMPv3 Configuration</h1>
+                                {% if snmp_config_parameters_form.errors %}
+                                    {% for field in snmp_config_parameters_form %}
+                                        {% for error in field.errors %}
+                                            <h2 class="card-category">
+                                                <span class="text-danger">{{ field.name }} - {{ error }}</span>
+                                            </h2>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <form class="form-example" action="" method="post"> {% csrf_token %}
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4>Mandatory Fields</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="group_name">Group Name</label>
+                                        </div>
+
+                                        <div class="col">
+
+                                            <label for="snmp_user">SNMP User</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+
+                                            <input type="text" class="form-control" id="group_name"
+                                                   placeholder="Group Name" name="group_name">
+                                        </div>
+
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="snmp_user"
+                                                   placeholder="SNMP User"
+                                                   name="snmp_user">
+                                        </div>
+
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="snmp_password">SNMP Password</label>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="snmp_encrypt_key">SNMP Encrypt Key</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <input type="password" class="form-control" id="snmp_password"
+                                                   placeholder="SNMP Password" name="snmp_password">
+                                        </div>
+
+                                        <div class="col">
+                                            <input type="password" class="form-control" id="snmp_encrypt_key"
+                                                   placeholder="SNMP Encrypt Key"
+                                                   name="snmp_encrypt_key">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="snmp_host">SNMP Host</label>
+                                        </div>
+                                        <div class="col">
+                                            <label for="snmp_auth_protocol">SNMP Auth Protocol</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="snmp_host"
+                                                   placeholder="SNMP Host"
+                                                   name="snmp_host">
+                                        </div>
+                                        <div class="col">
+                                            <select class="form-control" name="snmp_auth_protocol"
+                                                    id="snmp_auth_protocol">
+                                                {% for protocol in auth_protocols %}
+                                                    <option>{{ protocol|upper }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="snmp_privacy_protocol">SNMP Privacy Protocol</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col">
+                                            <select class="form-control" name="snmp_privacy_protocol"
+                                                    id="snmp_privacy_protocol">
+                                                {% for protocol in privacy_protocols %}
+                                                    <option>{{ protocol|upper }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="col">
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <h4>Optional Fields</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <label for="server_location">Server Location</label>
+                                        </div>
+
+                                        <div class="col">
+                                            <label for="contact_details">Contact Details</label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="server_location"
+                                                   placeholder="Server Location"
+                                                   name="server_location">
+                                        </div>
+                                        <div class="col">
+                                            <input type="text" class="form-control" id="contact_details"
+                                                   placeholder="Contact Details"
+                                                   name="contact_details">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="custom-control custom-checkbox" style="padding: 20px">
+                                                <input type="checkbox" class="custom-control-input" id="enable_traps"
+                                                       name="enable_traps">
+                                                <label class="custom-control-label" for="enable_traps">Enable
+                                                    Traps</label>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <input type="submit" name="add_snmp_config" value="Add"
+                                                   class="btn btn-primary btn-customized" style="margin: 20px">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card w-auto">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="card-title">Access Configuration List Details</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+
+                                {% if access_config_parameters_list %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Username</th>
+                                            <th scope="col">Password</th>
+                                            <th scope="col">Secret</th>
+                                            <th scope="col">Network IP</th>
+                                            <th scope="col">CIDR</th>
+                                            <th scope="col">Device OS</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for parameter_row in access_config_parameters_list %}
+                                            <tr>
+                                                <th scope="row">{{ parameter_row.id }}</th>
+                                                <td>{{ parameter_row.login_username }}</td>
+                                                <td>{{ parameter_row.login_password }}</td>
+                                                <td>{{ parameter_row.secret }}</td>
+                                                <td>{{ parameter_row.network_ip }}</td>
+                                                <td>{{ parameter_row.subnet_cidr }}</td>
+                                                <td>{{ parameter_row.network_device_os }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <h1 class="card-category">
+                                        <span class="text-danger" style="font-size: 15px">No data found.</span>
+                                    </h1>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        {% if access_config_parameters_list %}
+
+                            <div class="row">
+                                <div class=" col-sm">
+                                    <form class="form" action="" method="post"> {% csrf_token %}
+                                        <input type="submit" name="access_delete_all" value="Delete All"
+                                               class="btn btn btn-danger">
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="card w-auto">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="card-title">SNMPv3 Configuration List Details</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+
+                                {% if snmp_config_parameters_list %}
+                                    <table class="table">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">ID</th>
+                                            <th scope="col">Group Name</th>
+                                            <th scope="col">SNMP User</th>
+                                            <th scope="col">SNMP Password</th>
+                                            <th scope="col">SNMP Encrypt Key</th>
+                                            <th scope="col">SNMP Host</th>
+                                            <th scope="col">Contact Details</th>
+                                            <th scope="col">Server Location</th>
+                                            <th scope="col">Enable Traps</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {% for parameter_row in snmp_config_parameters_list %}
+                                            <tr>
+                                                <th scope="row">{{ parameter_row.id }}</th>
+                                                <td>{{ parameter_row.group_name }}</td>
+                                                <td>{{ parameter_row.snmp_user }}</td>
+                                                <td>{{ parameter_row.snmp_password }}</td>
+                                                <td>{{ parameter_row.snmp_encrypt_key }}</td>
+                                                <td>{{ parameter_row.snmp_host }}</td>
+                                                <td>{{ parameter_row.server_location }}</td>
+                                                <td>{{ parameter_row.contact_details }}</td>
+                                                <td>{{ parameter_row.enable_traps }}</td>
+                                            </tr>
+                                        {% endfor %}
+                                        </tbody>
+                                    </table>
+                                {% else %}
+                                    <h1 class="card-category">
+                                        <span class="text-danger" style="font-size: 15px">No data found.</span>
+                                    </h1>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-footer">
+                        {% if snmp_config_parameters_list %}
+
+                            <div class="row">
+                                <div class=" col-sm">
+                                    <form class="form" action="" method="post"> {% csrf_token %}
+                                        <input type="submit" name="snmp_delete_all" value="Delete All"
+                                               class="btn btn btn-danger">
+                                    </form>
+                                </div>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <div class="card w-auto">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="card-title">Run SNMPv3 Configurations</h1>
+                                <h1 class="card-category">
+                                    <div class="row justify-content-between">
+
+                                        {% if not available_hosts %}
+                                            <div class="col-6">
+                                                <span class="text-danger" style="font-size: 15px">No Available Devices - check your connectivity.</span>
+                                            </div>
+
+
+                                        {% else %}
+                                            <div class="col-6">
+                                                <h4> Available Devices</h4>
+                                            </div>
+
+                                        {% endif %}
+
+
+                                    </div>
+                                </h1>
+                                <div class="row">
+                                    <div class="col">
+                                        {% if available_hosts %}
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">ID</th>
+                                                    <th scope="col">Network Device IP</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for host in available_hosts %}
+                                                    <tr>
+                                                        <th scope="row">{{ host.id }}</th>
+                                                        <td>{{ host.network_address }}</td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col">
+                                <form class="form" action="" method="post"> {% csrf_token %}
+                                    {% if access_config_parameters_list %}
+                                        <div class="row">
+                                            <div class="col">
+                                                <label for="id">Access Configuration ID: </label>
+                                            </div>
+                                            <div class="col">
+                                                <select class="form-control" name="id" id="id">
+                                                    {% for parameter in access_config_parameters_list %}
+                                                        <option>{{ parameter.id }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                            <div class="col-sm">
+                                            <span class="text-warning" id="scanning_span"
+                                                  style="font-size: 15px"></span>
+                                                <input type="submit" name="available_hosts" value="Scan Network"
+                                                       class="btn btn-primary btn-block" onclick="ScanningLabel();">
+                                            </div>
+
+
+                                        </div>
+                                    {% endif %}
+                                    {% if snmp_config_parameters_list and available_hosts %}
+                                        <div class="row">
+                                        <div class="col">
+                                            <label for="id">SNMPv3 Configuration ID: </label>
                                         </div>
                                         <div class="col">
                                             <select class="form-control" name="id" id="id">
-                                                {% for parameter in access_config_parameters_list %}
+                                                {% for parameter in snmp_config_parameters_list %}
                                                     <option>{{ parameter.id }}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                         <div class="col-sm">
-                                            <span class="text-warning" id="scanning_span"
-                                                  style="font-size: 15px"></span>
-                                            <input type="submit" name="available_hosts" value="Scan Network"
-                                                   class="btn btn-primary btn-block" onclick="ScanningLabel();">
-                                        </div>
-
-
-                                    </div>
-                                {% endif %}
-                                {% if snmp_config_parameters_list and available_hosts %}
-                                    <div class="row">
-                                    <div class="col">
-                                        <label for="id">SNMPv3 Configuration ID: </label>
-                                    </div>
-                                    <div class="col">
-                                        <select class="form-control" name="id" id="id">
-                                            {% for parameter in snmp_config_parameters_list %}
-                                                <option>{{ parameter.id }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="col-sm">
                                             <span class="text-warning" id="configure_span"
                                                   style="font-size: 15px"></span>
-                                        <input type="submit" name="run_snmp_config" value="Configure"
-                                               class="btn btn-primary btn-block" onclick="ConfiguringSNMP();">
-                                        <span class="text-warning" id="remove_span"
-                                              style="font-size: 15px"></span>
-                                        <div class="row">
-                                            <div class="col-sm">
-                                                <input type="submit" name="remove_snmp_config" value="Rollback"
-                                                       class="btn btn-primary btn-block" onclick="RemoveSNMPConfig();">
+                                            <input type="submit" name="run_snmp_config" value="Configure"
+                                                   class="btn btn-primary btn-block" onclick="ConfiguringSNMP();">
+                                            <span class="text-warning" id="remove_span"
+                                                  style="font-size: 15px"></span>
+                                            <div class="row">
+                                                <div class="col-sm">
+                                                    <input type="submit" name="remove_snmp_config" value="Rollback"
+                                                           class="btn btn-primary btn-block"
+                                                           onclick="RemoveSNMPConfig();">
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                {% endif %}
-                            </form>
+                                    {% endif %}
+                                </form>
 
+                            </div>
                         </div>
                     </div>
                 </div>

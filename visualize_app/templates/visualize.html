@@ -1,23 +1,41 @@
 {% extends 'dashboard.html' %}
 {% load static %}
 {% block visualize %}
-
-    <svg width="100%" height="100%" >
-        <rect width="100%" height="100%"
-              style="fill:rgba(30, 30, 47, 0.2);stroke:#3e82f3;stroke-width:5;opacity:0.5"></rect>
-
-        <div class="card">
-            <div class="card-body" x="-16">
-                here is card body
+    {% if lldp_neighbor_details and device_model %}
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="card text-center w-100">
+                        <div class="card-header">
+                            <h1 class="card-title"> Neighbors Correlation Details - {{ device_model.system_name }} </h1>
+                        </div>
+                        <div class="card-body">
+                            asdasdasdasd
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-    </svg>
+    {% endif %}
+
+
+    <div class="row">
+        <form class="form" id="form-id" action=""
+              method="post"> {% csrf_token %}
+            <svg width="100%" height="100%">
+                <rect width="100%" height="100%"
+                      style="fill:#1d253b;stroke:#3e82f3;stroke-width:5;opacity:0.5"></rect>
+            </svg>
+            <input type="hidden" name="get_lldp_details" value="None" id="device_post">
+
+        </form>
+    </div>
 
 
 
     <script src="https://d3js.org/d3.v4.min.js"></script>
-    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
-
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src=https://code.jquery.com/jquery-3.5.1.min.js></script>
 
     <script>
         var no_neighbor_interfaces = "{% static 'visualize_app/data/no_neighbor_interfaces.json'%}"
@@ -27,5 +45,6 @@
         var image_path = "{% static 'visualize_app/img/group' %}"
     </script>
     <script src="{% static 'visualize_app/js/visualize_network.js' %}"></script>
+
 
 {% endblock %}

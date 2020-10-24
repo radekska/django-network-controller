@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from config_app.models import SNMPConfigParameters, AvailableDevices
 from manage_app.models import DeviceModel, DeviceInterface
-from .backend.get_device import DeviceManager
+from .backend.DeviceManager import DeviceManager
 from .backend.parse_model import parse_and_save_to_database
 from .backend.webssh import main
 from WebAppLAN_MonitorDjango.utils import get_available_devices

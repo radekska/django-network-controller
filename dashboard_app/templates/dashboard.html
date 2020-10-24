@@ -4,6 +4,10 @@
 
     <div class="container-fluid">
         <div class="wrapper">
+
+            {% block visualize %}
+            {% endblock %}
+
             <div class="row">
                 <div class="col-sm-2 col-md-3 sidebar">
 
@@ -51,9 +55,6 @@
 
                     </div>
                 </div>
-
-                {% block visualize %}
-                {% endblock %}
 
                 {% block manage_network %}
                 {% endblock %}

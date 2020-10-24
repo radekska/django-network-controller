@@ -85,6 +85,7 @@ def parse_and_save_to_database(devices, user):
             'system_image': system_image,
             'system_version': splitted_system_description[2].replace('Version', '').strip(),
             'system_contact': device.system.system_contact,
+            'full_system_name': device.system.full_system_name,
             'system_name': device.system.system_name,
             'system_location': device.system.system_location,
             'system_up_time': parse_up_time(device.system.system_up_time),
