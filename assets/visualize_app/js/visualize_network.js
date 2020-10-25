@@ -156,19 +156,22 @@ var simulation = d3.forceSimulation()
         return d.id;
     }).distance(100).strength(0.001))
     .force("charge", d3.forceManyBody().strength(-200).distanceMax(500).distanceMin(50))
-    .force("x", d3.forceX(function (d) {
-        if (d.group === "1") {
-            return 3 * (width * 0.7) / 4
-        } else if (d.group === "2") {
-            return 2 * (width * 0.7) / 4
-        } else if (d.group === "3") {
-            return 1 * (width * 0.7) / 4
-        } else {
-            return 0 * (width * 0.7) / 4
-        }
-    }).strength(1))
-    .force("y", d3.forceY(height / 2))
-    .force("center", d3.forceCenter((width * 0.7) / 2, height / 2))
+    .force("center", d3.forceCenter(width / 2, height / 2))
+
+
+    // .force("x", d3.forceX(function (d) {
+    //     if (d.group === "1") {
+    //         return 3 * (width * 0.7) / 4
+    //     } else if (d.group === "2") {
+    //         return 2 * (width * 0.57) / 4
+    //     } else if (d.group === "3") {
+    //         return 1 * (width * 0.7) / 4
+    //     } else {
+    //         return 0 * (width * 0.7) / 4
+    //     }
+    // }).strength(1))
+    //.force("y", d3.forceY(height / 2))
+    .force("center", d3.forceCenter((width * 0.8) / 2, height / 2))
     .force("collision", d3.forceCollide().radius(35));
 
 // ######################################

@@ -57,7 +57,7 @@
                                                         </td>
 
                                                     </form>
-                                                    <td>{{ device.device_type }}</td>
+                                                    <td><p class="text-info">{{ device.device_type }} </p></td>
                                                     <td>{{ device.if_number }}</td>
                                                     <td>{{ device.system_image }}</td>
                                                     <td>{{ device.system_version }}</td>
@@ -117,13 +117,13 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col">
-                                                    <p><b>System Name</b> : {{ device_detail_output.full_system_name }}</p>
-                                                    <p><b>Version</b> : {{ device_detail_output.system_version }}</p>
-                                                    <p><b>Image</b> : {{ device_detail_output.system_image }}</p>
-                                                    <p><b>Type</b> : {{ device_detail_output.system_type }}</p>
-                                                    <p><b>Contact</b> : {{ device_detail_output.system_contact }}</p>
-                                                    <p><b>Location</b> : {{ device_detail_output.system_location }}</p>
-                                                    <p><b>System Up From</b> : {{ device_detail_output.system_up_time }}
+                                                    <p><b class="text-info">System Name</b> : {{ device_detail_output.full_system_name }}</p>
+                                                    <p><b class="text-info">Version</b> : {{ device_detail_output.system_version }}</p>
+                                                    <p><b class="text-info">Image</b> : {{ device_detail_output.system_image }}</p>
+                                                    <p><b class="text-info">Type</b> : {{ device_detail_output.system_type }}</p>
+                                                    <p><b class="text-info">Contact</b> : {{ device_detail_output.system_contact }}</p>
+                                                    <p><b class="text-info">Location</b> : {{ device_detail_output.system_location }}</p>
+                                                    <p><b class="text-info">System Up From</b> : {{ device_detail_output.system_up_time }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -142,33 +142,33 @@
                                                 <div class="card">
                                                     <div class="row">
                                                         <div class="col">
-                                                            <h5><b>MAC
+                                                            <p><b class="text-info">MAC
                                                                 Address</b>: {{ interface.interface_physical_addr }}
-                                                            </h5>
-                                                            <h5><b>IP Address</b> : {{ interface.interface_ip }}</h5>
-                                                            <h5><b>Bandwidth</b> : {{ interface.interface_speed }}
+                                                            </p>
+                                                            <p><b class="text-info">IP Address</b> : {{ interface.interface_ip }}</p>
+                                                            <p><b class="text-info">Bandwidth</b> : {{ interface.interface_speed }}
                                                                 Kbits/sec
-                                                            </h5>
-                                                            <h5><b>Admin Status</b>
+                                                            </p>
+                                                            <p><b class="text-info">Admin Status</b>
                                                                 : {{ interface.interface_admin_status }}
-                                                            </h5>
-                                                            <h5><b>Operational Status</b>
-                                                                : {{ interface.interface_operational_staus }}</h5>
+                                                            </p>
+                                                            <p><b class="text-info">Operational Status</b>
+                                                                : {{ interface.interface_operational_staus }}</p>
                                                         </div>
                                                         <div class="col">
-                                                            <h5><b>Input Unicast
+                                                            <p><b class="text-info">Input Unicast
                                                                 Packets</b>: {{ interface.interface_in_unicast_packets }}
-                                                            </h5>
-                                                            <h5><b>Output Unicast
+                                                            </p>
+                                                            <p><b class="text-info">Output Unicast
                                                                 Packets</b>: {{ interface.interface_out_unicast_packets }}
-                                                            </h5>
-                                                            <h5><b>Input Errors</b>
+                                                            </p>
+                                                            <p><b class="text-info">Input Errors</b>
                                                                 : {{ interface.interface_in_errors }}
-                                                            </h5>
-                                                            <h5><b>Output Errors</b>
+                                                            </p>
+                                                            <p><b class="text-info">Output Errors</b>
                                                                 : {{ interface.interface_out_errors }}
-                                                            </h5>
-                                                            <h5><b>MTU</b> : {{ interface.interface_mtu }} bytes</h5>
+                                                            </p>
+                                                            <p><b class="text-info">MTU</b> : {{ interface.interface_mtu }} bytes</p>
                                                         </div>
                                                     </div>
                                                 </div>
