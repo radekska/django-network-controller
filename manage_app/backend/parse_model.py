@@ -25,7 +25,8 @@ def parse_mac_address(mac_address):
         mac_address.insert(i, '.')
 
     mac_address = ''.join(mac_address)
-    return mac_address
+
+    return mac_address if mac_address != '..' else "None"
 
 
 def parse_up_time(system_ticks):
@@ -52,6 +53,8 @@ def format_lldp_data(devices):
         for key, value in device.lldp_data.items():
             all_lldp_data.setdefault(key, []).append(value)
 
+    print(all_lldp_data)
+
     for device in devices:
         lldp_local_hostname = device.system.full_system_name  # CoreSwitch1
         lldp_neighbor_correlations = all_lldp_data[lldp_local_hostname][0]
@@ -72,6 +75,7 @@ def format_lldp_data(devices):
 
 
 def parse_and_save_to_database(devices, user):
+
     for device in devices:
         splitted_system_description = device.system.system_description.split(',')
         system_image = splitted_system_description[1].strip().split(' ')[-1].capitalize().replace('(', '').replace(
@@ -112,20 +116,21 @@ def parse_and_save_to_database(devices, user):
                     'interface_speed': intf.interface_speed[:-3],
                     'interface_physical_addr': parse_mac_address(intf.interface_physical_addr),
                     'interface_admin_status': 'Up' if intf.interface_admin_status == '1' else 'Down',
-                    'interface_operational_status': intf.interface_operational_status,
+                    'interface_operational_status': 'Up' if intf.interface_operational_status == '1' else 'Down',
                     'interface_in_unicast_packets': intf.interface_in_unicast_packets,
                     'interface_in_errors': intf.interface_in_errors,
                     'interface_out_unicast_packets': intf.interface_out_unicast_packets,
                     'interface_out_errors': intf.interface_out_errors,
                     'interface_ip': intf.interface_ip
                 }
+                print("YASSS")
 
                 interface_model = DeviceInterface(**interface)
                 interface_model.save()
+                print("NO.")
 
         real_inf_number = dev_model.if_number - len(list(filter(lambda item: len(item) > 0, matched_list)))
         dev_model.if_number = real_inf_number
         dev_model.save()
 
     format_lldp_data(devices)
-

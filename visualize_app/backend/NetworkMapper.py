@@ -11,12 +11,28 @@ class NetworkMapper:
     def __hostname_parser(hostname):
         return hostname.split('.')[0]
 
+    def __node_validator(self, device_name):
+        validator = False
+        for device_node in self.graph_data['nodes']:
+            if device_name == device_node['id']:
+                validator = True
+        return validator
+
     def __object_validator(self, id, container, object_id):
         validator = False
         for device_node in self.graph_data[container]:
             if id == device_node[object_id]:
                 validator = True
         return validator
+
+    def clear_graph_data(self):
+        self.graph_data = {
+            'nodes': list(),
+            'links': list()
+        }
+
+        with open(graph_data_path, 'w') as file_stream:
+            json.dump(self.graph_data, file_stream)
 
     def generate_graph_data(self):
         self.generate_nodes_graph_data()
@@ -27,8 +43,8 @@ class NetworkMapper:
             self.graph_data = json.loads(file_stream.read())
 
         for device_model in self.device_models:
-            if not self.__object_validator(device_model.id, 'nodes', 'object_id'):
-                device_name = device_model.system_name.split('.')[0]
+            device_name = device_model.system_name
+            if not self.__node_validator(device_name):
                 device_type = device_model.device_type
                 group = '2' if device_type == 'Router' else '1'
                 device_node = {

@@ -24,8 +24,6 @@ def config_network_view(request):
 
     user = User.objects.filter(username=request.user)[0]
 
-    print(request.POST)
-
     if 'add_access_config' in request.POST:
         config_parameters_form = ConfigParametersForm(request.POST or None)
         if config_parameters_form.is_valid():
@@ -71,10 +69,17 @@ def config_network_view(request):
 
         if 'run_snmp_config' in request.POST:
             output = connection.connect_and_configure_multiple(config_commands=snmp_config_commands)
+            ConfigParameters.objects.all().update(snmp_config_id=None)
+
+            config_model = ConfigParameters.objects.filter(id=access_cf_obj_id)[0]
+            config_model.snmp_config_id = snmp_cf_obj_id
+            config_model.save()
 
         else:
             output = connection.connect_and_configure_multiple(config_commands=snmp_config_commands,
                                                                type_of_change='rollback')
+            ConfigParameters.objects.all().update(snmp_config_id=None)
+
 
         error_status_message_list = list(filter(lambda conn: conn[2] == 'error', output))
         success_status_message_list = list(filter(lambda conn: conn[2] == 'success', output))

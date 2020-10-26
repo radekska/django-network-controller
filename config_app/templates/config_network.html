@@ -3,42 +3,42 @@
 
 {% block configure_network %}
 
-
-    {% if success_status_message %}
-        <div class="alert alert-success alert-dismissible" style="width: 870px">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Success!</strong> {{ success_status_message }}
-        </div>
-    {% endif %}
-    {% if warning_status_message %}
-        <div class="alert alert-warning alert-dismissible" style="width: 870px">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Warning!</strong> {{ warning_status_message }}
-        </div>
-    {% endif %}
-    {% if error_status_message %}
-        <div class="alert alert-danger alert-dismissible" style="width: 870px">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            <strong>Error!</strong> {{ error_status_message }}
-        </div>
-    {% endif %}
-    {% if success_status_message_list %}
-        <div class="alert alert-success alert-dismissible" style="width: 870px">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            {% for hostname, success_message, _ in success_status_message_list %}
-                <strong>Success!</strong> {{ hostname }}: {{ success_message }} <br>
-            {% endfor %}
-        </div>
-    {% endif %}
-    {% if error_status_message_list %}
-        <div class="alert alert-danger alert-dismissible" style="width: 870px">
-            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-            {% for hostname, error_message, _ in error_status_message_list %}
-                <strong>Error!</strong> {{ hostname }}: {{ error_message }} <br>
-            {% endfor %}
-        </div>
-    {% endif %}
     <div class="container">
+
+        {% if success_status_message %}
+            <div class="alert alert-success alert-dismissible" style="width: 870px">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Success!</strong> {{ success_status_message }}
+            </div>
+        {% endif %}
+        {% if warning_status_message %}
+            <div class="alert alert-warning alert-dismissible" style="width: 870px">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Warning!</strong> {{ warning_status_message }}
+            </div>
+        {% endif %}
+        {% if error_status_message %}
+            <div class="alert alert-danger alert-dismissible" style="width: 870px">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Error!</strong> {{ error_status_message }}
+            </div>
+        {% endif %}
+        {% if success_status_message_list %}
+            <div class="alert alert-success alert-dismissible" style="width: 870px">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {% for hostname, success_message, _ in success_status_message_list %}
+                    <strong>Success!</strong> {{ hostname }}: {{ success_message }} <br>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if error_status_message_list %}
+            <div class="alert alert-danger alert-dismissible" style="width: 870px">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                {% for hostname, error_message, _ in error_status_message_list %}
+                    <strong>Error!</strong> {{ hostname }}: {{ error_message }} <br>
+                {% endfor %}
+            </div>
+        {% endif %}
         <div class="row" style="width: 900px">
             <div class="col">
                 <div class="card text-center w-100">
@@ -118,7 +118,8 @@
                                         </div>
 
                                         <div class="col">
-                                            <label class="text-info" for="network_device_os">Device(s) Operating System</label>
+                                            <label class="text-info" for="network_device_os">Device(s) Operating
+                                                System</label>
                                         </div>
                                     </div>
                                     <div class="form-group row">

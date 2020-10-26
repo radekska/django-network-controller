@@ -2,8 +2,16 @@
 {% load static %}
 
 {% block manage_network %}
+
     <div class="container">
+        {% if error_status_message %}
+            <div class="alert alert-warning alert-dismissible">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <strong>Warning!</strong> {{ error_status_message }}
+            </div>
+        {% endif %}
         <div class="row">
+
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
@@ -14,7 +22,7 @@
 
                             <form class="form" action="" method="post"> {% csrf_token %}
                                 <div class="col">
-                                    <input type="submit" name="get_devices_details" value="Get Devices"
+                                    <input type="submit" name="get_devices_details" value="Refresh List"
                                            class="btn btn-primary btn-customized" style="margin: 20px">
                                 </div>
                             </form>
@@ -117,13 +125,20 @@
                                         <div class="card-body">
                                             <div class="row">
                                                 <div class="col">
-                                                    <p><b class="text-info">System Name</b> : {{ device_detail_output.full_system_name }}</p>
-                                                    <p><b class="text-info">Version</b> : {{ device_detail_output.system_version }}</p>
-                                                    <p><b class="text-info">Image</b> : {{ device_detail_output.system_image }}</p>
-                                                    <p><b class="text-info">Type</b> : {{ device_detail_output.system_type }}</p>
-                                                    <p><b class="text-info">Contact</b> : {{ device_detail_output.system_contact }}</p>
-                                                    <p><b class="text-info">Location</b> : {{ device_detail_output.system_location }}</p>
-                                                    <p><b class="text-info">System Up From</b> : {{ device_detail_output.system_up_time }}
+                                                    <p><b class="text-info">System Name</b>
+                                                        : {{ device_detail_output.full_system_name }}</p>
+                                                    <p><b class="text-info">Version</b>
+                                                        : {{ device_detail_output.system_version }}</p>
+                                                    <p><b class="text-info">Image</b>
+                                                        : {{ device_detail_output.system_image }}</p>
+                                                    <p><b class="text-info">Type</b>
+                                                        : {{ device_detail_output.system_type }}</p>
+                                                    <p><b class="text-info">Contact</b>
+                                                        : {{ device_detail_output.system_contact }}</p>
+                                                    <p><b class="text-info">Location</b>
+                                                        : {{ device_detail_output.system_location }}</p>
+                                                    <p><b class="text-info">System Up From</b>
+                                                        : {{ device_detail_output.system_up_time }}
                                                     </p>
                                                 </div>
                                             </div>
@@ -145,15 +160,18 @@
                                                             <p><b class="text-info">MAC
                                                                 Address</b>: {{ interface.interface_physical_addr }}
                                                             </p>
-                                                            <p><b class="text-info">IP Address</b> : {{ interface.interface_ip }}</p>
-                                                            <p><b class="text-info">Bandwidth</b> : {{ interface.interface_speed }}
+                                                            <p><b class="text-info">IP Address</b>
+                                                                : {{ interface.interface_ip }}</p>
+                                                            <p><b class="text-info">Bandwidth</b>
+                                                                : {{ interface.interface_speed }}
                                                                 Kbits/sec
                                                             </p>
                                                             <p><b class="text-info">Admin Status</b>
                                                                 : {{ interface.interface_admin_status }}
+
                                                             </p>
                                                             <p><b class="text-info">Operational Status</b>
-                                                                : {{ interface.interface_operational_staus }}</p>
+                                                                : {{ interface.interface_operational_status }}</p>
                                                         </div>
                                                         <div class="col">
                                                             <p><b class="text-info">Input Unicast
@@ -168,7 +186,8 @@
                                                             <p><b class="text-info">Output Errors</b>
                                                                 : {{ interface.interface_out_errors }}
                                                             </p>
-                                                            <p><b class="text-info">MTU</b> : {{ interface.interface_mtu }} bytes</p>
+                                                            <p><b class="text-info">MTU</b>
+                                                                : {{ interface.interface_mtu }} bytes</p>
                                                         </div>
                                                     </div>
                                                 </div>

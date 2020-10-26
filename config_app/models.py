@@ -15,6 +15,8 @@ class ConfigParameters(models.Model):
     subnet_cidr = models.IntegerField(validators=(MinValueValidator(0), MaxValueValidator(32)))
 
     network_device_os = models.CharField(max_length=50)
+    
+    snmp_config_id = models.IntegerField(default=None, null=True)
 
 
 class AvailableDevices(models.Model):
