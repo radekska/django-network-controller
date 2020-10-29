@@ -123,11 +123,9 @@ def parse_and_save_to_database(devices, user):
                     'interface_out_errors': intf.interface_out_errors,
                     'interface_ip': intf.interface_ip
                 }
-                print("YASSS")
 
                 interface_model = DeviceInterface(**interface)
                 interface_model.save()
-                print("NO.")
 
         real_inf_number = dev_model.if_number - len(list(filter(lambda item: len(item) > 0, matched_list)))
         dev_model.if_number = real_inf_number

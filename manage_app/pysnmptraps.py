@@ -1,32 +1,31 @@
 from pysnmp.carrier.asynsock.dispatch import AsynsockDispatcher
-from pysnmp.carrier.asynsock.dgram import udp, udp6
+from pysnmp.carrier.asynsock.dgram import udp
 from pyasn1.codec.ber import decoder
-from pysnmp.proto import api
+from pysnmp.proto import api, rfc1155
 
 
 def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
-    print('cbFun is called')
     while wholeMsg:
         msgVer = int(api.decodeMessageVersion(wholeMsg))
+
         if msgVer in api.protoModules:
             pMod = api.protoModules[msgVer]
         else:
             print('Unsupported SNMP version %s' % msgVer)
             return
+
         reqMsg, wholeMsg = decoder.decode(
             wholeMsg, asn1Spec=pMod.Message(),
         )
+
         print('Notification message from %s:%s: ' % (
             transportDomain, transportAddress
         )
               )
         reqPDU = pMod.apiMessage.getPDU(reqMsg)
+
         if reqPDU.isSameTypeWith(pMod.TrapPDU()):
             if msgVer == api.protoVersion1:
-                print('Enterprise: %s' % (
-                    pMod.apiTrapPDU.getEnterprise(reqPDU).prettyPrint()
-                )
-                      )
                 print('Agent Address: %s' % (
                     pMod.apiTrapPDU.getAgentAddr(reqPDU).prettyPrint()
                 )
@@ -44,12 +43,10 @@ def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
                 )
                       )
                 varBinds = pMod.apiTrapPDU.getVarBindList(reqPDU)
-            else:
-                varBinds = pMod.apiPDU.getVarBindList(reqPDU)
-            print('Var-binds:')
-            for oid, val in varBinds:
-                print('%s = %s' % (oid, val))
 
+                for component in varBinds.components:
+                    for out_value in component.values():
+                        print(dict(out_value))
         return wholeMsg
 
 
@@ -61,11 +58,6 @@ transportDispatcher.registerRecvCbFun(cbFun)
 transportDispatcher.registerTransport(
     udp.domainName, udp.UdpSocketTransport().openServerMode(('192.168.8.106', 162))
 )
-#
-# # UDP/IPv6
-# transportDispatcher.registerTransport(
-#     udp6.domainName, udp6.Udp6SocketTransport().openServerMode(('::1', 162))
-# )
 
 transportDispatcher.jobStarted(1)
 

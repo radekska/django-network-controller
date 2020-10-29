@@ -40,3 +40,9 @@ class DeviceInterface(models.Model):
     lldp_neighbor_hostname = models.CharField(max_length=50, default=None, null=True)
     lldp_neighbor_interface = models.CharField(max_length=30, default=None, null=True)
 
+
+class DeviceTrapModel(models.Model):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
+    device_model = models.ForeignKey(DeviceModel, on_delete=models.CASCADE, default=None)
+
+    trap_data = models.CharField(max_length=200, default=None, null=True)
