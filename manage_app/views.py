@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from config_app.models import ConfigParameters, AvailableDevices
+from config_app.models import ConfigParameters, AvailableDevices, SNMPConfigParameters
 from manage_app.models import DeviceModel, DeviceInterface
 from visualize_app.backend.NetworkMapper import NetworkMapper
 from .backend.DeviceManager import DeviceManager
@@ -26,6 +26,8 @@ def manage_network_view(request):
     user = User.objects.filter(username=request.user)[0]
     snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
 
+    traps_enabled = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].enable_traps
+
     request_post_dict = dict(request.POST)
 
     if 'get_devices_details' in request.POST:
@@ -45,6 +47,10 @@ def manage_network_view(request):
             logging.basicConfig(format='!!! %(asctime)s %(message)s')
             logging.warning(exception)
             error_status_message = 'System was not able to get all SNMP data - check connection...'
+
+        if traps_enabled:
+            pass
+            #implement trap recvier engine - for now, pysnmptraps2 works fine !
 
     elif 'get_device_details' in request.POST:
         device_id = request_post_dict.get('get_device_details')[0]

@@ -42,7 +42,19 @@ class DeviceInterface(models.Model):
 
 
 class DeviceTrapModel(models.Model):
-    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
     device_model = models.ForeignKey(DeviceModel, on_delete=models.CASCADE, default=None)
 
+    trap_domain = models.CharField(max_length=50, default=None, null=True)
+    trap_address = models.CharField(max_length=30, default=None, null=True)
+    trap_enterprise = models.CharField(max_length=30, default=None, null=True)
+    trap_agent_address = models.CharField(max_length=30, default=None, null=True)
+    trap_generic = models.CharField(max_length=30, default=None, null=True)
+    trap_uptime = models.CharField(max_length=30, default=None, null=True)
+
+    variable_binds_count = models.IntegerField(default=None, null=True)
+
+
+class VarBindModel(models.Model):
+    trap_model = models.ForeignKey(DeviceTrapModel, on_delete=models.CASCADE, default=None)
+    trap_oid = models.CharField(max_length=30, default=None, null=True)
     trap_data = models.CharField(max_length=200, default=None, null=True)
