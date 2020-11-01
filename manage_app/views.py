@@ -6,13 +6,12 @@ from django.contrib.auth.decorators import login_required
 
 # Models
 from config_app.models import ConfigParameters, SNMPConfigParameters
-from manage_app.models import DeviceModel, DeviceInterface
+from manage_app.models import DeviceModel, DeviceInterface, DeviceTrapModel, VarBindModel
 
 # Backend
 from visualize_app.backend.NetworkMapper import NetworkMapper
 from .backend.DeviceManager import DeviceManager
-from .backend.TrapEngine import TrapEngine
-from .backend.parse_model import parse_and_save_to_database
+from .backend.parse_model import parse_and_save_to_database, parse_trap_model
 from .backend.webssh import main
 from WebAppLAN_MonitorDjango.utils import get_available_devices
 
@@ -27,6 +26,9 @@ task = None
 @login_required(redirect_field_name='')
 def manage_network_view(request):
     global ssh_session, task
+
+    trap_data = None
+    device_trap_models = None
     device_details_output = None
     device_interfaces_output = None
     error_status_message = None
@@ -63,7 +65,6 @@ def manage_network_view(request):
     # SNMP_config.save()
 
     if 'start_trap_engine' in request.POST:
-        print(traps_enabled, traps_engine_running)
         if traps_enabled and not traps_engine_running:
             task = tasks.run_trap_engine.delay()
 
@@ -79,8 +80,15 @@ def manage_network_view(request):
 
     elif 'get_device_details' in request.POST:
         device_id = request_post_dict.get('get_device_details')[0]
+
         device_details_output = DeviceModel.objects.filter(id=device_id)[0]
         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
+
+        device_trap_models = DeviceTrapModel.objects.filter(device_model=device_details_output)
+        trap_data = VarBindModel.objects.all()
+
+        parse_trap_model(device_trap_models, trap_data)
+
 
     # TO DO!!!
     # elif 'run_ssh_session' in request.POST:
@@ -90,6 +98,7 @@ def manage_network_view(request):
     #     # clienta ssh, niestety glowny watek caly czas sie kreci - trzeba przekminic jak zforkowac clienta ssha zeby
     #     # to ładnie zagrało a potem zastanowic sie jak wpakowac tego klienta do mannage_app - do zrobienia
 
+    print(device_trap_models)
     context = {
         'ssh_session': ssh_session,
         'device_detail_output': device_details_output,
@@ -99,6 +108,8 @@ def manage_network_view(request):
         'error_status_message': error_status_message,
         'traps_engine_running': traps_engine_running,
         'traps_enabled': traps_enabled,
+        'device_trap_models': device_trap_models,
+        'var_bind_data': trap_data
     }
 
     return render(request, 'manage_network.html', context)

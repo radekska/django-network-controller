@@ -218,7 +218,33 @@
                                     <div class="card">
                                         <div class="card-header"></div>
 
-                                        <div class="card-body"></div>
+                                        <div class="card-body">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th scope="col">ID</th>
+                                                    <th scope="col">Datetime</th>
+                                                    <th scope="col">Agent Address</th>
+                                                    <th scope="col">Trap Type</th>
+                                                    <th scope="col">Trap Information</th>
+                                                </tr>
+                                                </thead>
+
+                                                <tbody>
+                                                {% for trap in device_trap_models %}
+                                                        <tr>
+                                                            <th scope="row">{{ trap.id }}</th>
+                                                            <td>{{ trap.trap_date }}</td>
+                                                            <td>{{ trap.trap_agent_address }} </td>
+                                                            <td>{{ trap.trap_generic }}</td>
+                                                            <td>{{ trap.trap_string_data }}</td>
+                                                        </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+
+
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">

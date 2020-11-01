@@ -75,7 +75,6 @@ def format_lldp_data(devices):
 
 
 def parse_and_save_to_database(devices, user):
-
     for device in devices:
         splitted_system_description = device.system.system_description.split(',')
         system_image = splitted_system_description[1].strip().split(' ')[-1].capitalize().replace('(', '').replace(
@@ -132,3 +131,14 @@ def parse_and_save_to_database(devices, user):
         dev_model.save()
 
     format_lldp_data(devices)
+
+
+def parse_trap_model(device_trap_models, trap_data):
+    for trap_model in device_trap_models:
+        filtered_trap_data = trap_data.filter(trap_model=trap_model)
+
+        string_data = [str(trap.trap_data) for trap in filtered_trap_data]
+        string_data = ', '.join(string_data)
+
+        trap_model.trap_string_data = string_data
+        trap_model.save()

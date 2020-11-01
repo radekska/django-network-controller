@@ -6,6 +6,7 @@ from pyasn1.codec.ber import decoder
 from pysnmp.proto import api
 
 import logging
+from datetime import datetime
 
 
 class TrapEngine:
@@ -41,6 +42,7 @@ class TrapEngine:
             reqPDU = pMod.apiMessage.getPDU(reqMsg)
             if reqPDU.isSameTypeWith(pMod.TrapPDU()):
                 if msgVer == api.protoVersion1:
+                    trap_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
                     trap_domain = transportDomain
                     trap_address = transportAddress
                     trap_enterprise = pMod.apiTrapPDU.getEnterprise(reqPDU).prettyPrint()
@@ -62,11 +64,11 @@ class TrapEngine:
                         'trap_enterprise': trap_enterprise,
                         'trap_agent_address': trap_agent_address,
                         'trap_generic': trap_generic,
-                        'trap_uptime': trap_uptime
+                        'trap_uptime': trap_uptime,
+                        'trap_date': trap_date
                     }
                     trap_model = DeviceTrapModel(**trap_model_parameters)
                     trap_model.save()
-
                     varBinds = pMod.apiTrapPDU.getVarBinds(reqPDU)
 
                     for trap_oid, trap_data in varBinds:
@@ -78,7 +80,6 @@ class TrapEngine:
 
                         var_bids_model = VarBindModel(**var_bids_parameters)
                         var_bids_model.save()
-
 
                 else:
                     varBinds = pMod.apiPDU.getVarBinds(reqPDU)
