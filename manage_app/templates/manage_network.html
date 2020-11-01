@@ -22,8 +22,11 @@
 
                             <form class="form" action="" method="post"> {% csrf_token %}
                                 <div class="col">
+                                    <span class="text-info" id="scanning_span"
+                                                  style="font-size: 15px"></span>
                                     <input type="submit" name="get_devices_details" value="Refresh List"
-                                           class="btn btn-primary btn-customized" style="margin: 20px">
+                                           class="btn btn-primary btn-customized" style="margin: 20px"
+                                           onclick="ScanningLabel();">
                                 </div>
                             </form>
                         </div>

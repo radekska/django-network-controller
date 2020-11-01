@@ -40,6 +40,7 @@ def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
             for oid, val in varBinds:
                 print('%s = %s' % (oid, val))
 
+
     return wholeMsg
 
 

@@ -1,16 +1,23 @@
 import logging
-
-from django.shortcuts import render
+# Django
+from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from config_app.models import ConfigParameters, AvailableDevices, SNMPConfigParameters
+# Models
+from config_app.models import ConfigParameters, SNMPConfigParameters
 from manage_app.models import DeviceModel, DeviceInterface
+
+# Backend
 from visualize_app.backend.NetworkMapper import NetworkMapper
 from .backend.DeviceManager import DeviceManager
+from .backend.TrapEngine import TrapEngine
 from .backend.parse_model import parse_and_save_to_database
 from .backend.webssh import main
 from WebAppLAN_MonitorDjango.utils import get_available_devices
+
+# Celery tasks
+from .backend import tasks
 
 ssh_session = None
 
@@ -27,6 +34,7 @@ def manage_network_view(request):
     snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
 
     traps_enabled = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].enable_traps
+    trap_engine_running = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].traps_activated
 
     request_post_dict = dict(request.POST)
 
@@ -48,9 +56,9 @@ def manage_network_view(request):
             logging.warning(exception)
             error_status_message = 'System was not able to get all SNMP data - check connection...'
 
-        if traps_enabled:
-            pass
-            #implement trap recvier engine - for now, pysnmptraps2 works fine !
+        if traps_enabled and not trap_engine_running:
+            tasks.run_trap_engine.delay()
+            SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].traps_activated = True
 
     elif 'get_device_details' in request.POST:
         device_id = request_post_dict.get('get_device_details')[0]

@@ -26,7 +26,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
-    '7c207af10f3f.ngrok.io']
+    'c6effa9779ab.ngrok.io']
 
 # Application definition
 
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # external packages
-
+    'django_celery_results',
     # custom models
     'config_app',
     'login_app',
@@ -130,3 +130,7 @@ STATICFILES_DIRS = (
 )
 LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/configcreate'
+
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_IMPORTS = ('manage_app.backend.tasks',)

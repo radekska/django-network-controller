@@ -40,3 +40,6 @@ class SNMPConfigParameters(models.Model):
     server_location = models.CharField(max_length=50, default=None, null=True, blank=True)
     contact_details = models.EmailField(max_length=50, default=None, null=True, blank=True)
     enable_traps = models.BooleanField(null=True, blank=True)  # checkbox
+
+    traps_activated = models.BooleanField(default=False, null=True, blank=True)
+
