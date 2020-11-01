@@ -19,14 +19,30 @@
                             <div class="col">
                                 <h1 class="card-title">Manage Network Devices</h1>
                             </div>
-
                             <form class="form" action="" method="post"> {% csrf_token %}
                                 <div class="col">
                                     <span class="text-info" id="scanning_span"
-                                                  style="font-size: 15px"></span>
+                                          style="font-size: 15px"></span>
                                     <input type="submit" name="get_devices_details" value="Refresh List"
                                            class="btn btn-primary btn-customized" style="margin: 20px"
                                            onclick="ScanningLabel();">
+                                </div>
+                            </form>
+                            <form class="form" action="" method="post"> {% csrf_token %}
+                                <div class="col">
+                                    {% if not traps_engine_running and traps_enabled %}
+                                        <input type="submit" name="start_trap_engine"
+                                               value="Start Trap Engine"
+                                               class="btn btn-primary btn-customized"
+                                               style="margin: 20px">
+                                    {% elif traps_enabled and traps_engine_running %}
+                                        <input type="submit" name="stop_trap_engine"
+                                               value="Stop Trap Engine"
+                                               class="btn btn-primary btn-customized"
+                                               style="margin: 20px">
+                                    {% else %}
+                                        <h2 class="table-warning"> Traps are not enabled.</h2>
+                                    {% endif %}
                                 </div>
                             </form>
                         </div>

@@ -12,4 +12,10 @@ def add(x, y):
 @shared_task
 def run_trap_engine():
     my_trap_engine = TrapEngine('192.168.8.106', 162)
-    my_trap_engine.run_engine()
+    try:
+        my_trap_engine.run_engine()
+    except Exception:
+        my_trap_engine.close_engine()
+
+
+

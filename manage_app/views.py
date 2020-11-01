@@ -20,12 +20,13 @@ from WebAppLAN_MonitorDjango.utils import get_available_devices
 from .backend import tasks
 
 ssh_session = None
+task = None
 
 
 # Create your views here.
 @login_required(redirect_field_name='')
 def manage_network_view(request):
-    global ssh_session
+    global ssh_session, task
     device_details_output = None
     device_interfaces_output = None
     error_status_message = None
@@ -33,10 +34,12 @@ def manage_network_view(request):
     user = User.objects.filter(username=request.user)[0]
     snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
 
-    traps_enabled = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].enable_traps
-    trap_engine_running = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].traps_activated
+    SNMP_config = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0]
+    traps_enabled = SNMP_config.enable_traps
+    traps_engine_running = SNMP_config.traps_activated
 
     request_post_dict = dict(request.POST)
+    print(request_post_dict)
 
     if 'get_devices_details' in request.POST:
         DeviceModel.objects.all().delete()
@@ -56,9 +59,23 @@ def manage_network_view(request):
             logging.warning(exception)
             error_status_message = 'System was not able to get all SNMP data - check connection...'
 
-        if traps_enabled and not trap_engine_running:
-            tasks.run_trap_engine.delay()
-            SNMPConfigParameters.objects.filter(id=snmp_config_id)[0].traps_activated = True
+    # SNMP_config.traps_activated = False
+    # SNMP_config.save()
+
+    if 'start_trap_engine' in request.POST:
+        print(traps_enabled, traps_engine_running)
+        if traps_enabled and not traps_engine_running:
+            task = tasks.run_trap_engine.delay()
+
+            SNMP_config.traps_activated = True
+            SNMP_config.save()
+
+    elif 'stop_trap_engine' in request.POST:
+        if traps_enabled and traps_engine_running:
+            task.revoke(terminate=True, signal='SIGUSR1')
+
+            SNMP_config.traps_activated = False
+            SNMP_config.save()
 
     elif 'get_device_details' in request.POST:
         device_id = request_post_dict.get('get_device_details')[0]
@@ -79,7 +96,9 @@ def manage_network_view(request):
         'device_interfaces_output': device_interfaces_output,
         'devices_details_output': DeviceModel.objects.all(),
         'devices_interfaces_output': DeviceInterface.objects.all(),
-        'error_status_message': error_status_message
+        'error_status_message': error_status_message,
+        'traps_engine_running': traps_engine_running,
+        'traps_enabled': traps_enabled,
     }
 
     return render(request, 'manage_network.html', context)
