@@ -88,7 +88,6 @@ def parse_snmp_config(object_id):
     napalm_configure_commands = '\n'.join([str(config) for config in configure_commands])
     napalm_configure_commands += '\nend'
 
-    print(napalm_configure_commands)
     return napalm_configure_commands
 
 
