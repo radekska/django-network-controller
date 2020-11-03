@@ -22,8 +22,11 @@ class ConfigManager:
             state = 'error'
         else:
             if type_of_change == 'configure':
+                print("im here")
                 connection.load_merge_candidate(config=config_commands)
+                print("im here too first")
                 connection.commit_config()
+                print("im here too")
                 message = 'SNMPv3 Configuration Successful!'
                 state = 'success'
             elif type_of_change == 'rollback':
@@ -32,6 +35,7 @@ class ConfigManager:
                 state = 'success'
 
         finally:
+            print(connection.hostname, message, state)
             return connection.hostname, message, state
 
     def connect_and_configure_multiple(self, config_commands=None, type_of_change='configure'):

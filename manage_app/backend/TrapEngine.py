@@ -4,6 +4,9 @@ from pysnmp.carrier.asyncore.dispatch import AsyncoreDispatcher
 from pysnmp.carrier.asyncore.dgram import udp
 from pyasn1.codec.ber import decoder
 from pysnmp.proto import api
+from pysnmp.entity import engine, config
+from pysnmp.entity.rfc3413 import ntfrcv
+from pysnmp.proto.api import v2c
 
 import logging
 from datetime import datetime
@@ -90,12 +93,33 @@ class TrapEngine:
 
         return wholeMsg
 
+    def initialize_enginev2(self):
+        self.snmpEngine = engine.SnmpEngine()
+
+        config.addTransport(
+            self.snmpEngine,
+            self.udp_domain_name,
+            self.udp_socket_transport().openServerMode((self.snmp_host, self.snmp_host_port))
+        )
+
+        config.addV1System(self.snmpEngine, 'password123', 'public')
+
+        ntfrcv.NotificationReceiver(self.snmpEngine, self._recieve_and_savev2)
+
+    def _recieve_and_savev2(self, snmpEngine, stateReference, contextEngineId, contextName,
+                            varBinds, cbCtx):
+        print('Notification from ContextEngineId "%s", ContextName "%s"' % (
+            contextEngineId.prettyPrint(), contextName.prettyPrint()))
+        for name, val in varBinds:
+            print('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
+
     def _initialize_engine(self):
         self.transport_dispatcher = AsyncoreDispatcher()
         self.transport_dispatcher.registerRecvCbFun(self._receive_and_save)
         self.transport_dispatcher.registerTransport(self.udp_domain_name,
                                                     self.udp_socket_transport().openServerMode(
                                                         (self.snmp_host, self.snmp_host_port)))
+
         self.transport_dispatcher.jobStarted(1)
 
     def run_engine(self):

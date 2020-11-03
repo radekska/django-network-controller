@@ -1,4 +1,5 @@
 import re
+import logging
 from datetime import datetime, timedelta
 from manage_app.models import DeviceModel, DeviceInterface
 from config_app.models import SNMPConfigParameters
@@ -134,10 +135,19 @@ def parse_and_save_to_database(devices, user):
 
 
 def parse_trap_model(device_trap_models, trap_data):
+    # logging.basicConfig(format='!!! %(asctime)s %(message)s')
+
     for trap_model in device_trap_models:
         filtered_trap_data = trap_data.filter(trap_model=trap_model)
 
-        string_data = [str(trap.trap_data) for trap in filtered_trap_data]
+        string_data = list()
+        for trap in filtered_trap_data:
+            try:
+                int(trap.trap_data)
+            except ValueError as exception:
+                # logging.warning('Parsing wanted exception: {exception}'.format(exception=exception))
+                string_data.append(str(trap.trap_data))
+
         string_data = ', '.join(string_data)
 
         trap_model.trap_string_data = string_data

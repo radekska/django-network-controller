@@ -27,7 +27,6 @@ task = None
 def manage_network_view(request):
     global ssh_session, task
 
-    trap_data = None
     device_trap_models = None
     device_details_output = None
     device_interfaces_output = None
@@ -41,7 +40,6 @@ def manage_network_view(request):
     traps_engine_running = SNMP_config.traps_activated
 
     request_post_dict = dict(request.POST)
-    print(request_post_dict)
 
     if 'get_devices_details' in request.POST:
         DeviceModel.objects.all().delete()
@@ -60,13 +58,14 @@ def manage_network_view(request):
             logging.basicConfig(format='!!! %(asctime)s %(message)s')
             logging.warning(exception)
             error_status_message = 'System was not able to get all SNMP data - check connection...'
-
+    #
     # SNMP_config.traps_activated = False
     # SNMP_config.save()
 
     if 'start_trap_engine' in request.POST:
         if traps_enabled and not traps_engine_running:
-            task = tasks.run_trap_engine.delay()
+            #task = tasks.run_trap_engine.delay()
+            task = tasks.run_trap_enginev2.delay()
 
             SNMP_config.traps_activated = True
             SNMP_config.save()
@@ -85,6 +84,7 @@ def manage_network_view(request):
         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
 
         device_trap_models = DeviceTrapModel.objects.filter(device_model=device_details_output)
+
         trap_data = VarBindModel.objects.all()
 
         parse_trap_model(device_trap_models, trap_data)
@@ -98,7 +98,7 @@ def manage_network_view(request):
     #     # clienta ssh, niestety glowny watek caly czas sie kreci - trzeba przekminic jak zforkowac clienta ssha zeby
     #     # to ładnie zagrało a potem zastanowic sie jak wpakowac tego klienta do mannage_app - do zrobienia
 
-    print(device_trap_models)
+    print()
     context = {
         'ssh_session': ssh_session,
         'device_detail_output': device_details_output,
@@ -109,7 +109,6 @@ def manage_network_view(request):
         'traps_engine_running': traps_engine_running,
         'traps_enabled': traps_enabled,
         'device_trap_models': device_trap_models,
-        'var_bind_data': trap_data
     }
 
     return render(request, 'manage_network.html', context)
