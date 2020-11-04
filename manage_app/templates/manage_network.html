@@ -225,8 +225,8 @@
                                                     <th scope="col">ID</th>
                                                     <th scope="col">Datetime</th>
                                                     <th scope="col">Agent Address</th>
-                                                    <th scope="col">Trap Type</th>
-                                                    <th scope="col">Trap Information</th>
+                                                    <th scope="col">Agent Port</th>
+                                                    <th scope="col">Trap Details</th>
                                                 </tr>
                                                 </thead>
 
@@ -234,9 +234,9 @@
                                                 {% for trap in device_trap_models %}
                                                         <tr>
                                                             <th scope="row">{{ trap.id }}</th>
-                                                            <td>{{ trap.trap_date }}</td>
-                                                            <td>{{ trap.trap_agent_address }} </td>
-                                                            <td>{{ trap.trap_generic }}</td>
+                                                            <td style="width: 150px">{{ trap.trap_date }}</td>
+                                                            <td>{{ trap.trap_address }}</td>
+                                                            <td>{{ trap.trap_port }}</td>
                                                             <td>{{ trap.trap_string_data }}</td>
                                                         </tr>
                                                 {% endfor %}

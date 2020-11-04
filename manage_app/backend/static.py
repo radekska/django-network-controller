@@ -14,3 +14,5 @@ lldp_defined_values = {
     'lldpNeighborHostName': 'iso.0.8802.1.1.2.1.4.1.1.9.0',
     'lldpLocalInterface': 'iso.0.8802.1.1.2.1.3.7.1.4',
 }
+
+snmp_host_port = 162

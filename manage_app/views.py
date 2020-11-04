@@ -35,9 +35,9 @@ def manage_network_view(request):
     user = User.objects.filter(username=request.user)[0]
     snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
 
-    SNMP_config = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0]
-    traps_enabled = SNMP_config.enable_traps
-    traps_engine_running = SNMP_config.traps_activated
+    snmp_config = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0]
+    traps_enabled = snmp_config.enable_traps
+    traps_engine_running = snmp_config.traps_activated
 
     request_post_dict = dict(request.POST)
 
@@ -58,24 +58,37 @@ def manage_network_view(request):
             logging.basicConfig(format='!!! %(asctime)s %(message)s')
             logging.warning(exception)
             error_status_message = 'System was not able to get all SNMP data - check connection...'
-    #
+
     # SNMP_config.traps_activated = False
     # SNMP_config.save()
 
     if 'start_trap_engine' in request.POST:
         if traps_enabled and not traps_engine_running:
-            #task = tasks.run_trap_engine.delay()
-            task = tasks.run_trap_enginev2.delay()
+            snmp_host = snmp_config.snmp_host
 
-            SNMP_config.traps_activated = True
-            SNMP_config.save()
+            privacy_protocol = snmp_config.snmp_privacy_protocol.replace(' ', '')
+            session_parameters = {
+                'hostname': None,
+                'version': 3,
+                'security_level': 'auth_with_privacy',
+                'security_username': snmp_config.snmp_user,
+                'privacy_protocol': privacy_protocol,
+                'privacy_password': snmp_config.snmp_encrypt_key,
+                'auth_protocol': snmp_config.snmp_auth_protocol,
+                'auth_password': snmp_config.snmp_password
+            }
+
+            task = tasks.run_trap_engine.delay(snmp_host, session_parameters)
+
+            snmp_config.traps_activated = True
+            snmp_config.save()
 
     elif 'stop_trap_engine' in request.POST:
         if traps_enabled and traps_engine_running:
             task.revoke(terminate=True, signal='SIGUSR1')
 
-            SNMP_config.traps_activated = False
-            SNMP_config.save()
+            snmp_config.traps_activated = False
+            snmp_config.save()
 
     elif 'get_device_details' in request.POST:
         device_id = request_post_dict.get('get_device_details')[0]
@@ -88,7 +101,6 @@ def manage_network_view(request):
         trap_data = VarBindModel.objects.all()
 
         parse_trap_model(device_trap_models, trap_data)
-
 
     # TO DO!!!
     # elif 'run_ssh_session' in request.POST:

@@ -135,7 +135,6 @@ def parse_and_save_to_database(devices, user):
 
 
 def parse_trap_model(device_trap_models, trap_data):
-    # logging.basicConfig(format='!!! %(asctime)s %(message)s')
 
     for trap_model in device_trap_models:
         filtered_trap_data = trap_data.filter(trap_model=trap_model)
@@ -148,7 +147,7 @@ def parse_trap_model(device_trap_models, trap_data):
                 # logging.warning('Parsing wanted exception: {exception}'.format(exception=exception))
                 string_data.append(str(trap.trap_data))
 
-        string_data = ', '.join(string_data)
+        string_data = ', '.join(string_data[1:])
 
         trap_model.trap_string_data = string_data
         trap_model.save()

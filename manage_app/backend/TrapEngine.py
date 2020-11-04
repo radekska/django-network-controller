@@ -1,28 +1,26 @@
-from manage_app.models import DeviceTrapModel, VarBindModel, DeviceModel, DeviceInterface
-
-from pysnmp.carrier.asyncore.dispatch import AsyncoreDispatcher
-from pysnmp.carrier.asyncore.dgram import udp
-from pyasn1.codec.ber import decoder
-from pysnmp.proto import api
-from pysnmp.entity import engine, config
-from pysnmp.entity.rfc3413 import ntfrcv
-from pysnmp.proto.api import v2c
-
 import logging
+
+from easysnmp import Session
 from datetime import datetime
+
+from pysnmp.proto import api
+from pyasn1.codec.ber import decoder
+from pysnmp.carrier.asyncore.dgram import udp
+from pysnmp.carrier.asyncore.dispatch import AsyncoreDispatcher
+
+from manage_app.models import DeviceTrapModel, VarBindModel, DeviceInterface, DeviceModel
 
 
 class TrapEngine:
-    def __init__(self, snmp_host, snmp_host_port):
+    def __init__(self, snmp_host, snmp_host_port, session_parameters):
         self.snmp_host = snmp_host
         self.snmp_host_port = snmp_host_port
+        self.session_parameters = session_parameters
 
         self.udp_domain_name = udp.domainName
         self.udp_socket_transport = udp.UdpSocketTransport
 
-    @staticmethod
-    def _receive_and_save(transportDispatcher, transportDomain, transportAddress, wholeMsg):
-        logging.basicConfig(format='!!! %(asctime)s %(message)s')
+    def _receive_and_save(self, transportDispatcher, transportDomain, transportAddress, wholeMsg):
 
         while wholeMsg:
 
@@ -39,79 +37,61 @@ class TrapEngine:
             )
 
             logging.warning('########## RECEIVED NEW TRAP ########## ')
-            logging.warning('Notification message from %s:%s: ' % (transportDomain,
-                                                                   transportAddress))
+            logging.warning(f'Notification message from {transportDomain}:{transportAddress}')
 
             reqPDU = pMod.apiMessage.getPDU(reqMsg)
+
             if reqPDU.isSameTypeWith(pMod.TrapPDU()):
-                if msgVer == api.protoVersion1:
-                    trap_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
-                    trap_domain = transportDomain
-                    trap_address = transportAddress
-                    trap_enterprise = pMod.apiTrapPDU.getEnterprise(reqPDU).prettyPrint()
-                    trap_agent_address = pMod.apiTrapPDU.getAgentAddr(reqPDU).prettyPrint()
-                    trap_generic = pMod.apiTrapPDU.getGenericTrap(reqPDU).prettyPrint()
-                    trap_uptime = pMod.apiTrapPDU.getTimeStamp(reqPDU).prettyPrint()
+                trap_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+                trap_domain = transportDomain
+                trap_address = transportAddress[0]
+                trap_port = transportAddress[1]
 
-                    logging.warning('Enterprise: {trap_enterprise}'.format(trap_enterprise=trap_enterprise))
-                    logging.warning('Agent Address: {trap_agent_address}'.format(trap_agent_address=trap_agent_address))
-                    logging.warning('Generic Trap: {trap_generic}'.format(trap_generic=trap_generic))
-                    logging.warning('Uptime: {trap_uptime}'.format(trap_uptime=trap_uptime))
+                logging.warning(f'Datetime: {trap_date}')
+                logging.warning(f'Trap Domain: {trap_domain}')
+                logging.warning(f'Agent Address: {trap_address}:{trap_port}')
 
-                    device_interface = DeviceInterface.objects.filter(interface_ip=trap_agent_address)[0]
+                full_system_name = self._get_system_name(trap_address)
+                device_model = DeviceModel.objects.filter(full_system_name=full_system_name)[0]
 
-                    trap_model_parameters = {
-                        'device_model': device_interface.device_model,
-                        'trap_domain': trap_domain,
-                        'trap_address': trap_address,
-                        'trap_enterprise': trap_enterprise,
-                        'trap_agent_address': trap_agent_address,
-                        'trap_generic': trap_generic,
-                        'trap_uptime': trap_uptime,
-                        'trap_date': trap_date
+                trap_model_parameters = {
+                    'device_model': device_model,
+                    'trap_domain': trap_domain,
+                    'trap_address': trap_address,
+                    'trap_port': trap_port,
+                    'trap_date': trap_date
+                }
+                trap_model = DeviceTrapModel(**trap_model_parameters)
+                trap_model.save()
+                varBinds = pMod.apiTrapPDU.getVarBinds(reqPDU)
+
+                for trap_oid, trap_data in varBinds:
+                    var_bids_parameters = {
+                        'trap_model': trap_model,
+                        'trap_oid': trap_oid,
+                        'trap_data': trap_data
                     }
-                    trap_model = DeviceTrapModel(**trap_model_parameters)
-                    trap_model.save()
-                    varBinds = pMod.apiTrapPDU.getVarBinds(reqPDU)
 
-                    for trap_oid, trap_data in varBinds:
-                        var_bids_parameters = {
-                            'trap_model': trap_model,
-                            'trap_oid': trap_oid,
-                            'trap_data': trap_data
-                        }
+                    var_bids_model = VarBindModel(**var_bids_parameters)
+                    var_bids_model.save()
 
-                        var_bids_model = VarBindModel(**var_bids_parameters)
-                        var_bids_model.save()
+            else:
+                varBinds = pMod.apiPDU.getVarBinds(reqPDU)
 
-                else:
-                    varBinds = pMod.apiPDU.getVarBinds(reqPDU)
-
-                logging.warning('Var-binds:')
-                for oid, val in varBinds:
-                    logging.warning('%s = %s' % (oid, val))
+            logging.warning('Var-binds:')
+            for oid, val in varBinds:
+                logging.warning('%s = %s' % (oid, val))
 
         return wholeMsg
 
-    def initialize_enginev2(self):
-        self.snmpEngine = engine.SnmpEngine()
+    def _get_system_name(self, trap_address):
 
-        config.addTransport(
-            self.snmpEngine,
-            self.udp_domain_name,
-            self.udp_socket_transport().openServerMode((self.snmp_host, self.snmp_host_port))
-        )
+        self.session_parameters['hostname'] = trap_address
 
-        config.addV1System(self.snmpEngine, 'password123', 'public')
+        session = Session(**self.session_parameters)
+        full_system_name = session.walk('sysName')[0].value
 
-        ntfrcv.NotificationReceiver(self.snmpEngine, self._recieve_and_savev2)
-
-    def _recieve_and_savev2(self, snmpEngine, stateReference, contextEngineId, contextName,
-                            varBinds, cbCtx):
-        print('Notification from ContextEngineId "%s", ContextName "%s"' % (
-            contextEngineId.prettyPrint(), contextName.prettyPrint()))
-        for name, val in varBinds:
-            print('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
+        return full_system_name
 
     def _initialize_engine(self):
         self.transport_dispatcher = AsyncoreDispatcher()

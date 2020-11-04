@@ -22,6 +22,8 @@ def cbFun(transportDispatcher, transportDomain, transportAddress, wholeMsg):
         print('Notification message from %s:%s: ' % (transportDomain,
                                                      transportAddress))
 
+        print(transportAddress, type(transportAddress), transportAddress[0], transportAddress[1])
+
         reqPDU = pMod.apiMessage.getPDU(reqMsg)
         if reqPDU.isSameTypeWith(pMod.TrapPDU()):
             if msgVer == api.protoVersion1:

@@ -55,9 +55,9 @@ config.addV1System(snmpEngine, 'my-area', 'Cisco123')
 #
 # # user: usr-sha-aes128, auth: SHA, priv AES
 # config.addV3User(
-#     snmpEngine, 'usr-sha-aes128',
-#     config.usmHMACSHAAuthProtocol, 'authkey1',
-#     config.usmAesCfb128Protocol, 'privkey1'
+#     snmpEngine, 'usr-md5-aes128',
+#     config.usmHMACMD5AuthProtocol, 'Cisco123',
+#     config.usmAesCfb128Protocol, 'cisco12345'
 # )
 # # user: usr-sha-aes128, auth: SHA, priv AES, securityEngineId: 8000000001020304
 # # this USM entry is used for TRAP receiving purposes

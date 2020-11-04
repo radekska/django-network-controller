@@ -2,7 +2,7 @@ from manage_app.backend.static import lldp_defined_values
 from easysnmp import Session
 
 # Create an SNMP session to be used for all our requests
-session = Session(hostname='192.168.8.32', version=3, security_level='auth_with_privacy', security_username='rskalban',
+session = Session(hostname='192.168.8.31', version=3, security_level='auth_with_privacy', security_username='rskalban',
                   privacy_protocol='AES128', privacy_password='cisco12345', auth_protocol='MD5',
                   auth_password='Cisco123')
 
@@ -13,19 +13,18 @@ session = Session(hostname='192.168.8.32', version=3, security_level='auth_with_
 # just a regular integer
 #
 # # And of course, you may use the numeric OID too
-int_name = session.get('1.0.8802.1.1.2.1.3.7.1.')
+int_name = session.get('1.3.6.1.2.1.1.3.0')
 print(int_name)
-host_name = session.get('iso.0.8802.1.1.2.1.4.1.1.9.0.2.2')
-print(host_name)
+# host_name = session.get('iso.0.8802.1.1.2.1.4.1.1.9.0.2.2')
+# print(host_name)
 #
 # # Set a variable using an SNMP SET
 # # session.set('sysLocation.0', 'The SNMP Lab')
 # print(description)
 # Perform an SNMP walk
-system_items = session.walk('1.0.8802.1.1.2.1.4.1')
-system_items2 = session.walk('1.0.8802.1.1.2.1.3.7')
+system_items = session.walk('sysName')[0].value
 
-
+print(system_items)
 
 
 # Each returned item can be used normally as its related type (str or int)
@@ -34,15 +33,6 @@ system_items2 = session.walk('1.0.8802.1.1.2.1.3.7')
 
 # int_desc = list(filter(lambda snmp_var: snmp_var.oid == 'ifDescr', system_items))
 # print(int_desc)
-
-for item in system_items:
-    print(item, type(item.oid))
-
-print("################")
-print(len(system_items2))
-
-for item in system_items2:
-    print(item, type(item.oid))
 
 
 # for item in system_items:

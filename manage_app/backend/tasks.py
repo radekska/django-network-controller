@@ -1,30 +1,19 @@
-from __future__ import absolute_import, unicode_literals
+import logging
+
+# from __future__ import absolute_import, unicode_literals
 
 from celery import shared_task
 from .TrapEngine import TrapEngine
+from .static import snmp_host_port
 
 
 @shared_task
-def add(x, y):
-    return x + y
-
-
-@shared_task
-def run_trap_engine():
-    my_trap_engine = TrapEngine('192.168.8.106', 162)
+def run_trap_engine(snmp_host, snmp_config):
+    my_trap_engine = TrapEngine(snmp_host, snmp_host_port, snmp_config)
     try:
         my_trap_engine.run_engine()
-    except Exception:
+    except Exception as exception:
+        logging.basicConfig(format='!!! %(asctime)s %(message)s')
+        logging.warning(exception)
+
         my_trap_engine.close_engine()
-
-
-@shared_task
-def run_trap_enginev2():
-    my_trap_engine = TrapEngine('192.168.8.106', 162)
-    my_trap_engine.initialize_enginev2()
-    my_trap_engine.snmpEngine.transportDispatcher.jobStarted(1)
-    try:
-        my_trap_engine.snmpEngine.transportDispatcher.runDispatcher()
-    except Exception:
-        my_trap_engine.snmpEngine.transportDispatcher.closeDispatcher()
-
