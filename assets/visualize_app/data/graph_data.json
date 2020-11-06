@@ -1,1 +1,1 @@
-{"nodes": [], "links": []}
+{"nodes": [{"group": "1", "id": "CoreSwitch2", "object_id": 9}, {"group": "2", "id": "EdgeRouter", "object_id": 10}], "links": [{"source": "CoreSwitch2", "target": "EdgeRouter", "value": 10, "interface_id": 53}, {"source": "EdgeRouter", "target": "CoreSwitch2", "value": 10, "interface_id": 60}]}

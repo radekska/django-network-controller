@@ -72,18 +72,9 @@
                                             {% for device in devices_details_output %}
                                                 <tr>
                                                     <th scope="row">{{ device.id }}</th>
-                                                    <form class="form" id="form-id-{{ device.id }}" action=""
-                                                          method="post"> {% csrf_token %}
-                                                        <td><a href="javascript:"
-                                                               onclick="document.getElementById('form-id-{{ device.id }}').submit();">
-                                                            {{ device.system_name }}</a>
-                                                            <input type="hidden" name="get_device_details"
-                                                                   value="{{ device.id }}">
-                                                            <input type="hidden" name="get_device_details"
-                                                                   value="{{ device.full_system_name }}">
-                                                        </td>
-
-                                                    </form>
+                                                    <td>
+                                                        <a href="?device_id={{ device.id }}">{{ device.system_name }}
+                                                        </a>
                                                     <td><p class="text-info">{{ device.device_type }} </p></td>
                                                     <td>{{ device.if_number }}</td>
                                                     <td>{{ device.system_image }}</td>
@@ -102,7 +93,7 @@
                     </div>
 
                 </div>
-                {% if device_detail_output %}
+                {% if device_detail_output or page_object %}
                     <div class="card">
                         <div class="card-header">
                             <div class="row">
@@ -231,15 +222,62 @@
                                                 </thead>
 
                                                 <tbody>
-                                                {% for trap in device_trap_models %}
+                                                <div id="content">
+                                                    {% for trap in page_object %}
                                                         <tr>
                                                             <th scope="row">{{ trap.id }}</th>
-                                                            <td style="width: 150px">{{ trap.trap_date }}</td>
+                                                            <td style="width: 160px">{{ trap.trap_date }}</td>
                                                             <td>{{ trap.trap_address }}</td>
                                                             <td>{{ trap.trap_port }}</td>
                                                             <td>{{ trap.trap_string_data }}</td>
                                                         </tr>
-                                                {% endfor %}
+                                                    {% endfor %}
+                                                </div>
+
+                                                <div class="pagination">
+                                                    <span class="step-links" id="links">
+                                                        {% if page_object.has_previous %}
+                                                            <a href="?trap_page=1">&laquo; first</a>
+                                                            <a href="?trap_page={{ page_object.previous_page_number }}">previous</a>
+                                                        {% endif %}
+
+                                                        <span class="current">
+                                                            Page {{ page_object.number }} of {{ page_object.paginator.num_pages }}.
+                                                        </span>
+
+                                                        {% if page_object.has_next %}
+                                                            <a href="?trap_page={{ page_object.next_page_number }}"
+                                                               id="id_href_id"
+                                                               data="{{ page_object.next_page_number }}">next</a>
+                                                            <a href="?trap_page={{ page_object.paginator.num_pages }}">last &raquo;</a>
+                                                        {% endif %}
+                                                        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+                                                        <script>
+                                                        $("#id_href_id").click(function () {
+                                                            var page_number = $(this).attr('data');
+                                                            console.log(page_number);
+                                                            {#TO DO - trzeba ogarnac ajaxa w taki sposob ze w momencie #}
+                                                            {#kiedy kilkamy next page albo previous itp. to ajax wysya do django get requesta a on zwraca liste z trapami nie odswiezajac przy tym calej strony#}
+                                                            {#https://simpleisbetterthancomplex.com/tutorial/2016/08/29/how-to-work-with-ajax-request-with-django.html#}
+                                                            $.ajax({
+                                                                type: 'GET',
+                                                                url: 'dashboard/manage_network/ajax/page',
+                                                                data: {
+                                                                    'page_number': page_number,
+                                                                    'test': 'ide zaraz w kimie',
+                                                                },
+                                                                dataType: 'json',
+                                                                success: function (data) {
+                                                                    alert(data.test1)z
+                                                                }
+                                                            });
+
+                                                        });
+
+                                                    </script>
+
+                                                    </span>
+                                                </div>
                                                 </tbody>
                                             </table>
 

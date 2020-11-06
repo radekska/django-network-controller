@@ -10,6 +10,7 @@ urlpatterns = [
     path('', views.dashboard_view, name='dashboard'),
     path('config_network/', config_app.views.config_network_view, name='config_network'),
     path('manage_network/', manage_app.views.manage_network_view, name='manage_network'),
+    path('manage_network/ajax/page', manage_app.views.ajax_trap_view, name='ajax_trap_view'),
     path('visualize_network/', visualize_app.views.visualize_network_view, name='visualize_network'),
 
 ]

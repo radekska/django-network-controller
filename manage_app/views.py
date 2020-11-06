@@ -3,7 +3,8 @@ import logging
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from django.core.paginator import Paginator
+from django.http import JsonResponse
 # Models
 from config_app.models import ConfigParameters, SNMPConfigParameters
 from manage_app.models import DeviceModel, DeviceInterface, DeviceTrapModel, VarBindModel
@@ -20,17 +21,19 @@ from .backend import tasks
 
 ssh_session = None
 task = None
+paginator = None
 
 
 # Create your views here.
 @login_required(redirect_field_name='')
 def manage_network_view(request):
-    global ssh_session, task
+    global ssh_session, task, paginator
 
     device_trap_models = None
     device_details_output = None
     device_interfaces_output = None
     error_status_message = None
+    page_object = None
 
     user = User.objects.filter(username=request.user)[0]
     snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
@@ -39,7 +42,7 @@ def manage_network_view(request):
     traps_enabled = snmp_config.enable_traps
     traps_engine_running = snmp_config.traps_activated
 
-    request_post_dict = dict(request.POST)
+    page_number = request.GET.get('trap_page')
 
     if 'get_devices_details' in request.POST:
         DeviceModel.objects.all().delete()
@@ -90,8 +93,8 @@ def manage_network_view(request):
             snmp_config.traps_activated = False
             snmp_config.save()
 
-    elif 'get_device_details' in request.POST:
-        device_id = request_post_dict.get('get_device_details')[0]
+    elif 'device_id' in request.GET:
+        device_id = request.GET.get('device_id')
 
         device_details_output = DeviceModel.objects.filter(id=device_id)[0]
         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
@@ -99,8 +102,16 @@ def manage_network_view(request):
         device_trap_models = DeviceTrapModel.objects.filter(device_model=device_details_output)
 
         trap_data = VarBindModel.objects.all()
-
         parse_trap_model(device_trap_models, trap_data)
+
+        paginator = Paginator(list(device_trap_models), 10)
+        page_number = 1 if page_number is None else page_number
+        page_object = paginator.page(page_number)
+
+    elif page_number is not None:
+        page_object = paginator.page(page_number)
+
+        # print(page_object, page_number, page_object.object_list)
 
     # TO DO!!!
     # elif 'run_ssh_session' in request.POST:
@@ -110,7 +121,6 @@ def manage_network_view(request):
     #     # clienta ssh, niestety glowny watek caly czas sie kreci - trzeba przekminic jak zforkowac clienta ssha zeby
     #     # to ładnie zagrało a potem zastanowic sie jak wpakowac tego klienta do mannage_app - do zrobienia
 
-    print()
     context = {
         'ssh_session': ssh_session,
         'device_detail_output': device_details_output,
@@ -121,6 +131,17 @@ def manage_network_view(request):
         'traps_engine_running': traps_engine_running,
         'traps_enabled': traps_enabled,
         'device_trap_models': device_trap_models,
+        'page_object': page_object
     }
 
     return render(request, 'manage_network.html', context)
+
+
+@login_required(redirect_field_name='')
+def ajax_trap_view(request):
+    test = request.GET.get('test')
+    data = {
+        'test1': 'testujemy ajax w django',
+        'co tu jest': test
+    }
+    return JsonResponse(data)

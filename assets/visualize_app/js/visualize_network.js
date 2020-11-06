@@ -157,20 +157,6 @@ var simulation = d3.forceSimulation()
     }).distance(100).strength(0.001))
     .force("charge", d3.forceManyBody().strength(-200).distanceMax(500).distanceMin(50))
     .force("center", d3.forceCenter(width / 2, height / 2))
-
-
-    // .force("x", d3.forceX(function (d) {
-    //     if (d.group === "1") {
-    //         return 3 * (width * 0.7) / 4
-    //     } else if (d.group === "2") {
-    //         return 2 * (width * 0.57) / 4
-    //     } else if (d.group === "3") {
-    //         return 1 * (width * 0.7) / 4
-    //     } else {
-    //         return 0 * (width * 0.7) / 4
-    //     }
-    // }).strength(1))
-    //.force("y", d3.forceY(height / 2))
     .force("center", d3.forceCenter((width * 0.8) / 2, height / 2))
     .force("collision", d3.forceCollide().radius(35));
 
@@ -197,11 +183,10 @@ d3.json(graph_data_path, function (error, graph) {
         .selectAll("a")
         .data(graph.nodes).enter()
         .append("a")
-        .attr("xlink:href", "javascript:")
-        .attr("id", function (d) {
-            object_id = d.object_id
-            return object_id
+        .attr("xlink:href", function (d){
+            return "?device_id=" + d.object_id
         })
+
 
     node.on("click", function (d) {
         document.getElementById('device_post').value = d.object_id

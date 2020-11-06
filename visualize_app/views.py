@@ -9,13 +9,12 @@ from visualize_app.backend.NetworkMapper import NetworkMapper
 def visualize_network_view(request):
     device_model = None
     neighbor_devices = None
-    request_post_dict = dict(request.POST)
 
     my_map = NetworkMapper()
     my_map.generate_graph_data()
 
-    if 'get_lldp_details' in request.POST:
-        device_id = request_post_dict.get('get_lldp_details')[0]
+    if 'device_id' in request.GET:
+        device_id = request.GET.get('device_id')
         device_model = DeviceModel.objects.filter(id=device_id)[0]
 
         device_interfaces = DeviceInterface.objects.filter(device_model=device_model)
