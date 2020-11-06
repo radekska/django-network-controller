@@ -207,10 +207,168 @@
                                 </div>
                                 <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
                                     <div class="card">
-                                        <div class="card-header"></div>
-
                                         <div class="card-body">
-                                            <table class="table">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <div class="pagination">
+                                                        <span class="step-links" id="links">
+                                                            <span class="current" id="id_page_current">
+                                                            Page {{ page_object.number }} of {{ page_object.paginator.num_pages }}.
+                                                            </span>
+                                                            <a href="#" id="id_page_first"></a>
+                                                            <a href="#" id="id_page_previous" data=""></a>
+
+                                                            <a href="#" id="id_page_next"
+                                                               data="{{ page_object.next_page_number }}">next</a>
+                                                            <a href="#" id="id_page_last"
+                                                               data="{{ page_object.paginator.num_pages }}">last &raquo;</a>
+                                                            <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+                                                        <script>
+
+                                                            function AddNavTags() {
+                                                                var first_nav_tag = document.getElementById('id_page_first');
+                                                                var previous_nav_tag = document.getElementById('id_page_previous');
+
+                                                                first_nav_tag.innerHTML = '&laquo; first ';
+                                                                previous_nav_tag.innerText = 'previous';
+
+                                                                var all_links = document.getElementById('links')
+                                                                all_links.insertBefore(previous_nav_tag, all_links.firstChild)
+                                                                all_links.insertBefore(first_nav_tag, all_links.firstChild)
+                                                            }
+
+
+                                                            function CallMethod(page_number, call_type) {
+                                                                $.ajax({
+                                                                    type: 'GET',
+                                                                    url: "{% url 'ajax_trap_view' %}",
+                                                                    data: {
+                                                                        'page_number': page_number
+                                                                    },
+                                                                    dataType: 'json',
+                                                                    success: function (data) {
+                                                                        var content = '';
+                                                                        for (var i = 0; i < data['trap_json_data'].length; i++) {
+                                                                            content += `<tr>
+                                                                            <th scope="row">${data['trap_json_data'][i]['pk']}</th>
+                                                                            <td style="width: 160px">${data['trap_json_data'][i]['fields']['trap_date']}</td>
+                                                                            <td>${data['trap_json_data'][i]['fields']['trap_address']}</td>
+                                                                            <td>${data['trap_json_data'][i]['fields']['trap_port']}</td>
+                                                                            <td>${data['trap_json_data'][i]['fields']['trap_string_data']}</td>
+                                                                            </tr>`
+                                                                        }
+                                                                        $("#trap_table tbody").html(content);
+
+                                                                        var first = document.getElementById('id_page_first');
+                                                                        var previous = document.getElementById('id_page_previous');
+                                                                        var last = document.getElementById('id_page_last');
+                                                                        var next = document.getElementById('id_page_next');
+                                                                        var page_counter = '';
+                                                                        var page_number = '';
+
+                                                                        if (call_type === 'first') {
+                                                                            first.innerHTML = '';
+                                                                            previous.innerText = '';
+                                                                            next.innerText = 'next';
+                                                                            last.innerHTML = 'last &raquo';
+
+                                                                            page_counter = 'Page 1 of ' + last.getAttribute('data');
+                                                                            document.getElementById('id_page_next').setAttribute('data', '2')
+
+
+                                                                        } else if (call_type === 'previous') {
+                                                                            page_number = data['current_page'];
+                                                                            var next_page_number = (parseInt(page_number) + 1).toString()
+                                                                            page_counter = 'Page ' + page_number + ' of ' + last.getAttribute('data');
+
+                                                                            document.getElementById('id_page_next').setAttribute('data', next_page_number)
+                                                                            if (page_number < data['last_page']) {
+                                                                                next.innerText = 'next';
+                                                                                last.innerHTML = 'last &raquo';
+                                                                            }
+
+                                                                            if (data['current_page'] === '1') {
+                                                                                first.innerHTML = '';
+                                                                                previous.innerText = '';
+                                                                            }
+
+
+                                                                        } else if (call_type === 'last') {
+                                                                            first.innerHTML = '&laquo first ';
+                                                                            previous.innerText = 'previous';
+                                                                            next.innerText = '';
+                                                                            last.innerText = '';
+                                                                            page_counter = 'Page ' + last.getAttribute('data') + ' of ' + last.getAttribute('data');
+                                                                            document.getElementById('id_page_next').setAttribute('data', (parseInt(last.getAttribute('data')) + 1).toString())
+
+                                                                        } else if (call_type === 'next') {
+                                                                            var current_page = data['current_page']
+                                                                            page_number = (parseInt(data['current_page']) + 1).toString();
+                                                                            page_counter = 'Page ' + current_page + ' of ' + last.getAttribute('data');
+
+                                                                            document.getElementById('id_page_next').setAttribute('data', page_number)
+
+                                                                            if (page_number > data['last_page']) {
+                                                                                next.innerText = '';
+                                                                                last.innerText = '';
+                                                                            }
+
+                                                                            if (data['current_page'] !== 1) {
+                                                                                first.innerHTML = '&laquo first ';
+                                                                                previous.innerText = 'previous';
+                                                                            }
+
+                                                                        }
+                                                                        document.getElementById('id_page_current').innerText = page_counter
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            var nav_tags_added = false;
+
+                                                            $("#id_page_first").click(function () {
+                                                                nav_tags_added = false;
+                                                                CallMethod('1', 'first')
+                                                            })
+
+                                                            $("#id_page_previous").click(function () {
+                                                                var page_number = document.getElementById('id_page_next').getAttribute('data');
+                                                                page_number = (parseInt(page_number) - 2).toString();
+                                                                if (page_number < 1) {
+                                                                    page_number = 1;
+                                                                }
+                                                                CallMethod(page_number, 'previous');
+                                                            })
+
+                                                            $("#id_page_next").click(function () {
+                                                                var page_number = $(this).attr('data');
+
+                                                                if (!nav_tags_added) {
+                                                                    nav_tags_added = true;
+                                                                    AddNavTags();
+                                                                }
+
+                                                                CallMethod(page_number, 'next');
+
+                                                            })
+
+                                                            $("#id_page_last").click(function () {
+                                                                var last_page = $(this).attr('data')
+
+                                                                if (!nav_tags_added) {
+                                                                    nav_tags_added = true;
+                                                                    AddNavTags();
+                                                                }
+                                                                CallMethod(last_page, 'last');
+                                                            });
+
+                                                    </script>
+
+                                                    </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <table class="table" id="trap_table">
                                                 <thead>
                                                 <tr>
                                                     <th scope="col">ID</th>
@@ -222,73 +380,22 @@
                                                 </thead>
 
                                                 <tbody>
-                                                <div id="content">
-                                                    {% for trap in page_object %}
-                                                        <tr>
-                                                            <th scope="row">{{ trap.id }}</th>
-                                                            <td style="width: 160px">{{ trap.trap_date }}</td>
-                                                            <td>{{ trap.trap_address }}</td>
-                                                            <td>{{ trap.trap_port }}</td>
-                                                            <td>{{ trap.trap_string_data }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                </div>
-
-                                                <div class="pagination">
-                                                    <span class="step-links" id="links">
-                                                        {% if page_object.has_previous %}
-                                                            <a href="?trap_page=1">&laquo; first</a>
-                                                            <a href="?trap_page={{ page_object.previous_page_number }}">previous</a>
-                                                        {% endif %}
-
-                                                        <span class="current">
-                                                            Page {{ page_object.number }} of {{ page_object.paginator.num_pages }}.
-                                                        </span>
-
-                                                        {% if page_object.has_next %}
-                                                            <a href="?trap_page={{ page_object.next_page_number }}"
-                                                               id="id_href_id"
-                                                               data="{{ page_object.next_page_number }}">next</a>
-                                                            <a href="?trap_page={{ page_object.paginator.num_pages }}">last &raquo;</a>
-                                                        {% endif %}
-                                                        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-                                                        <script>
-                                                        $("#id_href_id").click(function () {
-                                                            var page_number = $(this).attr('data');
-                                                            console.log(page_number);
-                                                            {#TO DO - trzeba ogarnac ajaxa w taki sposob ze w momencie #}
-                                                            {#kiedy kilkamy next page albo previous itp. to ajax wysya do django get requesta a on zwraca liste z trapami nie odswiezajac przy tym calej strony#}
-                                                            {#https://simpleisbetterthancomplex.com/tutorial/2016/08/29/how-to-work-with-ajax-request-with-django.html#}
-                                                            $.ajax({
-                                                                type: 'GET',
-                                                                url: 'dashboard/manage_network/ajax/page',
-                                                                data: {
-                                                                    'page_number': page_number,
-                                                                    'test': 'ide zaraz w kimie',
-                                                                },
-                                                                dataType: 'json',
-                                                                success: function (data) {
-                                                                    alert(data.test1)z
-                                                                }
-                                                            });
-
-                                                        });
-
-                                                    </script>
-
-                                                    </span>
-                                                </div>
+                                                {% for trap in page_object %}
+                                                    <tr>
+                                                        <th scope="row">{{ trap.id }}</th>
+                                                        <td style="width: 160px">{{ trap.trap_date }}</td>
+                                                        <td>{{ trap.trap_address }}</td>
+                                                        <td>{{ trap.trap_port }}</td>
+                                                        <td>{{ trap.trap_string_data }}</td>
+                                                    </tr>
+                                                {% endfor %}
                                                 </tbody>
                                             </table>
-
-
                                         </div>
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
-
                                     <div class="card">
-
                                         <div class="card-header">
                                             <div class="row">
                                                 <div class="col">
@@ -312,7 +419,6 @@
                                         </div>
                                         <div class="card-body">
                                             <div class="row">
-
                                             </div>
                                         </div>
                                     </div>

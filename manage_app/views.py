@@ -1,10 +1,13 @@
+import json
 import logging
+
 # Django
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.http import JsonResponse
+from django.core import serializers
+from django.http import JsonResponse, Http404
 # Models
 from config_app.models import ConfigParameters, SNMPConfigParameters
 from manage_app.models import DeviceModel, DeviceInterface, DeviceTrapModel, VarBindModel
@@ -62,9 +65,6 @@ def manage_network_view(request):
             logging.warning(exception)
             error_status_message = 'System was not able to get all SNMP data - check connection...'
 
-    # SNMP_config.traps_activated = False
-    # SNMP_config.save()
-
     if 'start_trap_engine' in request.POST:
         if traps_enabled and not traps_engine_running:
             snmp_host = snmp_config.snmp_host
@@ -108,11 +108,6 @@ def manage_network_view(request):
         page_number = 1 if page_number is None else page_number
         page_object = paginator.page(page_number)
 
-    elif page_number is not None:
-        page_object = paginator.page(page_number)
-
-        # print(page_object, page_number, page_object.object_list)
-
     # TO DO!!!
     # elif 'run_ssh_session' in request.POST:
     #     ssh_session = main.main()
@@ -133,15 +128,26 @@ def manage_network_view(request):
         'device_trap_models': device_trap_models,
         'page_object': page_object
     }
-
     return render(request, 'manage_network.html', context)
 
 
 @login_required(redirect_field_name='')
 def ajax_trap_view(request):
-    test = request.GET.get('test')
-    data = {
-        'test1': 'testujemy ajax w django',
-        'co tu jest': test
-    }
-    return JsonResponse(data)
+    if request.is_ajax():
+        global paginator
+        page_number = request.GET.get('page_number')
+        page_object = paginator.page(page_number)
+
+        data = serializers.serialize('json', page_object.object_list)
+        trap_json_data = json.loads(data)
+
+        json_data = {
+            'trap_json_data': trap_json_data,
+            'page_has_next': page_object.has_next(),
+            'page_has_previous': page_object.has_previous(),
+            'current_page': page_number,
+            'last_page': paginator.num_pages
+        }
+        return JsonResponse(json_data, safe=False)
+    else:
+        raise Http404
