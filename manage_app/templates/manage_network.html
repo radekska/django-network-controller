@@ -19,7 +19,8 @@
                             <div class="col">
                                 <h1 class="card-title">Manage Network Devices</h1>
                             </div>
-                            <form class="form" action="" method="post"> {% csrf_token %}
+
+                            <form action="" method="get">
                                 <div class="col">
                                     <span class="text-info" id="scanning_span"
                                           style="font-size: 15px"></span>
@@ -28,23 +29,50 @@
                                            onclick="ScanningLabel();">
                                 </div>
                             </form>
-                            <form class="form" action="" method="post"> {% csrf_token %}
-                                <div class="col">
-                                    {% if not traps_engine_running and traps_enabled %}
-                                        <input type="submit" name="start_trap_engine"
+                            {% if not traps_engine_running and traps_enabled %}
+                                <form class="form" action="" method="post"> {% csrf_token %}
+                                    <div class="col">
+                                        <input type="submit" id="id_start_trap_engine" name="start_trap_engine"
                                                value="Start Trap Engine"
                                                class="btn btn-primary btn-customized"
                                                style="margin: 20px">
-                                    {% elif traps_enabled and traps_engine_running %}
-                                        <input type="submit" name="stop_trap_engine"
+                                    </div>
+                                </form>
+                            {% elif traps_enabled and traps_engine_running %}
+                                <form class="form" action="" method="post"> {% csrf_token %}
+                                    <div class="col">
+                                        <input type="submit" id="id_stop_trap_engine" name="stop_trap_engine"
                                                value="Stop Trap Engine"
                                                class="btn btn-primary btn-customized"
                                                style="margin: 20px">
-                                    {% else %}
-                                        <h2 class="table-warning"> Traps are not enabled.</h2>
-                                    {% endif %}
-                                </div>
-                            </form>
+                                    </div>
+                                </form>
+                                <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+                                <script>
+                                    function CallMethod(button) {
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '{% url 'ajax_trap_engine' %}',
+                                            data: {
+                                                'button':button
+                                            },
+                                            dataType: 'json',
+                                            success: function (data){
+                                                {#TO DO #}
+                                            }
+                                        })
+                                    }
+
+                                    $("#id_start_trap_engine").click(function () {
+                                        CallMethod('start')
+                                    })
+
+                                    $("#id_stop_trap_engine").click(function () {
+                                        CallMethod('stop')
+                                    })
+                                </script>
+                            {% endif %}
+
                         </div>
                     </div>
                     <div class="card-body">
@@ -208,20 +236,23 @@
                                 <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
                                     <div class="card">
                                         <div class="card-body">
-                                            <div class="row">
-                                                <div class="col">
-                                                    <div class="pagination">
+                                            {% if not warning_status_message %}
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="pagination">
                                                         <span class="step-links" id="links">
                                                             <span class="current" id="id_page_current">
                                                             Page {{ page_object.number }} of {{ page_object.paginator.num_pages }}.
                                                             </span>
-                                                            <a href="#" id="id_page_first"></a>
-                                                            <a href="#" id="id_page_previous" data=""></a>
+                                                            {% if next_page %}
+                                                                <a href="#" id="id_page_first"></a>
+                                                                <a href="#" id="id_page_previous" data=""></a>
 
-                                                            <a href="#" id="id_page_next"
-                                                               data="{{ page_object.next_page_number }}">next</a>
-                                                            <a href="#" id="id_page_last"
-                                                               data="{{ page_object.paginator.num_pages }}">last &raquo;</a>
+                                                                <a href="#" id="id_page_next"
+                                                                   data="{{ page_object.next_page_number }}">next</a>
+                                                                <a href="#" id="id_page_last"
+                                                                   data="{{ page_object.paginator.num_pages }}">last &raquo;</a>
+                                                            {% endif %}
                                                             <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
                                                         <script>
 
@@ -365,33 +396,40 @@
                                                     </script>
 
                                                     </span>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <table class="table" id="trap_table">
-                                                <thead>
-                                                <tr>
-                                                    <th scope="col">ID</th>
-                                                    <th scope="col">Datetime</th>
-                                                    <th scope="col">Agent Address</th>
-                                                    <th scope="col">Agent Port</th>
-                                                    <th scope="col">Trap Details</th>
-                                                </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                {% for trap in page_object %}
+                                                <table class="table" id="trap_table">
+                                                    <thead>
                                                     <tr>
-                                                        <th scope="row">{{ trap.id }}</th>
-                                                        <td style="width: 160px">{{ trap.trap_date }}</td>
-                                                        <td>{{ trap.trap_address }}</td>
-                                                        <td>{{ trap.trap_port }}</td>
-                                                        <td>{{ trap.trap_string_data }}</td>
+                                                        <th scope="col">ID</th>
+                                                        <th scope="col">Datetime</th>
+                                                        <th scope="col">Agent Address</th>
+                                                        <th scope="col">Agent Port</th>
+                                                        <th scope="col">Trap Details</th>
                                                     </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                                    </thead>
+
+                                                    <tbody>
+                                                    {% for trap in page_object %}
+                                                        <tr>
+                                                            <th scope="row">{{ trap.id }}</th>
+                                                            <td style="width: 160px">{{ trap.trap_date }}</td>
+                                                            <td>{{ trap.trap_address }}</td>
+                                                            <td>{{ trap.trap_port }}</td>
+                                                            <td>{{ trap.trap_string_data }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            {% else %}
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h4 class="text-info text-center"> {{ warning_status_message }}</h4>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
                                     </div>
                                 </div>
                                 <div class="tab-pane fade" id="others" role="tabpanel" aria-labelledby="others-tab">
