@@ -20,16 +20,17 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
-from login_app.views import login_view, logout_view
-from registration_app.views import registration_view
+from login_app.views import LoginView, LogoutView
+from registration_app.views import RegistrationView
+from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('', login_view, name='login'),
-    path('login/', login_view, name='login'),
-    path('logout/', logout_view, name='logout'),
-    path('registration/', registration_view, name='registration'),
+    path('', LoginView.as_view(), name='login'),
+    path('login/', LoginView.as_view(), name='login'),
+    path('logout/', login_required(LogoutView.as_view()), name='logout'),
+    path('registration/', RegistrationView.as_view(), name='registration'),
 
     path('dashboard/', include('dashboard_app.urls')),
 

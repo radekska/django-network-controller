@@ -8,8 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 from django.core import serializers
-from django.http import JsonResponse, Http404
-from django.views.generic import ListView
+from django.http import JsonResponse, Http404, HttpResponse
+from django.views.generic import DetailView, ListView, TemplateView
 from django.views.generic.detail import SingleObjectTemplateResponseMixin
 
 # Models
@@ -29,6 +29,20 @@ from .backend import tasks
 ssh_session = None
 task = None
 paginator = None
+
+
+class JSONResponseMixin(object):
+    # a mixin that can be used to render a JSON response
+    response_class = HttpResponse
+
+    def render_to_response(self, context, **response_kwargs):
+        # returns a JSON response, transforming 'context' to make the payload
+        response_kwargs['content_type'] = 'application/json'
+        return self.response_class(self.convert_context_to_json(context), **response_kwargs)
+
+    def convert_context_to_json(self, context):
+        # this would need to be a bit more complex if we're dealing with more complicated variables
+        return json.dumps(context)
 
 
 #
@@ -136,9 +150,23 @@ def manage_network_view(request):
     return render(request, 'manage_network.html', context)
 
 
-#
+class AjaxTrapEngine(JSONResponseMixin, TemplateView):
+    template_name = 'manage_network.html'
 
-class ManageNetworkView(ListView):
+    def post(self, request, *args, **kwargs):
+        # self._get_config_details(request)
+        # if 'start_trap_engine' in request.POST and self.traps_enabled and not self.traps_engine_running:
+        #     self._post_start_trap_engine()
+        # elif 'stop_trap_engine' in request.POST and self.traps_enabled and self.traps_engine_running:
+        #     self._post_stop_trap_engine()
+
+        print(request.is_ajax())
+        json_data = ajax_trap_engine(request)
+        print(json_data)
+        return self.render_to_response(json_data)
+
+
+class ManageNetworkView(AjaxTrapEngine, ListView):
     template_name = 'manage_network.html'
     model = User
 
@@ -166,7 +194,7 @@ class ManageNetworkView(ListView):
         global paginator
         paginator = Paginator(list(self.device_trap_models), 10)
 
-        if paginator.count is 0:
+        if paginator.count == 0:
             self.warning_status_message = 'No trap data found.'
         else:
             self.page_object = paginator.page(1)
@@ -199,7 +227,7 @@ class ManageNetworkView(ListView):
 
     def get(self, request, *args, **kwargs):
         self._get_config_details(request)
-        print(request.GET)
+
         if 'device_id' in request.GET:
             self._get_device_details(request)
             self._get_traps_pages()
@@ -221,40 +249,44 @@ class ManageNetworkView(ListView):
 
         return render(request, self.template_name, context)
 
-    def post(self, request, *args, **kwargs):
-        self._get_config_details(request)
-        if 'start_trap_engine' in request.POST and self.traps_enabled and not self.traps_engine_running:
-            self._post_start_trap_engine()
-        elif 'stop_trap_engine' in request.POST and self.traps_enabled and self.traps_engine_running:
-            self._post_stop_trap_engine()
+    #     # self._get_config_details(request)
+    #     # if 'start_trap_engine' in request.POST and self.traps_enabled and not self.traps_engine_running:
+    #     #     self._post_start_trap_engine()
+    #     # elif 'stop_trap_engine' in request.POST and self.traps_enabled and self.traps_engine_running:
+    #     #     self._post_stop_trap_engine()
+    #
+    #     print(request.is_ajax())
+    #     json_data = ajax_trap_engine(request)
+    #     print(json_data)
+    #     return self.render_to_response(json_data)
 
-    def _post_start_trap_engine(self):
-        global task
-        snmp_host = self.snmp_config.snmp_host
+    # def _post_start_trap_engine(self):
+    #     global task
+    #     snmp_host = self.snmp_config.snmp_host
+    #
+    #     privacy_protocol = self.snmp_config.snmp_privacy_protocol.replace(' ', '')
+    #     session_parameters = {
+    #         'hostname': None,
+    #         'version': 3,
+    #         'security_level': 'auth_with_privacy',
+    #         'security_username': self.snmp_config.snmp_user,
+    #         'privacy_protocol': privacy_protocol,
+    #         'privacy_password': self.snmp_config.snmp_encrypt_key,
+    #         'auth_protocol': self.snmp_config.snmp_auth_protocol,
+    #         'auth_password': self.snmp_config.snmp_password
+    #     }
+    #
+    #     task = tasks.run_trap_engine.delay(snmp_host, session_parameters)
+    #
+    #     self.snmp_config.traps_activated = True
+    #     self.snmp_config.save()
 
-        privacy_protocol = self.snmp_config.snmp_privacy_protocol.replace(' ', '')
-        session_parameters = {
-            'hostname': None,
-            'version': 3,
-            'security_level': 'auth_with_privacy',
-            'security_username': self.snmp_config.snmp_user,
-            'privacy_protocol': privacy_protocol,
-            'privacy_password': self.snmp_config.snmp_encrypt_key,
-            'auth_protocol': self.snmp_config.snmp_auth_protocol,
-            'auth_password': self.snmp_config.snmp_password
-        }
-
-        task = tasks.run_trap_engine.delay(snmp_host, session_parameters)
-
-        self.snmp_config.traps_activated = True
-        self.snmp_config.save()
-
-    def _post_stop_trap_engine(self):
-        global task
-        task.revoke(terminate=True, signal='SIGUSR1')
-
-        self.snmp_config.traps_activated = False
-        self.snmp_config.save()
+    # def _post_stop_trap_engine(self):
+    #     global task
+    #     task.revoke(terminate=True, signal='SIGUSR1')
+    #
+    #     self.snmp_config.traps_activated = False
+    #     self.snmp_config.save()
 
 
 @login_required(redirect_field_name='')
@@ -279,8 +311,15 @@ def ajax_trap_view(request):
         raise Http404
 
 
-@login_required(redirect_field_name='')
+# @login_required(redirect_field_name='')
 def ajax_trap_engine(request):
-    if request.is_ajax():
-        print(request.POST)
-    # to do.
+    snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
+
+    snmp_config = SNMPConfigParameters.objects.get(id=snmp_config_id)
+    traps_engine_running = snmp_config.traps_activated
+    snmp_config.traps_activated = True
+    snmp_config.save()
+
+    json_data = dict(traps_engine_running=traps_engine_running)
+
+    return json_data

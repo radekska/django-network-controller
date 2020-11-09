@@ -29,49 +29,20 @@
                                            onclick="ScanningLabel();">
                                 </div>
                             </form>
-                            {% if not traps_engine_running and traps_enabled %}
-                                <form class="form" action="" method="post"> {% csrf_token %}
-                                    <div class="col">
-                                        <input type="submit" id="id_start_trap_engine" name="start_trap_engine"
-                                               value="Start Trap Engine"
-                                               class="btn btn-primary btn-customized"
-                                               style="margin: 20px">
-                                    </div>
+                                <form class="form" action="" method="post" id="trap_buttons"> {% csrf_token %}
+                                <div class="col">
+                                    <input type="submit" id="id_start_trap_engine" name="start_trap_engine"
+                                           value="Start Trap Engine"
+                                           class="btn btn-primary btn-customized"
+                                           style="margin: 20px">
+                                </div>
+                                <div class="col">
+                                    <input type="submit" id="id_stop_trap_engine" name="stop_trap_engine"
+                                           value="Stop Trap Engine"
+                                           class="btn btn-primary btn-customized"
+                                           style="margin: 20px">
+                                </div>
                                 </form>
-                            {% elif traps_enabled and traps_engine_running %}
-                                <form class="form" action="" method="post"> {% csrf_token %}
-                                    <div class="col">
-                                        <input type="submit" id="id_stop_trap_engine" name="stop_trap_engine"
-                                               value="Stop Trap Engine"
-                                               class="btn btn-primary btn-customized"
-                                               style="margin: 20px">
-                                    </div>
-                                </form>
-                                <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-                                <script>
-                                    function CallMethod(button) {
-                                        $.ajax({
-                                            type: 'POST',
-                                            url: '{% url 'ajax_trap_engine' %}',
-                                            data: {
-                                                'button':button
-                                            },
-                                            dataType: 'json',
-                                            success: function (data){
-                                                {#TO DO #}
-                                            }
-                                        })
-                                    }
-
-                                    $("#id_start_trap_engine").click(function () {
-                                        CallMethod('start')
-                                    })
-
-                                    $("#id_stop_trap_engine").click(function () {
-                                        CallMethod('stop')
-                                    })
-                                </script>
-                            {% endif %}
 
                         </div>
                     </div>
@@ -253,149 +224,7 @@
                                                                 <a href="#" id="id_page_last"
                                                                    data="{{ page_object.paginator.num_pages }}">last &raquo;</a>
                                                             {% endif %}
-                                                            <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
-                                                        <script>
-
-                                                            function AddNavTags() {
-                                                                var first_nav_tag = document.getElementById('id_page_first');
-                                                                var previous_nav_tag = document.getElementById('id_page_previous');
-
-                                                                first_nav_tag.innerHTML = '&laquo; first ';
-                                                                previous_nav_tag.innerText = 'previous';
-
-                                                                var all_links = document.getElementById('links')
-                                                                all_links.insertBefore(previous_nav_tag, all_links.firstChild)
-                                                                all_links.insertBefore(first_nav_tag, all_links.firstChild)
-                                                            }
-
-
-                                                            function CallMethod(page_number, call_type) {
-                                                                $.ajax({
-                                                                    type: 'GET',
-                                                                    url: "{% url 'ajax_trap_view' %}",
-                                                                    data: {
-                                                                        'page_number': page_number
-                                                                    },
-                                                                    dataType: 'json',
-                                                                    success: function (data) {
-                                                                        var content = '';
-                                                                        for (var i = 0; i < data['trap_json_data'].length; i++) {
-                                                                            content += `<tr>
-                                                                            <th scope="row">${data['trap_json_data'][i]['pk']}</th>
-                                                                            <td style="width: 160px">${data['trap_json_data'][i]['fields']['trap_date']}</td>
-                                                                            <td>${data['trap_json_data'][i]['fields']['trap_address']}</td>
-                                                                            <td>${data['trap_json_data'][i]['fields']['trap_port']}</td>
-                                                                            <td>${data['trap_json_data'][i]['fields']['trap_string_data']}</td>
-                                                                            </tr>`
-                                                                        }
-                                                                        $("#trap_table tbody").html(content);
-
-                                                                        var first = document.getElementById('id_page_first');
-                                                                        var previous = document.getElementById('id_page_previous');
-                                                                        var last = document.getElementById('id_page_last');
-                                                                        var next = document.getElementById('id_page_next');
-                                                                        var page_counter = '';
-                                                                        var page_number = '';
-
-                                                                        if (call_type === 'first') {
-                                                                            first.innerHTML = '';
-                                                                            previous.innerText = '';
-                                                                            next.innerText = 'next';
-                                                                            last.innerHTML = 'last &raquo';
-
-                                                                            page_counter = 'Page 1 of ' + last.getAttribute('data');
-                                                                            document.getElementById('id_page_next').setAttribute('data', '2')
-
-
-                                                                        } else if (call_type === 'previous') {
-                                                                            page_number = data['current_page'];
-                                                                            var next_page_number = (parseInt(page_number) + 1).toString()
-                                                                            page_counter = 'Page ' + page_number + ' of ' + last.getAttribute('data');
-
-                                                                            document.getElementById('id_page_next').setAttribute('data', next_page_number)
-                                                                            if (page_number < data['last_page']) {
-                                                                                next.innerText = 'next';
-                                                                                last.innerHTML = 'last &raquo';
-                                                                            }
-
-                                                                            if (data['current_page'] === '1') {
-                                                                                first.innerHTML = '';
-                                                                                previous.innerText = '';
-                                                                            }
-
-
-                                                                        } else if (call_type === 'last') {
-                                                                            first.innerHTML = '&laquo first ';
-                                                                            previous.innerText = 'previous';
-                                                                            next.innerText = '';
-                                                                            last.innerText = '';
-                                                                            page_counter = 'Page ' + last.getAttribute('data') + ' of ' + last.getAttribute('data');
-                                                                            document.getElementById('id_page_next').setAttribute('data', (parseInt(last.getAttribute('data')) + 1).toString())
-
-                                                                        } else if (call_type === 'next') {
-                                                                            var current_page = data['current_page']
-                                                                            page_number = (parseInt(data['current_page']) + 1).toString();
-                                                                            page_counter = 'Page ' + current_page + ' of ' + last.getAttribute('data');
-
-                                                                            document.getElementById('id_page_next').setAttribute('data', page_number)
-
-                                                                            if (page_number > data['last_page']) {
-                                                                                next.innerText = '';
-                                                                                last.innerText = '';
-                                                                            }
-
-                                                                            if (data['current_page'] !== 1) {
-                                                                                first.innerHTML = '&laquo first ';
-                                                                                previous.innerText = 'previous';
-                                                                            }
-
-                                                                        }
-                                                                        document.getElementById('id_page_current').innerText = page_counter
-                                                                    }
-                                                                });
-                                                            }
-
-                                                            var nav_tags_added = false;
-
-                                                            $("#id_page_first").click(function () {
-                                                                nav_tags_added = false;
-                                                                CallMethod('1', 'first')
-                                                            })
-
-                                                            $("#id_page_previous").click(function () {
-                                                                var page_number = document.getElementById('id_page_next').getAttribute('data');
-                                                                page_number = (parseInt(page_number) - 2).toString();
-                                                                if (page_number < 1) {
-                                                                    page_number = 1;
-                                                                }
-                                                                CallMethod(page_number, 'previous');
-                                                            })
-
-                                                            $("#id_page_next").click(function () {
-                                                                var page_number = $(this).attr('data');
-
-                                                                if (!nav_tags_added) {
-                                                                    nav_tags_added = true;
-                                                                    AddNavTags();
-                                                                }
-
-                                                                CallMethod(page_number, 'next');
-
-                                                            })
-
-                                                            $("#id_page_last").click(function () {
-                                                                var last_page = $(this).attr('data')
-
-                                                                if (!nav_tags_added) {
-                                                                    nav_tags_added = true;
-                                                                    AddNavTags();
-                                                                }
-                                                                CallMethod(last_page, 'last');
-                                                            });
-
-                                                    </script>
-
-                                                    </span>
+                                                        </span>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -467,5 +296,11 @@
                 {% endif %}
             </div>
         </div>
+        <script>
+            var ajax_trap_view_url = "{%  url 'ajax_trap_view' %}"
+            var ajax_trap_engine_url = "{% url 'ajax_trap_engine' %}"
+        </script>
+        <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+        <script src="{% static 'manage_app/js/manage_network.js' %}"></script>
 
 {% endblock %}

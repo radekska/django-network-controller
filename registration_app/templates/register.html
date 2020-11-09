@@ -8,22 +8,15 @@
                     <form class="form-example" action="" method="post"> {% csrf_token %}
                         <div class="card-header">
                             <h1 class="card-title">Register an account by filling fields below</h1>
-                            {% if form.errors %}
-                                {% for field in form %}
-                                    {% for error in field.errors %}
-                                        <h2 class="card-category">
-                                            <span class="text-danger">{{ field.name }} - {{ error }}</span>
-                                        </h2>
-                                    {% endfor %}
-                                {% endfor %}
-                            {% endif %}
                         </div>
                         <div class="card-body">
                             <div class="form-group row">
-
                                 <label for="username" class="col-sm-3 col-form-label">Username:</label>
                                 <div class="col-sm-9">
-
+                                    {% if error_username_message %}
+                                        <span class="text-danger"
+                                              style="padding-left: 10px">{{ error_username_message.0.message }}</span>
+                                    {% endif %}
                                     <input type="text" class="form-control username" id="username"
                                            placeholder="Username..."
                                            name="username">
@@ -31,9 +24,12 @@
 
                             </div>
                             <div class="form-group row">
-                                <label for="password1" class="col-sm-3 col-form-label">Password:</label>
+                                <label for="password" class="col-sm-3 col-form-label">Password:</label>
                                 <div class="col-sm-9">
-
+                                    {% if error_password_message %}
+                                        <span class="text-danger"
+                                              style="padding-left: 10px">{{ error_password_message.0.message }}</span>
+                                    {% endif %}
                                     <input type="password" class="form-control password" id="password1"
                                            placeholder="Password..."
                                            name="password1">
@@ -41,9 +37,13 @@
                             </div>
 
                             <div class="form-group row">
-                                <label for="password2" class="col-sm-3 col-form-label">Confirm Password:</label>
+                                <label for="password_confirm" class="col-sm-3 col-form-label">Confirm Password:</label>
                                 <div class="col-sm-9">
                                     <div class="form-group">
+                                        {% if error_password_confirm %}
+                                            <span class="text-danger"
+                                                  style="padding-left: 10px">{{ error_password_confirm.0.message }}</span>
+                                        {% endif %}
                                         <input type="password" class="form-control password" id="password2"
                                                placeholder="Confirm Password..."
                                                name="password2">
