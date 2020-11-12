@@ -42,7 +42,10 @@ class TrapEngine:
             reqPDU = pMod.apiMessage.getPDU(reqMsg)
 
             if reqPDU.isSameTypeWith(pMod.TrapPDU()):
-                trap_date = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+                trap_date = datetime.now()
+                trap_date = trap_date.replace(hour=datetime.now().hour + 1)
+                trap_date = trap_date.strftime("%m/%d/%Y, %H:%M:%S")
+
                 trap_domain = transportDomain
                 trap_address = transportAddress[0]
                 trap_port = transportAddress[1]

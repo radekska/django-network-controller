@@ -5,12 +5,10 @@ import logging
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 from django.core import serializers
-from django.http import JsonResponse, Http404, HttpResponse
-from django.views.generic import DetailView, ListView, TemplateView
-from django.views.generic.detail import SingleObjectTemplateResponseMixin
+from django.http import JsonResponse, Http404
+from django.views.generic import ListView, View
 
 # Models
 from config_app.models import ConfigParameters, SNMPConfigParameters
@@ -20,7 +18,6 @@ from manage_app.models import DeviceModel, DeviceInterface, DeviceTrapModel, Var
 from visualize_app.backend.NetworkMapper import NetworkMapper
 from .backend.DeviceManager import DeviceManager
 from .backend.parse_model import parse_and_save_to_database, parse_trap_model
-from .backend.webssh import main
 from WebAppLAN_MonitorDjango.utils import get_available_devices
 
 # Celery tasks
@@ -31,18 +28,7 @@ task = None
 paginator = None
 
 
-class JSONResponseMixin(object):
-    # a mixin that can be used to render a JSON response
-    response_class = HttpResponse
 
-    def render_to_response(self, context, **response_kwargs):
-        # returns a JSON response, transforming 'context' to make the payload
-        response_kwargs['content_type'] = 'application/json'
-        return self.response_class(self.convert_context_to_json(context), **response_kwargs)
-
-    def convert_context_to_json(self, context):
-        # this would need to be a bit more complex if we're dealing with more complicated variables
-        return json.dumps(context)
 
 
 #
@@ -150,23 +136,10 @@ def manage_network_view(request):
     return render(request, 'manage_network.html', context)
 
 
-class AjaxTrapEngine(JSONResponseMixin, TemplateView):
-    template_name = 'manage_network.html'
-
-    def post(self, request, *args, **kwargs):
-        # self._get_config_details(request)
-        # if 'start_trap_engine' in request.POST and self.traps_enabled and not self.traps_engine_running:
-        #     self._post_start_trap_engine()
-        # elif 'stop_trap_engine' in request.POST and self.traps_enabled and self.traps_engine_running:
-        #     self._post_stop_trap_engine()
-
-        print(request.is_ajax())
-        json_data = ajax_trap_engine(request)
-        print(json_data)
-        return self.render_to_response(json_data)
 
 
-class ManageNetworkView(AjaxTrapEngine, ListView):
+
+class ManageNetworkView(ListView):
     template_name = 'manage_network.html'
     model = User
 
@@ -198,7 +171,11 @@ class ManageNetworkView(AjaxTrapEngine, ListView):
             self.warning_status_message = 'No trap data found.'
         else:
             self.page_object = paginator.page(1)
-        self.next_page = self.page_object.has_next()
+
+        try:
+            self.next_page = self.page_object.has_next()
+        except Exception as exception:
+            logging.warning(exception)
 
     def _refresh_device_list(self, request):
         DeviceModel.objects.all().delete()
@@ -246,6 +223,9 @@ class ManageNetworkView(AjaxTrapEngine, ListView):
             page_object=self.page_object,
             next_page=self.next_page
         )
+
+        # self.snmp_config.traps_activated = False
+        # self.snmp_config.save()
 
         return render(request, self.template_name, context)
 
@@ -301,8 +281,8 @@ def ajax_trap_view(request):
 
         json_data = {
             'trap_json_data': trap_json_data,
-            'page_has_next': page_object.has_next(),
-            'page_has_previous': page_object.has_previous(),
+            # 'page_has_next': page_object.has_next(),
+            # 'page_has_previous': page_object.has_previous(),
             'current_page': page_number,
             'last_page': paginator.num_pages
         }
@@ -311,15 +291,3 @@ def ajax_trap_view(request):
         raise Http404
 
 
-# @login_required(redirect_field_name='')
-def ajax_trap_engine(request):
-    snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
-
-    snmp_config = SNMPConfigParameters.objects.get(id=snmp_config_id)
-    traps_engine_running = snmp_config.traps_activated
-    snmp_config.traps_activated = True
-    snmp_config.save()
-
-    json_data = dict(traps_engine_running=traps_engine_running)
-
-    return json_data

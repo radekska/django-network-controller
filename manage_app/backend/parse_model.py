@@ -54,8 +54,6 @@ def format_lldp_data(devices):
         for key, value in device.lldp_data.items():
             all_lldp_data.setdefault(key, []).append(value)
 
-    print(all_lldp_data)
-
     for device in devices:
         lldp_local_hostname = device.system.full_system_name  # CoreSwitch1
         lldp_neighbor_correlations = all_lldp_data[lldp_local_hostname][0]

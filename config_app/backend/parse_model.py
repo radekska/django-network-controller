@@ -53,7 +53,6 @@ def parse_snmp_config(object_id):
     configure_commands.append("lldp run")
 
     if snmp_config.enable_traps:
-        # configure_commands.append("{basic_command} enable traps".format(basic_command=basic_command))
         configure_commands.append("{basic_command} enable traps syslog".format(basic_command=basic_command))
     if snmp_config.server_location:
         configure_commands.append("{basic_command} location {loaction}".format(basic_command=basic_command,
@@ -70,13 +69,6 @@ def parse_snmp_config(object_id):
             basic_command=basic_command, user=snmp_config.snmp_user, group=snmp_config.group_name,
             auth_protocol=snmp_config.snmp_auth_protocol, privacy_protocol=snmp_config.snmp_privacy_protocol,
             password=snmp_config.snmp_password, encrypt_key=snmp_config.snmp_encrypt_key))
-
-    # configure_commands.append("{basic_command} trap link ietf".format(basic_command=basic_command))
-
-    # configure_commands.append("{basic_command} host {host} version 3 priv {user}".format(basic_command=basic_command,
-    #                                                                                      host=snmp_config.snmp_host,
-    #
-    #                                                                                      user=snmp_config.snmp_user))
 
     configure_commands.append("logging history debugging")
     configure_commands.append("logging snmp-trap 0 7")
