@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block manage_network %}
+    <link rel="stylesheet" href="{% static 'manage_app/xterm/node_modules/xterm/css/xterm.css' %}"/>
 
     <div class="container">
         {% if error_status_message %}
@@ -87,7 +88,7 @@
                                             <input type="submit" name="get_devices_details" value="Refresh List"
                                                    class="btn btn-primary btn-customized"
                                                    onclick="ScanningLabel();"
-                                                   >
+                                            >
                                         </div>
                                     </form>
                                 </div>
@@ -294,17 +295,59 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
+                    </div>
+
+                </div>
+
+                <div class="card">
+                    <div class="card-body">
+                        <div id="terminal"></div>
+
                     </div>
                 </div>
             {% endif %}
+
+
         </div>
+
     </div>
+
+
     <script>
         var ajax_trap_view_url = "{%  url 'ajax_trap_view' %}"
         var ajax_trap_engine_url = "{% url 'ajax_trap_engine' %}"
     </script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="{% static 'manage_app/xterm/node_modules/xterm/lib/xterm.js' %}"></script>
+    <script>
+
+
+        var term = new Terminal();
+        var char_buffer = '';
+
+        term.open(document.getElementById('terminal'));
+        term.write("Hello world!")
+
+
+        {#TEST #}
+        term.onKey(function (data) {
+            char_buffer += data.key
+            if (data.key === '\r'){
+                data.key += '\n'
+                char_buffer += data.key
+                {#term onKey wpisuje do consoli / frontendu, jutro przekminic dokladnie web socketa tak zeby mozna bylo wpisywac znaki na backend.#}
+                {#potem w django otwierasz sesjie (paramiko, netmiko - do przekminki) potem przekazujesz znaki/cale stringi z frontendu na backend a z backendu na server ssh (CISCO BOX)#}
+                console.log(char_buffer)
+                char_buffer = ''
+            }
+            term.write(data.key)
+        })
+
+    </script>
     <script src="{% static 'manage_app/js/manage_network.js' %}"></script>
+
+
 
 {% endblock %}

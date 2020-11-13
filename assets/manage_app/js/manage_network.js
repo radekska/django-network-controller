@@ -1,3 +1,4 @@
+
 function AddNavTags() {
     var first_nav_tag = document.getElementById('id_page_first');
     var previous_nav_tag = document.getElementById('id_page_previous');
@@ -238,3 +239,4 @@ $("#id_start_trap_engine").click(function () {
 $("#id_stop_trap_engine").click(function () {
     EngineCallMethod('stop')
 })
+

@@ -28,9 +28,6 @@ task = None
 paginator = None
 
 
-
-
-
 #
 # Create your views here.
 @login_required(redirect_field_name='')
@@ -134,9 +131,6 @@ def manage_network_view(request):
         'page_object': page_object
     }
     return render(request, 'manage_network.html', context)
-
-
-
 
 
 class ManageNetworkView(ListView):
@@ -291,3 +285,5 @@ def ajax_trap_view(request):
         raise Http404
 
 
+def test_view(request):
+    return render(request, 'test.html', {})

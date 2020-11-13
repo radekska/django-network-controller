@@ -4,13 +4,13 @@ import ssl
 import sys
 
 from tornado.options import define
-from manage_app.backend.webssh.policy import (
+from webssh.policy import (
     load_host_keys, get_policy_class, check_policy_setting
 )
-from manage_app.backend.webssh.utils import (
+from webssh.utils import (
     to_ip_address, parse_origin_from_url, is_valid_encoding
 )
-from manage_app.backend.webssh._version import __version__
+from webssh._version import __version__
 
 
 def print_version(flag):
@@ -20,9 +20,9 @@ def print_version(flag):
 
 
 define('address', default='', help='Listen address')
-define('port', type=int, default=8888, help='Listen port')
+define('port', type=int, default=8888,  help='Listen port')
 define('ssladdress', default='', help='SSL listen address')
-define('sslport', type=int, default=4433, help='SSL listen port')
+define('sslport', type=int, default=4433,  help='SSL listen port')
 define('certfile', default='', help='SSL certificate file')
 define('keyfile', default='', help='SSL private key file')
 define('debug', type=bool, default=False, help='Debug mode')
@@ -54,6 +54,7 @@ Example: --encoding='utf-8' to solve the problem with some switches&routers''')
 define('version', type=bool, help='Show version information',
        callback=print_version)
 
+
 base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 font_dirs = ['webssh', 'static', 'css', 'fonts']
 max_body_size = 1 * 1024 * 1024
@@ -65,12 +66,10 @@ class Font(object):
         self.family = self.get_family(filename)
         self.url = self.get_url(filename, dirs)
 
-    @staticmethod
-    def get_family(filename):
+    def get_family(self, filename):
         return filename.split('.')[0]
 
-    @staticmethod
-    def get_url(filename, dirs):
+    def get_url(self, filename, dirs):
         return os.path.join(*(dirs + [filename]))
 
 

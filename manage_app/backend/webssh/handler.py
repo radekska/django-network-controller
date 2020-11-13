@@ -12,12 +12,12 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado.ioloop import IOLoop
 from tornado.options import options
 from tornado.process import cpu_count
-from manage_app.backend.webssh.utils import (
+from webssh.utils import (
     is_valid_ip_address, is_valid_port, is_valid_hostname, to_bytes, to_str,
     to_int, to_ip_address, UnicodeType, is_ip_hostname, is_same_primary_domain,
     is_valid_encoding
 )
-from manage_app.backend.webssh.worker import Worker, recycle_worker, clients
+from webssh.worker import Worker, recycle_worker, clients
 
 try:
     from json.decoder import JSONDecodeError
@@ -458,7 +458,6 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
             raise ValueError('Bad host key.')
 
         term = self.get_argument('term', u'') or u'xterm'
-
         chan = ssh.invoke_shell(term=term)
         chan.setblocking(0)
         worker = Worker(self.loop, ssh, chan, dst_addr)
@@ -493,7 +492,6 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
             raise ValueError('Uncaught exception')
 
         ip, port = self.get_client_addr()
-        print(ip, port)
         workers = clients.get(ip, {})
         if workers and len(workers) >= options.maxconn:
             raise tornado.web.HTTPError(403, 'Too many live connections.')
@@ -505,7 +503,6 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
         except InvalidValueError as exc:
             raise tornado.web.HTTPError(400, str(exc))
 
-        print(args)
         future = self.executor.submit(self.ssh_connect, args)
 
         try:
@@ -522,7 +519,6 @@ class IndexHandler(MixinHandler, tornado.web.RequestHandler):
                                  worker)
             self.result.update(id=worker.id, encoding=worker.encoding)
 
-        print(self.result)
         self.write(self.result)
 
 
@@ -575,7 +571,6 @@ class WsockHandler(MixinHandler, tornado.websocket.WebSocketHandler):
                 pass
 
         data = msg.get('data')
-        print(data)
         if data and isinstance(data, UnicodeType):
             worker.data_to_dst.append(data)
             worker.on_write()

@@ -1,15 +1,12 @@
-import asyncio
 import logging
 import tornado.web
 import tornado.ioloop
 
-from tornado.platform.asyncio import AnyThreadEventLoopPolicy
 from tornado.options import options
-
-from manage_app.backend.webssh import handler
-from manage_app.backend.webssh.handler import IndexHandler, WsockHandler, NotFoundHandler
-from manage_app.backend.webssh.settings import (
-    get_app_settings, get_host_keys_settings, get_policy_setting,
+from webssh import handler
+from webssh.handler import IndexHandler, WsockHandler, NotFoundHandler
+from webssh.settings import (
+    get_app_settings,  get_host_keys_settings, get_policy_setting,
     get_ssl_context, get_server_settings, check_encoding_setting
 )
 
@@ -28,7 +25,6 @@ def make_handlers(loop, options):
 
 def make_app(handlers, settings):
     settings.update(default_handler_class=NotFoundHandler)
-    print(settings)
     return tornado.web.Application(handlers, **settings)
 
 
@@ -47,10 +43,7 @@ def app_listen(app, port, address, server_settings):
 def main():
     options.parse_command_line()
     check_encoding_setting(options.encoding)
-
-    asyncio.set_event_loop_policy(AnyThreadEventLoopPolicy())
     loop = tornado.ioloop.IOLoop.current()
-
     app = make_app(make_handlers(loop, options), get_app_settings(options))
     ssl_ctx = get_ssl_context(options)
     server_settings = get_server_settings(options)
@@ -58,12 +51,8 @@ def main():
     if ssl_ctx:
         server_settings.update(ssl_options=ssl_ctx)
         app_listen(app, options.sslport, options.ssladdress, server_settings)
-
     loop.start()
-    # return loop
-    # loop.close()
 
 
-#
 if __name__ == '__main__':
     main()
