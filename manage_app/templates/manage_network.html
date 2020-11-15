@@ -323,27 +323,64 @@
     <script src="{% static 'manage_app/xterm/node_modules/xterm/lib/xterm.js' %}"></script>
     <script>
 
-
-        var term = new Terminal();
-        var char_buffer = '';
-
-        term.open(document.getElementById('terminal'));
-        term.write("Hello world!")
+        console.log(window.location)
+        var loc = window.location
 
 
-        {#TEST #}
-        term.onKey(function (data) {
-            char_buffer += data.key
-            if (data.key === '\r'){
-                data.key += '\n'
-                char_buffer += data.key
-                {#term onKey wpisuje do consoli / frontendu, jutro przekminic dokladnie web socketa tak zeby mozna bylo wpisywac znaki na backend.#}
-                {#potem w django otwierasz sesjie (paramiko, netmiko - do przekminki) potem przekazujesz znaki/cale stringi z frontendu na backend a z backendu na server ssh (CISCO BOX)#}
-                console.log(char_buffer)
-                char_buffer = ''
+        if (loc.search !== '') {
+            var term = new Terminal({
+                cursorBlink: 'block'
+            })
+
+            var ws_start = 'ws://'
+            if (loc.proto === 'https:') {
+                ws_start = 'wss://'
             }
-            term.write(data.key)
-        })
+            var ws_endpoint = ws_start + loc.host + loc.pathname + loc.search
+            var socket = new WebSocket(ws_endpoint)
+
+            let char_buffer = ''
+
+            socket.onmessage = function (e) {
+                console.log("message", e)
+                term.write(e.data)
+            }
+
+            socket.onopen = function (e) {
+                console.log("message", e)
+
+                term.onKey(data => {
+                        console.log(data)
+                        if (data.domEvent.key === 'Backspace') {
+                            char_buffer = char_buffer.slice(0, -1)
+                            term.write("\b \b")
+                        } else if (data.domEvent.key === 'Enter') {
+                            term.write("\r\n")
+                            socket.send(char_buffer + '\n')
+                            char_buffer = ''
+                        } else {
+                            term.write(data.key)
+                            char_buffer += data.key
+                        }
+
+
+                    }
+                )
+                ;
+            }
+
+            socket.onerror = function (e) {
+                console.log("message", e)
+            }
+            socket.onclose = function (e) {
+                console.log("message", e)
+            }
+
+
+            term.open(document.getElementById('terminal'));
+
+
+        }
 
     </script>
     <script src="{% static 'manage_app/js/manage_network.js' %}"></script>

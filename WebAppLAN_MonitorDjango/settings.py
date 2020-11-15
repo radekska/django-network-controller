@@ -24,9 +24,7 @@ SECRET_KEY = 'e)93^yn(n%1o+(ty1$*b(92n#ysl1$y@!=dra^!_h6z1uy=+lp'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    'c6effa9779ab.ngrok.io']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -46,6 +44,8 @@ INSTALLED_APPS = [
     'dashboard_app',
     'visualize_app',
     'manage_app',
+    # web socket module
+    'channels'
 ]
 
 MIDDLEWARE = [
@@ -59,6 +59,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'WebAppLAN_MonitorDjango.urls'
+
+# Routing file for channels / converter from WSGI to ASGI
+ASGI_APPLICATION = 'WebAppLAN_MonitorDjango.routing.application'
+
 
 TEMPLATES = [
     {
@@ -77,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'WebAppLAN_MonitorDjango.wsgi.application'
+# WSGI_APPLICATION = 'WebAppLAN_MonitorDjango.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
