@@ -92,7 +92,8 @@ def parse_and_save_to_database(devices, user):
             'system_location': device.system.system_location,
             'system_up_time': parse_up_time(device.system.system_up_time),
             'if_number': device.if_number,
-            'device_type': device_type
+            'device_type': device_type,
+            'hostname': device.system.hostname,
         }
 
         dev_model = DeviceModel(**device_model)

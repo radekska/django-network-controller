@@ -17,6 +17,7 @@ class DeviceModel(models.Model):
     system_up_time = models.CharField(max_length=100, default=None, null=True)
     if_number = models.IntegerField(default=None, null=True)
     device_type = models.CharField(max_length=10, default=None, null=True)
+    hostname = models.CharField(max_length=30, default=None, null=True)
 
 
 class DeviceInterface(models.Model):

@@ -14,7 +14,7 @@ class DeviceManager:
 
     def __get_single_device_details(self, hostname):
         session = Session(hostname=hostname, **self.session_parameters)
-        device = Device(session)
+        device = Device(hostname, session)
         return device
 
     def get_multiple_device_details(self):
@@ -32,12 +32,13 @@ class DeviceManager:
 
 
 class DeviceSystem_:
-    def __init__(self, session):
+    def __init__(self, hostname, session):
         self.system_description = session.get(('sysDescr', 0)).value
         self.system_contact = session.get(('sysContact', 0)).value
         self.full_system_name = session.get(('sysName', 0)).value
         self.system_location = session.get(('sysLocation', 0)).value
         self.system_up_time = session.get(('sysUpTime', 0)).value
+        self.hostname = hostname
 
 
 class DeviceInterface_:
@@ -68,9 +69,10 @@ class DeviceInterface_:
 
 
 class Device:
-    def __init__(self, session):
+    def __init__(self, hostname, session):
+        self.hostname = hostname
         self.session = session
-        self.system = DeviceSystem_(self.session)
+        self.system = DeviceSystem_(self.hostname, self.session)
         self.if_number = int(self.session.get(('ifNumber', 0)).value)
         self.interfaces = [DeviceInterface_(number, self.session) for number in range(1, self.if_number + 1)]
         self.lldp_data = self.__get_lldp_entries()

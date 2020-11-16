@@ -1,4 +1,3 @@
-
 function AddNavTags() {
     var first_nav_tag = document.getElementById('id_page_first');
     var previous_nav_tag = document.getElementById('id_page_previous');
@@ -240,3 +239,85 @@ $("#id_stop_trap_engine").click(function () {
     EngineCallMethod('stop')
 })
 
+var ssh_session_button = $('#id_ssh_session').click(function () {
+    console.log(window.location)
+    var loc = window.location
+
+
+    if (loc.search !== '') {
+        var term = new Terminal({
+            cursorBlink: 'block',
+        })
+
+        var ws_start = 'ws://'
+        if (loc.proto === 'https:') {
+            ws_start = 'wss://'
+        }
+        var ws_endpoint = ws_start + loc.host + loc.pathname + loc.search
+        var socket = new WebSocket(ws_endpoint)
+
+        let char_buffer = ''
+        var stdin_allowed = true
+
+        socket.onmessage = function (e) {
+            console.log("message", e)
+            term.write(e.data)
+        }
+
+        socket.onerror = function (e) {
+            console.log("message", e)
+        }
+        socket.onclose = function (e) {
+            stdin_allowed = false
+            console.log(e)
+        }
+
+        socket.onopen = function (e) {
+            stdin_allowed = true
+            console.log("message", e)
+
+            term.onKey(data => {
+                    if (stdin_allowed) {
+                        console.log(data)
+                        if (data.domEvent.key === 'Backspace') {
+                            char_buffer = char_buffer.slice(0, -1)
+                            term.write("\b \b")
+                        } else if (data.domEvent.key === 'Enter') {
+                            char_buffer += '\n'
+                            console.log(char_buffer, char_buffer.length)
+                            if (char_buffer === 'exit\n') {
+                                term.write('\r\nClosing SSH session...')
+                                socket.send(char_buffer)
+                                socket.close()
+                            } else if (char_buffer === 'clear\n') {
+                                term.clear()
+                            } else {
+                                socket.send(char_buffer)
+
+                            }
+
+
+                            term.write('\r')
+                            char_buffer = ''
+                        } else {
+                            if (data.domEvent.key !== 'ArrowDown' && data.domEvent.key !== 'ArrowUp') {
+                                term.write(data.key)
+                                if (data.domEvent.key !== 'ArrowLeft' && data.domEvent.key !== 'ArrowRight') {
+                                    char_buffer += data.key
+                                }
+                            }
+
+                        }
+                    }
+
+                }
+            )
+            ;
+        }
+
+
+        term.open(document.getElementById('terminal'));
+
+    }
+
+})
