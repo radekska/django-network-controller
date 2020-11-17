@@ -17,6 +17,7 @@ class ConfigParameters(models.Model):
     network_device_os = models.CharField(max_length=50)
     
     snmp_config_id = models.IntegerField(default=None, null=True)
+    access_config_id = models.IntegerField(default=None, null=True)
 
 
 class AvailableDevices(models.Model):

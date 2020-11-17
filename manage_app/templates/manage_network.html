@@ -106,12 +106,18 @@
                                     <h1 class="card-title">{{ device_detail_output.system_name }} - Remote Control</h1>
                                 {% endif %}
                             </div>
-                            <div class="col">
-                                <input type="submit" id="id_ssh_session" value="Start SSH Session"
-                                       class="btn btn-primary btn-customized"
-                                       style="margin: 20px;position: absolute; right: 0;">
-                                <input type="hidden" name="run_ssh_session"
-                                       value="{{ device_detail_output.hostname }}">
+                            <div class="col" id="id_session_buttons">
+                                {% if not device_detail_output.ssh_session %}
+                                    <input type="submit" id="id_ssh_session_start" value="Start SSH Session"
+                                           class="btn btn-primary btn-customized"
+                                           style="margin: 20px;position: absolute; right: 0;">
+                                {% elif device_detail_output.ssh_session %}
+                                    <input type="submit" id="id_ssh_session_stop" value="Stop SSH Session"
+                                           class="btn btn-primary btn-customized"
+                                           style="margin: 20px;position: absolute; right: 0;">
+
+                                {% endif %}
+
                             </div>
                         </div>
                     </div>
@@ -299,10 +305,16 @@
     <script>
         var ajax_trap_view_url = "{%  url 'ajax_trap_view' %}"
         var ajax_trap_engine_url = "{% url 'ajax_trap_engine' %}"
+        var ajax_ssh_url = "{% url 'ajax_ssh_session' %}"
     </script>
     <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
     <script src="{% static 'manage_app/xterm/node_modules/xterm/lib/xterm.js' %}"></script>
-    <script src="{% static 'manage_app/js/manage_network.js' %}"></script>
+    <script src="{% static 'manage_app/xterm-fit/node_modules/xterm-addon-fit/lib/xterm-addon-fit.js' %}"></script>
+
+    <script src="{% static 'manage_app/js/pages.js' %}"></script>
+    <script src="{% static 'manage_app/js/ssh_session.js' %}"></script>
+    <script src="{% static 'manage_app/js/trap_engine.js' %}"></script>
+
 
 
 

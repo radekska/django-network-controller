@@ -71,15 +71,15 @@ def config_network_view(request):
             output = connection.connect_and_configure_multiple(config_commands=snmp_config_commands)
             ConfigParameters.objects.all().update(snmp_config_id=None)
 
-            config_model = ConfigParameters.objects.filter(id=access_cf_obj_id)[0]
+            config_model = ConfigParameters.objects.get(id=access_cf_obj_id)
             config_model.snmp_config_id = snmp_cf_obj_id
+            config_model.access_config_id = access_cf_obj_id
             config_model.save()
 
         else:
             output = connection.connect_and_configure_multiple(config_commands=snmp_config_commands,
                                                                type_of_change='rollback')
             ConfigParameters.objects.all().update(snmp_config_id=None)
-
 
         error_status_message_list = list(filter(lambda conn: conn[2] == 'error', output))
         success_status_message_list = list(filter(lambda conn: conn[2] == 'success', output))

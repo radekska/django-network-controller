@@ -19,6 +19,8 @@ class DeviceModel(models.Model):
     device_type = models.CharField(max_length=10, default=None, null=True)
     hostname = models.CharField(max_length=30, default=None, null=True)
 
+    ssh_session = models.BooleanField(null=True, default=False)
+
 
 class DeviceInterface(models.Model):
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)

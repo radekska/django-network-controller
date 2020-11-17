@@ -28,8 +28,6 @@ task = None
 paginator = None
 
 
-#
-# Create your views here.
 @login_required(redirect_field_name='')
 def manage_network_view(request):
     global ssh_session, task, paginator
@@ -190,7 +188,7 @@ class ManageNetworkView(ListView):
 
     def _get_config_details(self, request):
         self.user = User.objects.get(username=request.user)
-        self.snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
+        self.snmp_config_id = ConfigParameters.objects.get(snmp_config_id__isnull=False).snmp_config_id
 
         self.snmp_config = SNMPConfigParameters.objects.get(id=self.snmp_config_id)
         self.traps_enabled = self.snmp_config.enable_traps
@@ -218,49 +216,8 @@ class ManageNetworkView(ListView):
             next_page=self.next_page
         )
 
-        # self.snmp_config.traps_activated = False
-        # self.snmp_config.save()
-
         return render(request, self.template_name, context)
 
-    #     # self._get_config_details(request)
-    #     # if 'start_trap_engine' in request.POST and self.traps_enabled and not self.traps_engine_running:
-    #     #     self._post_start_trap_engine()
-    #     # elif 'stop_trap_engine' in request.POST and self.traps_enabled and self.traps_engine_running:
-    #     #     self._post_stop_trap_engine()
-    #
-    #     print(request.is_ajax())
-    #     json_data = ajax_trap_engine(request)
-    #     print(json_data)
-    #     return self.render_to_response(json_data)
-
-    # def _post_start_trap_engine(self):
-    #     global task
-    #     snmp_host = self.snmp_config.snmp_host
-    #
-    #     privacy_protocol = self.snmp_config.snmp_privacy_protocol.replace(' ', '')
-    #     session_parameters = {
-    #         'hostname': None,
-    #         'version': 3,
-    #         'security_level': 'auth_with_privacy',
-    #         'security_username': self.snmp_config.snmp_user,
-    #         'privacy_protocol': privacy_protocol,
-    #         'privacy_password': self.snmp_config.snmp_encrypt_key,
-    #         'auth_protocol': self.snmp_config.snmp_auth_protocol,
-    #         'auth_password': self.snmp_config.snmp_password
-    #     }
-    #
-    #     task = tasks.run_trap_engine.delay(snmp_host, session_parameters)
-    #
-    #     self.snmp_config.traps_activated = True
-    #     self.snmp_config.save()
-
-    # def _post_stop_trap_engine(self):
-    #     global task
-    #     task.revoke(terminate=True, signal='SIGUSR1')
-    #
-    #     self.snmp_config.traps_activated = False
-    #     self.snmp_config.save()
 
 
 @login_required(redirect_field_name='')
