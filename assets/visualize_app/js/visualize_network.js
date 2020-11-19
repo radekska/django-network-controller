@@ -17,65 +17,6 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
-function OnClickDetails(deviceid) {
-    //alert("devicedetails: " + deviceid);
-    //usage:
-
-    // #############################
-    // # READING NEIGHBORS         #
-    // #############################
-    readTextFile(neighbors, function (text) {
-        var data = JSON.parse(text);
-        console.log(data);
-        console.log(deviceid);
-
-        bFoundMatch = 0;
-        for (var key in data) {
-            console.log("Key: " + key + " vs " + deviceid);
-
-            if ((deviceid.localeCompare(key)) === 0) {
-                console.log("match!");
-                bFoundMatch = 1;
-                text = tableFromNeighbor(key, data);
-
-                printToDivWithID("infobox", "<h2><u>" + key + "</u></h2>" + text);
-            }
-        }
-        if (!(bFoundMatch)) {
-            warning_text = "<h4>The selected device id: ";
-            warning_text += deviceid;
-            warning_text += " is not in database!</h4>";
-            warning_text += "This is most probably as you clicked on edge node ";
-            warning_text += "that is not NETCONF data gathered, try clicking on its neighbors.";
-            printToDivWithID("infobox", warning_text);
-        }
-    });
-
-    // ####################################
-    // # READING NEIGHBOR-LESS INTERFACES #
-    // ####################################
-    readTextFile(no_neighbor_interfaces, function (text) {
-        var data = JSON.parse(text);
-        console.log(data);
-        console.log(deviceid);
-
-        bFoundMatch = 0;
-        for (var key in data) {
-            console.log("Key: " + key + " vs " + deviceid);
-
-            if ((deviceid.localeCompare(key)) === 0) {
-                console.log("match!");
-                bFoundMatch = 1;
-                text = tableFromUnusedInterfaces(key, data);
-                printToDivWithID("infobox2", "<font color=\"red\">Enabled Interfaces without LLDP Neighbor:</font><br>" + text);
-            }
-        }
-        if (!(bFoundMatch)) {
-            printToDivWithID("infobox2", "");
-        }
-    });
-}
-
 // ####################################
 // # using input parameters returns
 // # HTML table with these inputs

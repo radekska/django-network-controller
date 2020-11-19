@@ -58,10 +58,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'WebAppLAN_MonitorDjango.urls'
+ROOT_URLCONF = 'main_app.urls'
 
 # Routing file for channels / converter from WSGI to ASGI
-ASGI_APPLICATION = 'WebAppLAN_MonitorDjango.routing.application'
+ASGI_APPLICATION = 'main_app.routing.application'
 
 
 TEMPLATES = [
@@ -81,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-# WSGI_APPLICATION = 'WebAppLAN_MonitorDjango.wsgi.application'
+# WSGI_APPLICATION = 'main_app.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
@@ -133,7 +133,6 @@ STATICFILES_DIRS = (
 
 )
 LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/configcreate'
 
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_CACHE_BACKEND = 'django-cache'

@@ -2,7 +2,10 @@ import json
 import ipcalc
 import subprocess
 import threading
+import logging
 from queue import Queue
+
+from config_app.models import AvailableDevices
 
 
 def convert_mask(config):
@@ -24,7 +27,8 @@ def ping_ip(current_ip_address):
         else:
             return current_ip_address, True
 
-    except Exception:
+    except Exception as e:
+        logging.warning(e)
         return current_ip_address, False
 
 
@@ -68,3 +72,7 @@ def connect_and_get_output(device):
     else:
         json_output = json.dumps(output, indent=5)
         return json_output
+
+
+def get_available_devices():
+    return [host.network_address for host in AvailableDevices.objects.all()]

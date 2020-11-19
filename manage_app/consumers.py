@@ -28,31 +28,34 @@ class SSHConsumer(AsyncConsumer):
             access_config_id__isnull=False)
         self.access_config_id = self.access_config_model.access_config_id
 
+        initial_data = dict(response=f'\r\nOpening SSH session to {self.device_model.hostname}... \r\n')
+
         await self.send({
             'type': 'websocket.send',
-            'text': f'\r\nOpening SSH session to {self.device_model.hostname}... \r\n'
+            'text': json.dumps(initial_data)
         })
 
         self.SSHConnection = await SSHConnectionHandler.initialize_connection(self.device_id, self.access_config_id)
-        initial_response = await self.SSHConnection.read_from_connection(self.SSHConnection)
+        data = await self.SSHConnection.read_from_connection(self.SSHConnection)
         await asyncio.sleep(1)
 
         await self.send({
             'type': 'websocket.send',
-            'text': initial_response
+            'text': json.dumps(data),
+
         })
 
     async def websocket_receive(self, event):
         command = event.get('text', None)
 
-        responded_lines, response = await asyncio.gather(
+        responded_lines, response_and_prompt = await asyncio.gather(
             self.SSHConnection.write_to_connection(self.SSHConnection, command),
             self.SSHConnection.read_from_connection(self.SSHConnection))
 
-        if response is not False:
+        if response_and_prompt is not False:
             await self.send({
                 'type': 'websocket.send',
-                'text': response
+                'text': json.dumps(response_and_prompt)
             })
 
     async def websocket_disconnect(self, event):

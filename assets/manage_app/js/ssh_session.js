@@ -2,6 +2,7 @@ let socket = null
 let term = new Terminal({
     cursorBlink: 'block',
 })
+term.resize(117, 24)
 
 
 var ssh_buttons = document.getElementById('id_session_buttons')
@@ -37,10 +38,15 @@ function SSHCallMethod(loc, button) {
 
                     let char_buffer = ''
                     var stdin_allowed = true
+                    var response_data = null
+                    var prompt = null
 
                     socket.onmessage = function (e) {
                         console.log("message", e)
-                        term.write(e.data)
+                        response_data = JSON.parse(e.data)
+                        var response = response_data.response
+                        prompt = response_data.current_prompt
+                        term.write('\r'+response)
                     }
 
                     socket.onerror = function (e) {
@@ -57,13 +63,13 @@ function SSHCallMethod(loc, button) {
 
                         term.onKey(data => {
                                 if (stdin_allowed) {
-                                    console.log(data)
                                     if (data.domEvent.key === 'Backspace') {
-                                        char_buffer = char_buffer.slice(0, -1)
-                                        term.write("\b \b")
+                                        if (term.buffer.active.cursorX > prompt.length) {
+                                            char_buffer = char_buffer.slice(0, -1)
+                                            term.write("\b \b")
+                                        }
                                     } else if (data.domEvent.key === 'Enter') {
                                         char_buffer += '\n'
-                                        console.log(char_buffer, char_buffer.length)
                                         if (char_buffer === 'exit\n') {
                                             term.write('\r\nClosing SSH session...')
                                             socket.send(char_buffer)
@@ -74,8 +80,6 @@ function SSHCallMethod(loc, button) {
                                             socket.send(char_buffer)
 
                                         }
-
-
                                         term.write('\r')
                                         char_buffer = ''
                                     } else {
@@ -153,6 +157,5 @@ $('#id_ssh_session_start').click(function () {
 
 $('#id_ssh_session_stop').click(function () {
     var loc = window.location
-    console.log("IM CLOSING CONNECTION")
     SSHCallMethod(loc, 'stop')
 })

@@ -20,7 +20,7 @@ def parse_initial_config(object_id):
         }
     }
 
-    config_obj = ConfigParameters.objects.filter(id=object_id)[0]
+    config_obj = ConfigParameters.objects.get(id=object_id)
 
     config["user"]["username"] = config_obj.login_username
     config["user"]["password"] = config_obj.login_password

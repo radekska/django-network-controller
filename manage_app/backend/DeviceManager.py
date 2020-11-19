@@ -1,7 +1,7 @@
 from threading import Thread
 from queue import Queue
 from easysnmp import Session
-from config_app.backend.utils import get_thread_output
+from config_app.backend.helpers import get_thread_output
 from manage_app.backend import parse_model, static
 
 

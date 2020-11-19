@@ -22,13 +22,16 @@ class SSHConnectionHandler:
             secret=self.conf_model.login_password
         )
 
-        self.connection = netmiko.BaseConnection(**login_params)
-        self.connection.set_terminal_width('511')
-        self.connection.write_channel('terminal length 0\n')
+        try:
+            self.connection = netmiko.BaseConnection(**login_params)
+            self.connection.set_terminal_width('511')
+            self.connection.write_channel('terminal length 0\n')
 
-        logging.warning(f'Successfully opened SSH session with {self.device_model.hostname}:22.')
+            logging.warning(f'Successfully opened SSH session with {self.device_model.hostname}:22.')
 
-        return self
+            return self
+        except Exception as e:
+            logging.warning(e)
 
     @staticmethod
     async def write_to_connection(self, command_string):
@@ -39,11 +42,14 @@ class SSHConnectionHandler:
     async def read_from_connection(self):
         try:
             response = self.connection.read_until_prompt()
+            current_prompt = self.connection.find_prompt()
             response_in_lines = response.split('\n')
             response_in_lines.pop(0)
 
             response = '\n' + '\n'.join(response_in_lines)
-            return response
+            data = dict(response=response, current_prompt=current_prompt)
+
+            return data
         except Exception as e:
             logging.warning(e)
             return False

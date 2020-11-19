@@ -11,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('', views.dashboard_view, name='dashboard'),
-    path('config_network/', config_app.views.config_network_view, name='config_network'),
+    path('config_network/', login_required(config_app.views.ConfigNetworkView.as_view()), name='config_network'),
     path('manage_network/', login_required(manage_app.views.ManageNetworkView.as_view()), name='manage_network'),
     path('manage_network/ajax/pages/', manage_app.views.ajax_trap_view, name='ajax_trap_view'),
     path('manage_network/ajax/engine/', login_required(manage_app.backend.mixins.AjaxTrapEngineView.as_view()), name='ajax_trap_engine'),
