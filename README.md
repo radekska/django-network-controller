@@ -1,3 +1,3 @@
-# WebApp-LAN_MonitorDjango
+# Network Monitor App - Engineer's Thesis Project
 
 Working ...
