@@ -2,9 +2,7 @@ import logging
 import asyncio
 import json
 from asgiref.sync import sync_to_async
-from django.contrib.auth import get_user_model
 from channels.consumer import AsyncConsumer
-from channels.db import database_sync_to_async
 
 from manage_app.backend.ConnectionHandler import SSHConnectionHandler
 

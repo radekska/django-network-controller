@@ -1,5 +1,4 @@
 from manage_app.backend.mixins.JSONResponseMixin import JSONResponseMixin
-from config_app.models import ConfigParameters, SNMPConfigParameters
 from manage_app.models import DeviceModel
 
 from django.views.generic import View

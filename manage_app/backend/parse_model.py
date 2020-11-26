@@ -1,5 +1,4 @@
 import re
-import logging
 from datetime import datetime, timedelta
 from manage_app.models import DeviceModel, DeviceInterface
 from config_app.models import SNMPConfigParameters

@@ -2,7 +2,7 @@ from manage_app.backend.mixins.JSONResponseMixin import JSONResponseMixin
 from config_app.models import ConfigParameters, SNMPConfigParameters
 
 from django.views.generic import View
-from django.http import JsonResponse, Http404
+from django.http import Http404
 from manage_app.backend import tasks
 
 task = None

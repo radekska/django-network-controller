@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core import serializers
 from django.http import JsonResponse, Http404
-from django.views.generic import ListView, View
+from django.views.generic import ListView
 
 # Models
 from config_app.models import ConfigParameters, SNMPConfigParameters
@@ -21,8 +21,6 @@ from .backend.parse_model import parse_and_save_to_database, parse_trap_model
 from config_app.backend.helpers import get_available_devices
 
 # Celery tasks
-from .backend import tasks
-
 ssh_session = None
 task = None
 paginator = None
