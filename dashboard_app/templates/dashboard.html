@@ -1,13 +1,127 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block dashboard %}
 
+    {% if dashboard_only %}
+        <div class="container">
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title text-info"> Network Monitor App - Introduction</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="blockquote blockquote-primary"> This web application has been made as a engineer's
+                            thesis project and the main purpose of it, is to present skills and ideas obtained during
+                            studies on AGH University of Science and Technology in Cracow at Electronics and
+                            Telecommunication department.
+                            <br><br>
+                            Mentioned web application has been designed to monitor, manage and configure computer local
+                            area networks. Project is splited up into three main parts:
+                            <br><br>
+                            - Configuration
+                            <br>
+                            - Management
+                            <br>
+                            - Visualization
+                            <br>
+                            Each of those part are in detail explained below.
+                            <br><br>
+                        </p>
+                        <i>For source code and full project description check out the github repository with the
+                            link given at the bottom of this page.</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title text-info">Configure Section</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>The main and only purpose of this part of the project is to find, access and configure
+                            network devices with SNMPv3 protocol, specified in firstly created <i>Access Config</i>
+                            which includes parameters
+                            such as:</p>
+                        <ul>
+                            <li>Login Username</li>
+                            <li>Login Password</li>
+                            <li>Secret Password</li>
+                            <li>Subnet CIDR</li>
+                            <li>Device OS</li>
+                        </ul>
+                        <p>Next part of it is a <i>SNMP Config</i> which is used to generate proper Cisco IOS
+                            configuration and apply it remotely on device(s) in order to properly use <i>Mange
+                                Section.</i> It includes parameters such as:</p>
+                        <ul>
+                            <p class="text-success"> Mandatory </p>
+                            <li>Group Name</li>
+                            <li>SNMP User</li>
+                            <li>SNMP Password</li>
+                            <li>SNMP Encrypt Key</li>
+                            <li>SNMP Host</li>
+                            <li>SNMP Authentication Protocol</li>
+                            <li>SNMP Privacy Protocol</li>
+                            <li>Server Location</li>
+                            <p class="text-info"> Optional </p>
+                            <li>Contact Details</li>
+                            <li>Enable Traps Functionality</li>
+                        </ul>
+                        <p>This section includes as well two tables with created configurations for visibility.</p>
+                        <p>Last part of this section is to choosing right configurations which should be applied on
+                            network devices, scanning local network for available devices and then finally applying
+                            mentioned SNMPv3 configurations.</p>
+
+
+                        <i>More detailed description can be found on a github project repository.</i>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Manage Section</h2>
+                    </div>
+                    <div class="card-body">
+                        bbbb
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">Visualize Section</h2>
+                    </div>
+                    <div class="card-body">
+                        bbbb
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col text-center">
+                <a href="https://github.com/radekska/WebApp-LAN_MonitorDjango">
+                    <img alt="W3Schools" src="{% static 'dashboard_app/img/github.png' %}" width="80"
+                         height="40" style="margin-right: 10px">
+                </a>
+
+                <a href="https://www.linkedin.com/in/rskałbania/">
+                    <img alt="W3Schools" src="{% static 'dashboard_app/img/linkedin.png' %}" width="40"
+                         height="40" style="margin-left: 10px">
+                </a>
+            </div>
+        </div>
+
+
+    {% endif %}
+
+
+
     <div class="container-fluid">
+
         <div class="wrapper">
-
-            {% block visualize %}
-            {% endblock %}
-
             <div class="row">
                 <div class="col-sm-2 col-md-3 sidebar">
 
@@ -55,6 +169,8 @@
 
                     </div>
                 </div>
+                {% block visualize %}
+                {% endblock %}
 
                 {% block manage_network %}
                 {% endblock %}
@@ -64,5 +180,6 @@
 
             </div>
         </div>
+
     </div>
 {% endblock %}
