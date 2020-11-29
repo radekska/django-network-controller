@@ -1,6 +1,7 @@
 import manage_app.views , manage_app.backend.mixins
+import visualize_app.views, visualize_app.backend.mixins
 import config_app.views
-import visualize_app.views
+
 
 from . import views
 from django.urls import path
@@ -17,5 +18,5 @@ urlpatterns = [
     path('manage_network/ajax/engine/', login_required(manage_app.backend.mixins.AjaxTrapEngineView.as_view()), name='ajax_trap_engine'),
     path('manage_network/ajax/ssh/', login_required(manage_app.backend.mixins.AjaxSSHSessionView.as_view()), name='ajax_ssh_session'),
     path('visualize_network/', login_required(visualize_app.views.VisualizeNetworkView.as_view()), name='visualize_network'),
-
+    path('visualize_network/ajax/neighbors', login_required(visualize_app.backend.mixins.AjaxDeviceNeighborsView.as_view()), name='ajax_device_neighbors')
 ]

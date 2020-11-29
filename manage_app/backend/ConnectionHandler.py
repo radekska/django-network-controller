@@ -1,6 +1,4 @@
-import asyncio
 import netmiko
-import time
 import logging
 from asgiref.sync import sync_to_async
 from manage_app.models import DeviceModel

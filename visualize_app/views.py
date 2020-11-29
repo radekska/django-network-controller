@@ -48,29 +48,29 @@ class VisualizeNetworkView(ListView):
     device_model = None
     lldp_neighbor_details = None
 
-    def _get_device_detail(self, request):
-        device_id = request.GET.get('device_id')
-        self.device_model = DeviceModel.objects.get(id=device_id)
-
-        device_interfaces = DeviceInterface.objects.filter(device_model=self.device_model)
-        device_interfaces = list(
-            filter(lambda interface: interface.lldp_neighbor_hostname is not None, device_interfaces))
-
-        neighbor_system_names = [neighbor.lldp_neighbor_hostname for neighbor in device_interfaces]
-        neighbor_devices = list()
-
-        for system_name in neighbor_system_names:
-            neighbor_device = DeviceModel.objects.get(full_system_name=system_name)
-            neighbor_devices.append(neighbor_device)
-
-        self.lldp_neighbor_details = zip(device_interfaces, neighbor_devices)
+    # def _get_device_detail(self, request):
+    #     device_id = request.GET.get('device_id')
+    #     self.device_model = DeviceModel.objects.get(id=device_id)
+    #
+    #     device_interfaces = DeviceInterface.objects.filter(device_model=self.device_model)
+    #     device_interfaces = list(
+    #         filter(lambda interface: interface.lldp_neighbor_hostname is not None, device_interfaces))
+    #
+    #     neighbor_system_names = [neighbor.lldp_neighbor_hostname for neighbor in device_interfaces]
+    #     neighbor_devices = list()
+    #
+    #     for system_name in neighbor_system_names:
+    #         neighbor_device = DeviceModel.objects.get(full_system_name=system_name)
+    #         neighbor_devices.append(neighbor_device)
+    #
+    #     self.lldp_neighbor_details = zip(device_interfaces, neighbor_devices)
 
     def get(self, request, *args, **kwargs):
         my_map = NetworkMapper()
         my_map.generate_graph_data()
 
-        if 'device_id' in request.GET:
-            self._get_device_detail(request)
+        # if 'device_id' in request.GET:
+        #     self._get_device_detail(request)
 
         context = dict(
             device_model=self.device_model,

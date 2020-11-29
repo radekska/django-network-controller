@@ -1,10 +1,8 @@
-// =============================
-// PRINTING DEVICE DETAILS TABLE
-// =============================
+// PRINTING DEVICE DETAILS
+var card_object = document.getElementById('id_card')
 
-// ====================
+
 // READING OF JSON FILE
-// ====================
 function readTextFile(file, callback) {
     var rawFile = new XMLHttpRequest();
     rawFile.overrideMimeType("application/json");
@@ -17,67 +15,6 @@ function readTextFile(file, callback) {
     rawFile.send(null);
 }
 
-// ####################################
-// # using input parameters returns
-// # HTML table with these inputs
-// ####################################
-function tableFromUnusedInterfaces(key, data) {
-    text = "<table class=\"infobox2\">";
-    text += "<thead><th><u><h4>LOCAL INT.</h4></u></th><th><u><h4>DESCRIPTION</h4></u></th><th><u><h4>Bandwith</h4></u></th>";
-    text += "</thead>";
-
-    for (var neighbor in data[key]) {
-        text += "<tr>";
-
-        console.log("local_intf:" + data[key][neighbor]['local_intf']);
-        text += "<td>" + data[key][neighbor]['local_intf'] + "</td>";
-        console.log("description:" + data[key][neighbor]['description']);
-        text += "<td>" + data[key][neighbor]['description'] + "</td>";
-        console.log("actual_bandwith:" + data[key][neighbor]['actual_bandwith']);
-        text += "<td>" + data[key][neighbor]['actual_bandwith'] + "</td>";
-
-        text += "</tr>";
-    }
-
-    text += "</table>";
-
-    return text;
-}
-
-// ####################################
-// # using input parameters returns
-// # HTML table with these inputs
-// ####################################
-function tableFromNeighbor(key, data) {
-    text = "<table class=\"infobox\">";
-    text += "<thead><th><u><h4>LOCAL INT.</h4></u></th><th><u><h4>NEIGHBOR</h4></u></th><th><u><h4>NEIGHBOR'S INT</h4></u></th>";
-    text += "</thead>";
-
-    for (var neighbor in data[key]) {
-        text += "<tr>";
-
-        console.log("local_intf:" + data[key][neighbor]['local_intf']);
-        text += "<td>" + data[key][neighbor]['local_intf'] + "</td>";
-        console.log("neighbor_intf:" + data[key][neighbor]['neighbor_intf']);
-        text += "<td>" + data[key][neighbor]['neighbor'] + "</td>";
-        console.log("neighbor:" + data[key][neighbor]['neighbor']);
-        text += "<td>" + data[key][neighbor]['neighbor_intf'] + "</td>";
-
-        text += "</tr>";
-    }
-
-    text += "</table>";
-
-    return text;
-}
-
-// ####################################
-// # replaces content of specified DIV
-// ####################################
-function printToDivWithID(id, text) {
-    div = document.getElementById(id);
-    div.innerHTML = text;
-}
 
 // ########
 // # MAIN #
@@ -124,14 +61,15 @@ d3.json(graph_data_path, function (error, graph) {
         .selectAll("a")
         .data(graph.nodes).enter()
         .append("a")
-        .attr("xlink:href", function (d){
-            return "?device_id=" + d.object_id
-        })
+        .attr("xlink:href", "#")
 
 
     node.on("click", function (d) {
-        document.getElementById('device_post').value = d.object_id
-        return document.getElementById('form-id').submit()
+        var data = {
+            'device_id': d.object_id,
+            'device_name': d.id
+        }
+        GetDeviceNeighbors(data)
     })
 
 
@@ -213,4 +151,75 @@ function dragended(d) {
     if (!d3.event.active) simulation.alphaTarget(0);
     d.fx = null;
     d.fy = null;
+}
+
+function GetDeviceNeighbors(initial_data) {
+    console.log(initial_data)
+    $.ajax({
+        type: 'GET',
+        url: ajax_device_neighbors_url,
+        data: {
+            'device_id': initial_data['device_id'],
+        },
+        dataType: 'json',
+        success: function (received_data) {
+
+            var card_header = document.getElementById('id_card_header')
+            var card_body_out = document.getElementById('id_card_body_out')
+
+
+            if (card_header !== null && card_body_out !== null) {
+                card_header.remove()
+                card_body_out.remove()
+            }
+
+
+            card_header = document.createElement('div')
+            card_header.setAttribute('class', 'card-header')
+            card_header.setAttribute('id', 'id_card_header')
+
+            card_body_out = document.createElement('div')
+            card_body_out.setAttribute('class', 'card-body')
+            card_body_out.setAttribute('id', 'id_card_body_out')
+
+
+            var card_tittle = document.createElement('h1')
+            card_tittle.setAttribute('class', 'card-title')
+
+
+            var card_colored_tittle = document.createElement('b')
+            card_colored_tittle.setAttribute('class', 'text-info')
+            card_colored_tittle.innerHTML = initial_data['device_name'] + ' #' + initial_data['device_id']
+            card_tittle.innerHTML = 'Device Neighbors - '
+            card_tittle.appendChild(card_colored_tittle)
+            card_header.appendChild(card_tittle)
+
+            var content = ''
+            for (var i = 0; i < received_data.length; i++) {
+                content += `
+                <div class="col">
+                    <div class="card">
+                        <div class="card-body">
+                            <p><b class="text-info">Remote Device Type : </b>${received_data[i]['device_type']}</p>
+                            <p><b class="text-info">Remote Name : </b>${received_data[i]['system_name']}</p>
+                            <p><b class="text-info">Remote Interface</b>: ${received_data[i]['lldp_neighbor_interface']}</p>
+                            <p><b class="text-info">Local Interface</b> : ${received_data[i]['interface_description']}</p>
+                            <p><b class="text-info">Remote IP Address: </b>${received_data[i]['hostname']}</p>
+                        </div>
+                    </div>
+                </div>`
+                console.log(content)
+
+            }
+            card_body_out.innerHTML = content
+            console.log(received_data)
+
+            console.log(card_body_out)
+            card_object.appendChild(card_header)
+            card_object.appendChild(card_body_out)
+
+
+        }
+    })
+
 }

@@ -1,4 +1,4 @@
-from manage_app.backend.mixins.JSONResponseMixin import JSONResponseMixin
+from main_app.mixins.JSONResponseMixin import JSONResponseMixin
 from config_app.models import ConfigParameters, SNMPConfigParameters
 
 from django.views.generic import View

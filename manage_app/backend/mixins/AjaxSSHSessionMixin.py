@@ -1,14 +1,13 @@
-from manage_app.backend.mixins.JSONResponseMixin import JSONResponseMixin
+from main_app.mixins.JSONResponseMixin import JSONResponseMixin
 from manage_app.models import DeviceModel
 
 from django.views.generic import View
-from django.http import JsonResponse, Http404
+from django.http import Http404
 
 
 class AjaxSSHSessionView(JSONResponseMixin, View):
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
-            print(request.POST)
             device_id = request.POST.get('device_id', None)
             method = request.POST.get('button')
             if device_id:

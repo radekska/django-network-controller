@@ -1,3 +1,2 @@
-from .JSONResponseMixin import JSONResponseMixin
 from .AjaxTrapViewMixin import AjaxTrapEngineView
 from .AjaxSSHSessionMixin import AjaxSSHSessionView
