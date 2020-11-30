@@ -5,6 +5,16 @@ from queue import Queue
 
 
 class ConfigManager:
+    """
+    This class connects to all devices specified in available_hosts list
+    and configure them with given SNMP configuration.
+
+    Constructor positional arguments:
+    - initial_config_data -- dictionary with device parameters
+    - login_params -- dictionary with access device details
+    - available_hosts -- list of LAN available devices
+    """
+
     def __init__(self, initial_config_data, login_params, available_hosts):
         self.initial_config_data = initial_config_data
         self.login_params = login_params

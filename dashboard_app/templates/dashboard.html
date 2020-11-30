@@ -83,7 +83,25 @@
                         <h2 class="card-title">Manage Section</h2>
                     </div>
                     <div class="card-body">
-                        bbbb
+                        <p>This section is focused on providing details about our local area network. We can also use it
+                            to manage and configure specific devices via web-based SSH terminal session. <br><br>
+
+                            The first part of this section is designed with two main buttons - "Refresh List" and
+                            "Start/Stop Trap Engine" button. First one runs a SNMP query to all devices in our local
+                            network
+                            and then populates table with received data.
+                            Second button allows to monitor network by using SNMP traps (works only if "enable traps"
+                            field was marked in configure section). When user clicks on specific device name new fields
+                            will pop up. First field is for generating and establishing remote SSH session with chosen
+                            device. User can easily configure device or check it's details without using third party
+                            terminals. Second field provides device details based on system and interfaces MIBs. Third
+                            tab includes table which is populated with mentioned earlier SNMP traps when SNMP engine
+                            enabled. <br><br>
+
+                            Manage network section is a core part of this project as user is able to obtain deep details
+                            about specified network.
+                        </p>
+                        <i>More detailed description can be found on a github project repository.</i>
                     </div>
                 </div>
             </div>
@@ -93,7 +111,11 @@
                         <h2 class="card-title">Visualize Section</h2>
                     </div>
                     <div class="card-body">
-                        bbbb
+                        <p>The last, but not least section of this project is focused on generating nice and user
+                            friendly, dynamic network topology with little help of initially configured LLDP protocol.
+                            When user clicks on chosen device new window will pop up with all neighbor(s) details.
+                        </p>
+                        <i>More detailed description can be found on a github project repository.</i>
                     </div>
                 </div>
             </div>

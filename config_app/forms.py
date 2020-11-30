@@ -3,6 +3,17 @@ from .models import ConfigParameters, SNMPConfigParameters
 
 
 class ConfigParametersForm(forms.ModelForm):
+    """
+    This class creates a django form to specify initial configuration parameters.
+    fields:
+    - login_username
+    - login_password
+    - secret
+    - network_ip
+    - subnet_cidr
+    - network_device_os
+    """
+
     class Meta:
         model = ConfigParameters
         fields = [
@@ -21,6 +32,21 @@ class ConfigParametersForm(forms.ModelForm):
 
 
 class SNMPConfigParametersForm(forms.ModelForm):
+    """
+    This class creates a django form to specify SNMP configuration parameters.
+    fields:
+    - server_location
+    - contact_details
+    - enable_traps
+    - group_name
+    - snmp_user
+    - snmp_password
+    - snmp_encrypt_key
+    - snmp_host
+    - snmp_auth_protocol
+    - snmp_privacy_protocol
+    """
+
     server_location = forms.CharField(required=False)
     contact_details = forms.CharField(required=False)
     enable_traps = forms.BooleanField(required=False)
@@ -45,4 +71,3 @@ class SNMPConfigParametersForm(forms.ModelForm):
             'snmp_password': forms.PasswordInput(),
             'snmp_encrypt_key': forms.PasswordInput(),
         }
-

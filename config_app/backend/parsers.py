@@ -3,6 +3,16 @@ from config_app.backend.static import device_os_napalm
 
 
 def parse_initial_config(object_id):
+    """
+    This function formats data which can be easily provided to NAPALM and Netmiko connection/driver objects.
+
+    Positional arguments:
+    - object_id -- specific id for ConfigParameters query.
+
+    Returns:
+    - config -- dictionary with all device access details
+    - login_params -- dictionary with formatted data ready to be applied to napalm or netmiko module
+    """
     config = {
         "user": {
             "username": None,
@@ -46,6 +56,16 @@ def parse_initial_config(object_id):
 
 
 def parse_snmp_config(object_id):
+    """
+    This function takes object_id parameter and generates a SNMP configuration for Cisco IOS devices.
+
+    Positional argument:
+    - object_id -- id of SNMP configuration model object.
+
+    Returns:
+    - napalm_configure_commands -- list of SNMP configure commands
+    """
+
     configure_commands = list()
     snmp_config = SNMPConfigParameters.objects.filter(id=object_id)[0]
     basic_command = "snmp-server"
@@ -84,5 +104,14 @@ def parse_snmp_config(object_id):
 
 
 def remove_snmp_config(object_id):
+    """
+    This function prepares rollback configuration.
+
+    Positional argument:
+    - object_id -- id of SNMP configuration model object.
+
+    Returns:
+    list of rollback commands
+    """
     commands = parse_snmp_config(object_id)
     return ["no {command}".format(command=command) for command in commands]
