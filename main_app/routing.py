@@ -5,6 +5,8 @@ from channels.security.websocket import AllowedHostsOriginValidator, OriginValid
 
 from manage_app.consumers import SSHConsumer
 
+""" Creating ASGI WebSocket url"""
+
 application = ProtocolTypeRouter({
     'websocket': AllowedHostsOriginValidator(
         AuthMiddlewareStack(

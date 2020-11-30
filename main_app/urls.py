@@ -26,18 +26,11 @@ from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
     path('', LoginView.as_view(), name='login'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', login_required(LogoutView.as_view()), name='logout'),
     path('registration/', RegistrationView.as_view(), name='registration'),
-
     path('dashboard/', include('dashboard_app.urls')),
-
-
-    # Built in path to login view
-    # path('', include('django.contrib.auth.urls')),
-
 ]
 
 urlpatterns += staticfiles_urlpatterns()
