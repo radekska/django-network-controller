@@ -12,6 +12,15 @@ from manage_app.models import DeviceTrapModel, VarBindModel, DeviceInterface, De
 
 
 class TrapEngine:
+    """
+    This trap engine core class implements all the required behaviour for SNMP traps.
+
+    Constructor Positional Arguments:
+    - snmp_host -- destination IP address for SNMP traps
+    - snmp_port -- destination UDP port address for SNMP traps
+    - snmp_config -- SNMP configuration details for accessing device
+    """
+
     def __init__(self, snmp_host, snmp_host_port, session_parameters):
         self.snmp_host = snmp_host
         self.snmp_host_port = snmp_host_port

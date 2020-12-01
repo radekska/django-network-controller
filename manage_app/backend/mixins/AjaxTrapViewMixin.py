@@ -1,14 +1,18 @@
-from main_app.mixins.JSONResponseMixin import JSONResponseMixin
-from config_app.models import ConfigParameters, SNMPConfigParameters
-
 from django.views.generic import View
 from django.http import Http404
+
+from main_app.mixins.JSONResponseMixin import JSONResponseMixin
+from config_app.models import ConfigParameters, SNMPConfigParameters
 from manage_app.backend import tasks
 
 task = None
 
 
 class AjaxTrapEngineView(JSONResponseMixin, View):
+    """
+    This class based view inherits from JSONResponseMixin and View class. It handles asynchronous POST requests
+    and starts trap engine if AJAX request otherwise raises Http404
+    """
 
     def post(self, request, *args, **kwargs):
         if request.is_ajax():

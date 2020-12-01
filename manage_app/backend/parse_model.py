@@ -5,7 +5,18 @@ from config_app.models import SNMPConfigParameters
 
 
 def parse_to_session_parameters(snmp_config_id):
-    snmp_config = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0]
+    """
+    This function is responsible for parsing django model into easy applicable keyword parameters.
+    (It can be also done by using django serializers)
+
+    Positional Argument:
+    - snmp_config_id -- id which referees to initially provided SNMP configuration
+
+    Returns:
+    - snmp_session_parameters -- dictionary with all SNMP parameters
+    """
+
+    snmp_config = SNMPConfigParameters.objects.get(id=snmp_config_id)
     snmp_session_parameters = {
         'version': 3,
         'security_level': 'auth_with_privacy',
@@ -20,6 +31,15 @@ def parse_to_session_parameters(snmp_config_id):
 
 
 def parse_mac_address(mac_address):
+    """
+    This function parses raw SNMP MAC address into pretty hexadecimal format.
+
+    Positional Argument:
+    - mac_address -- SNMP raw MAC address string
+
+    Returns:
+    - mac_address -- string hexadecimal MAC address
+    """
     mac_address = ['{:02x}'.format(int(ord(val))) for val in mac_address]
     for i in range(2, 6, 3):
         mac_address.insert(i, '.')
@@ -30,13 +50,29 @@ def parse_mac_address(mac_address):
 
 
 def parse_up_time(system_ticks):
+    """
+    Handles conversion of system_tick into string datetime format.
+
+    Positional Arguments:
+    - system_ticks -- device system ticks given as a string
+
+    Returns:
+    - dt -- datetime object converted into string
+    """
     dt = datetime.now() - timedelta(microseconds=int(system_ticks) * 10000)
     dt = dt.strftime("%Y-%m-%d %H:%M:%S")
     return dt
 
 
 def save_to_database_lldp_data(lldp_neighbor_details):
-    current_device = DeviceModel.objects.filter(full_system_name=lldp_neighbor_details['lldp_local_hostname'])[0]
+    """
+    Helper function which handles saving device neighbors to specific model
+
+    Positional Argument:
+    - lldp_neighbor_details -- dictionary with given neighbor details for specific device
+    """
+
+    current_device = DeviceModel.objects.get(full_system_name=lldp_neighbor_details['lldp_local_hostname'])
     current_interfaces = DeviceInterface.objects.filter(device_model=current_device)
 
     current_interface = current_interfaces.filter(interface_description=lldp_neighbor_details['lldp_local_interface'])[
@@ -48,6 +84,14 @@ def save_to_database_lldp_data(lldp_neighbor_details):
 
 
 def format_lldp_data(devices):
+    """
+    This function is includes core algorithm which handles building database correlation between neighbor devices
+    by using LLDP data
+
+    Positional Argument:
+    - devices -- list of all available device instances in specified network.
+    """
+
     all_lldp_data = dict()
     for device in devices:
         for key, value in device.lldp_data.items():
@@ -73,6 +117,13 @@ def format_lldp_data(devices):
 
 
 def parse_and_save_to_database(devices, user):
+    """
+    This function takes devices list of device instances and parse it in order to create models in database.
+
+    Positional Argument:
+    - devices -- list of all available device instances in specified network.
+    """
+
     for device in devices:
         splitted_system_description = device.system.system_description.split(',')
         system_image = splitted_system_description[1].strip().split(' ')[-1].capitalize().replace('(', '').replace(
@@ -133,6 +184,13 @@ def parse_and_save_to_database(devices, user):
 
 
 def parse_trap_model(device_trap_models, trap_data):
+    """
+    This function filters out trap_model from unwanted data.
+
+    Positional Arguments:
+    - device_trap_models -- list of all trap models for specific devices
+    - trap_data -- raw trap data
+    """
 
     for trap_model in device_trap_models:
         filtered_trap_data = trap_data.filter(trap_model=trap_model)

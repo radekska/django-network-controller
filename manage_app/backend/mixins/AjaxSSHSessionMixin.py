@@ -1,11 +1,18 @@
-from main_app.mixins.JSONResponseMixin import JSONResponseMixin
-from manage_app.models import DeviceModel
-
 from django.views.generic import View
 from django.http import Http404
 
+from main_app.mixins.JSONResponseMixin import JSONResponseMixin
+from manage_app.models import DeviceModel
+
 
 class AjaxSSHSessionView(JSONResponseMixin, View):
+    """
+    This class based view inherits from JSONResponseMixin and View class
+    and creates proper method to handle asynchronous POST request for running SSH web terminal session.
+
+    If request is AJAX it returns json object otherwise raises Http404
+    """
+
     def post(self, request, *args, **kwargs):
         if request.is_ajax():
             device_id = request.POST.get('device_id', None)

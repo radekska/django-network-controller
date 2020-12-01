@@ -6,6 +6,17 @@ from manage_app.backend import parse_model, static
 
 
 class DeviceManager:
+    """
+    This class is used to create multiple device objects by retrieving data via SNMP from all device in specified
+    network.
+
+    Constructor Positional Arguments:
+    - user -- django User model object
+    - available_hosts -- list of available IP addresses (network devices)
+    - snmp_config_id -- id which referees to initially provided SNMP configuration
+
+    """
+
     def __init__(self, user, available_hosts, snmp_config_id):
         self.user = user
         self.available_host = available_hosts
@@ -32,6 +43,14 @@ class DeviceManager:
 
 
 class DeviceSystem_:
+    """
+    This class uses easysnmp session object to retrieve all SNMP system MIB data.
+
+    Constructor Positional Arguments:
+    - hostname -- IP address of connected device
+    - session -- easysnmp Session class instance
+    """
+
     def __init__(self, hostname, session):
         self.system_description = session.get(('sysDescr', 0)).value
         self.system_contact = session.get(('sysContact', 0)).value
@@ -42,6 +61,14 @@ class DeviceSystem_:
 
 
 class DeviceInterface_:
+    """
+    This class uses easysnmp session object to retrieve all SNMP interface MIB data.
+
+    Constructor Positional Arguments:
+    - number -- interface number
+    - session -- easysnmp Session class instance
+    """
+
     def __init__(self, number, session):
         self.interface_idx = session.get(('ifName', number)).oid_index
         self.interface_name = session.get(('ifName', number)).value
@@ -69,6 +96,15 @@ class DeviceInterface_:
 
 
 class Device:
+    """
+    This class both DeviceInterface_ and DeviceSystem_ classes to merge together all the data and create one final
+    Device object with neighbor details as well.
+
+    Constructor Positional Arguments:
+    - hostname -- IP address of connected device
+    - session -- easysnmp Session class instance
+    """
+
     def __init__(self, hostname, session):
         self.hostname = hostname
         self.session = session
