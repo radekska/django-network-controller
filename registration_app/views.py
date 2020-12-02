@@ -6,27 +6,11 @@ from django.contrib.auth.models import User
 from django.views.generic import ListView
 
 
-# Create your views here.
-# def registration_view(request):
-#     print(request.POST)
-#     if request.method == 'POST':
-#         form = UserCreationForm(request.POST)
-#
-#         if form.is_valid():
-#             form.save()
-#             username = form.cleaned_data.get('username')
-#             password = form.cleaned_data.get('password1')
-#
-#             user = authenticate(request, username=username, password=password)
-#             login(request, user)
-#             return redirect('/dashboard')
-#     else:
-#         form = UserCreationForm()
-#
-#     return render(request, 'register.html', {'form': form})
-
-
 class RegistrationView(ListView):
+    """
+    This class based view handles all GET/POST synchronous requests for registration section.
+    """
+
     template_name = 'register.html'
     model = User
 
@@ -38,10 +22,8 @@ class RegistrationView(ListView):
         return render(request, self.template_name, context={'form': form})
 
     def post(self, request, *args, **kwargs):
-        print(request.POST)
         form = UserCreationForm(request.POST)
 
-        print(form.is_valid())
         if form.is_valid():
             form.save()
             self.username = form.cleaned_data.get('username')

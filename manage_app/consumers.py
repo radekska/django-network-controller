@@ -1,6 +1,9 @@
+import json
 import logging
 import asyncio
-import json
+
+from django.contrib.auth.models import User
+
 from asgiref.sync import sync_to_async
 from channels.consumer import AsyncConsumer
 
@@ -11,9 +14,15 @@ from manage_app.models import DeviceModel
 
 
 class SSHConsumer(AsyncConsumer):
+    """
+    This class is inherits from AsyncConsumer class from channels.consumer module and it is responsible for handling all
+    asynchronous traffic coming from javascript frontend web socket. (xterm SSH web terminal)
+    """
     socket_opened = False
 
     async def websocket_connect(self, event):
+        self.user = self.scope["user"]
+
         logging.warning(f"Web socket opened - {event}.")
         await self.send({
             'type': 'websocket.accept',
@@ -22,8 +31,12 @@ class SSHConsumer(AsyncConsumer):
         self.device_model = await sync_to_async(DeviceModel.objects.get, thread_sensitive=True)(ssh_session=True)
         self.device_id = self.device_model.id
 
-        self.access_config_model = await sync_to_async(ConfigParameters.objects.get, thread_sensitive=True)(
+        self.user_model = await sync_to_async(User.objects.get, thread_sensitive=True)(
+            username=self.user)
+        self.access_config_model = await sync_to_async(ConfigParameters.objects.filter, thread_sensitive=True)(
             access_config_id__isnull=False)
+        self.access_config_model = await sync_to_async(self.access_config_model.get, thread_sensitive=True)(
+            user=self.user_model)
         self.access_config_id = self.access_config_model.access_config_id
 
         initial_data = dict(response=f'\r\nOpening SSH session to {self.device_model.hostname}... \r\n')

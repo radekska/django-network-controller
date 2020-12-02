@@ -2,8 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# Create your models here.
 class DeviceModel(models.Model):
+    """
+    This class produces DeviceModel table in django database.
+    """
     user = models.ForeignKey(User, on_delete=models.CASCADE, default=None)
 
     system_description = models.CharField(max_length=1000, default=None)
@@ -23,6 +25,10 @@ class DeviceModel(models.Model):
 
 
 class DeviceInterface(models.Model):
+    """
+    This class produces DeviceInterface table in django database.
+    """
+
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING, default=None)
     device_model = models.ForeignKey(DeviceModel, on_delete=models.CASCADE, default=None)
 
@@ -45,6 +51,11 @@ class DeviceInterface(models.Model):
 
 
 class DeviceTrapModel(models.Model):
+    """
+    This class produces DeviceTrapModel table in django database.
+    Used for saving SNMP trap data.
+    """
+
     device_model = models.ForeignKey(DeviceModel, on_delete=models.CASCADE, default=None)
 
     trap_date = models.CharField(max_length=50, default=None, null=True)
@@ -56,6 +67,11 @@ class DeviceTrapModel(models.Model):
 
 
 class VarBindModel(models.Model):
+    """
+    This class produces VarBindModel table in django database.
+    Used for saving SNMP trap data.
+    """
+
     trap_model = models.ForeignKey(DeviceTrapModel, on_delete=models.CASCADE, default=None)
     trap_oid = models.CharField(max_length=30, default=None, null=True)
     trap_data = models.CharField(max_length=200, default=None, null=True)

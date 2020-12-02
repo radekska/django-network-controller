@@ -1,2 +1,2 @@
-from .AjaxTrapViewMixin import AjaxTrapEngineView
+from .AjaxTrapEngineMixin import AjaxTrapEngineView
 from .AjaxSSHSessionMixin import AjaxSSHSessionView

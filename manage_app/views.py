@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core import serializers
 from django.http import JsonResponse, Http404
-from django.views.generic import ListView
+from django.views.generic import ListView, View
 
 # Models
 from config_app.models import ConfigParameters, SNMPConfigParameters
@@ -20,109 +20,18 @@ from .backend.DeviceManager import DeviceManager
 from .backend.parse_model import parse_and_save_to_database, parse_trap_model
 from config_app.backend.helpers import get_available_devices
 
-# Celery tasks
+# Mixins
+from main_app.mixins.JSONResponseMixin import JSONResponseMixin
+
 ssh_session = None
 task = None
 paginator = None
 
 
-# @login_required(redirect_field_name='')
-# def manage_network_view(request):
-#     global ssh_session, task, paginator
-#
-#     device_trap_models = None
-#     device_details_output = None
-#     device_interfaces_output = None
-#     error_status_message = None
-#     page_object = None
-#
-#     user = User.objects.filter(username=request.user)[0]
-#     snmp_config_id = ConfigParameters.objects.filter(snmp_config_id__isnull=False)[0].snmp_config_id
-#
-#     snmp_config = SNMPConfigParameters.objects.filter(id=snmp_config_id)[0]
-#     traps_enabled = snmp_config.enable_traps
-#     traps_engine_running = snmp_config.traps_activated
-#
-#     page_number = request.GET.get('trap_page')
-#
-#     if 'get_devices_details' in request.POST:
-#         DeviceModel.objects.all().delete()
-#         DeviceInterface.objects.all().delete()
-#
-#         available_hosts = get_available_devices()
-#         device = DeviceManager(user, available_hosts, snmp_config_id)
-#         devices_details_output = device.get_multiple_device_details()
-#
-#         my_map = NetworkMapper()
-#         my_map.clear_graph_data()
-#
-#         try:
-#             parse_and_save_to_database(devices_details_output, user)
-#         except Exception as exception:
-#             logging.basicConfig(format='!!! %(asctime)s %(message)s')
-#             logging.warning(exception)
-#             error_status_message = 'System was not able to get all SNMP data - check connection...'
-#
-#     if 'start_trap_engine' in request.POST:
-#         if traps_enabled and not traps_engine_running:
-#             snmp_host = snmp_config.snmp_host
-#
-#             privacy_protocol = snmp_config.snmp_privacy_protocol.replace(' ', '')
-#             session_parameters = {
-#                 'hostname': None,
-#                 'version': 3,
-#                 'security_level': 'auth_with_privacy',
-#                 'security_username': snmp_config.snmp_user,
-#                 'privacy_protocol': privacy_protocol,
-#                 'privacy_password': snmp_config.snmp_encrypt_key,
-#                 'auth_protocol': snmp_config.snmp_auth_protocol,
-#                 'auth_password': snmp_config.snmp_password
-#             }
-#
-#             task = tasks.run_trap_engine.delay(snmp_host, session_parameters)
-#
-#             snmp_config.traps_activated = True
-#             snmp_config.save()
-#
-#     elif 'stop_trap_engine' in request.POST:
-#         if traps_enabled and traps_engine_running:
-#             task.revoke(terminate=True, signal='SIGUSR1')
-#
-#             snmp_config.traps_activated = False
-#             snmp_config.save()
-#
-#     elif 'device_id' in request.GET:
-#         device_id = request.GET.get('device_id')
-#
-#         device_details_output = DeviceModel.objects.filter(id=device_id)[0]
-#         device_interfaces_output = DeviceInterface.objects.filter(device_model_id=device_id)
-#
-#         device_trap_models = DeviceTrapModel.objects.filter(device_model=device_details_output)
-#
-#         trap_data = VarBindModel.objects.all()
-#         parse_trap_model(device_trap_models, trap_data)
-#
-#         paginator = Paginator(list(device_trap_models), 10)
-#         page_number = 1 if page_number is None else page_number
-#         page_object = paginator.page(page_number)
-#
-#
-#     context = {
-#         'ssh_session': ssh_session,
-#         'device_detail_output': device_details_output,
-#         'device_interfaces_output': device_interfaces_output,
-#         'devices_details_output': DeviceModel.objects.all(),
-#         'devices_interfaces_output': DeviceInterface.objects.all(),
-#         'error_status_message': error_status_message,
-#         'traps_engine_running': traps_engine_running,
-#         'traps_enabled': traps_enabled,
-#         'device_trap_models': device_trap_models,
-#         'page_object': page_object
-#     }
-#     return render(request, 'manage_network.html', context)
-
-
 class ManageNetworkView(ListView):
+    """
+    This class based view inherits from ListView and handles all synchronous GET requests issued to manage section.
+    """
     template_name = 'manage_network.html'
     model = User
 
@@ -210,28 +119,27 @@ class ManageNetworkView(ListView):
         return render(request, self.template_name, context)
 
 
+class AjaxTrapView(JSONResponseMixin, View):
+    """
+    This class based view handles all AJAX GET requests for Traps and Events table pagination.
+    """
+    def get(self, request, *args, **kwargs):
+        if request.is_ajax():
+            global paginator
+            page_number = request.GET.get('page_number', None)
 
-@login_required(redirect_field_name='')
-def ajax_trap_view(request):
-    if request.is_ajax():
-        global paginator
-        page_number = request.GET.get('page_number')
-        page_object = paginator.page(page_number)
+            if page_number:
+                page_object = paginator.page(page_number)
 
-        data = serializers.serialize('json', page_object.object_list)
-        trap_json_data = json.loads(data)
+                data = serializers.serialize('json', page_object.object_list)
+                trap_json_data = json.loads(data)
 
-        json_data = {
-            'trap_json_data': trap_json_data,
-            # 'page_has_next': page_object.has_next(),
-            # 'page_has_previous': page_object.has_previous(),
-            'current_page': page_number,
-            'last_page': paginator.num_pages
-        }
-        return JsonResponse(json_data, safe=False)
-    else:
-        raise Http404
+                json_data = dict(
+                    trap_json_data=trap_json_data,
+                    current_page=page_number,
+                    last_page=paginator.num_pages
+                )
+                return self.render_to_response(json_data)
 
-
-def test_view(request):
-    return render(request, 'test.html', {})
+        else:
+            raise Http404
