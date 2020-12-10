@@ -28,6 +28,7 @@ class TrapEngine:
 
         self.udp_domain_name = udp.domainName
         self.udp_socket_transport = udp.UdpSocketTransport
+        self.trap_model_parameters = dict()
 
     def _receive_and_save(self, transportDispatcher, transportDomain, transportAddress, wholeMsg):
 
@@ -64,28 +65,30 @@ class TrapEngine:
                 logging.warning(f'Agent Address: {trap_address}:{trap_port}')
 
                 full_system_name = self._get_system_name(trap_address)
-                device_model = DeviceModel.objects.filter(full_system_name=full_system_name)[0]
+                device_model = DeviceModel.objects.get(full_system_name=full_system_name)
 
-                trap_model_parameters = {
-                    'device_model': device_model,
-                    'trap_domain': trap_domain,
-                    'trap_address': trap_address,
-                    'trap_port': trap_port,
-                    'trap_date': trap_date
-                }
-                trap_model = DeviceTrapModel(**trap_model_parameters)
-                trap_model.save()
+                self.trap_model_parameters = dict(
+                    device_model=device_model,
+                    trap_domain=trap_domain,
+                    trap_address=trap_address,
+                    trap_port=trap_port,
+                    trap_date=trap_date
+                )
                 varBinds = pMod.apiTrapPDU.getVarBinds(reqPDU)
 
-                for trap_oid, trap_data in varBinds:
-                    var_bids_parameters = {
-                        'trap_model': trap_model,
-                        'trap_oid': trap_oid,
-                        'trap_data': trap_data
-                    }
+                if not self._database_validator():
+                    trap_model = DeviceTrapModel(**trap_model_parameters)
+                    trap_model.save()
 
-                    var_bids_model = VarBindModel(**var_bids_parameters)
-                    var_bids_model.save()
+                    for trap_oid, trap_data in varBinds:
+                        var_bids_parameters = {
+                            'trap_model': trap_model,
+                            'trap_oid': trap_oid,
+                            'trap_data': trap_data
+                        }
+
+                        var_bids_model = VarBindModel(**var_bids_parameters)
+                        var_bids_model.save()
 
             else:
                 varBinds = pMod.apiPDU.getVarBinds(reqPDU)
@@ -95,6 +98,13 @@ class TrapEngine:
                 logging.warning('%s = %s' % (oid, val))
 
         return wholeMsg
+
+    def _database_validator(self):
+        return DeviceTrapModel.objects.filter(device_model=self.trap_model_parameters['device_model'],
+                                              trap_domain=self.trap_model_parameters['trap_domain'],
+                                              trap_address=self.trap_model_parameters['trap_address'],
+                                              trap_port=self.trap_model_parameters['trap_port'],
+                                              trap_date=self.trap_model_parameters['trap_date']).exists()
 
     def _get_system_name(self, trap_address):
 

@@ -114,14 +114,13 @@ class Device:
         self.lldp_data = self.__get_lldp_entries()
 
     def __get_lldp_entries(self):
-
+        # THIS FUNCTION WORKS WRONG WHEN INT DESCRIPTIONS ARE ADDED - SOME BACKEND ISSUES WITH EASYSNMP WALK !!!
         lldp_remote_systems_data = self.session.walk(static.lldp_defined_values['lldpRemoteSystemsData'])
 
         lldp_remote_query = {
             'lldp_neighbor_interfaces': list(),
             'lldp_neighbor_hostnames': list(),
         }
-
         for item in lldp_remote_systems_data:
             if static.lldp_defined_values['lldpNeighborInterface'] in item.oid:
                 lldp_remote_query['lldp_neighbor_interfaces'].append(item.value)
@@ -133,10 +132,9 @@ class Device:
         lldp_final_correlation = dict()
 
         for lldp_neighbor_interface, lldp_neigbor_hostname in lldp_neighbor_correlation:
-            lldp_final_correlation[lldp_neighbor_interface] = lldp_neigbor_hostname
+            lldp_final_correlation[lldp_neigbor_hostname] = lldp_neighbor_interface
 
         lldp_final_query = {
             self.system.full_system_name: lldp_final_correlation
         }
-
         return lldp_final_query

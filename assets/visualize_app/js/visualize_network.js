@@ -1,4 +1,3 @@
-// PRINTING DEVICE DETAILS
 var card_object = document.getElementById('id_card')
 
 
@@ -16,16 +15,14 @@ function readTextFile(file, callback) {
 }
 
 
-// ########
-// # MAIN #
-// ########
+// MAIN
 width = window.innerWidth || document.documentElement.clientWidth;
 height = window.innerHeight || document.documentElement.clientHeight;
 
 var svg = d3.select("svg");
 
-d3.select("svg").attr("height", height * 0.9)
-d3.select("svg").attr("width", width * 0.785)
+d3.select("svg").attr("height", height)
+d3.select("svg").attr("width", width)
 
 var color = d3.scaleOrdinal(d3.schemeCategory20);
 
@@ -34,8 +31,7 @@ var simulation = d3.forceSimulation()
         return d.id;
     }).distance(100).strength(0.001))
     .force("charge", d3.forceManyBody().strength(-200).distanceMax(500).distanceMin(50))
-    .force("center", d3.forceCenter(width / 2, height / 2))
-    .force("center", d3.forceCenter((width * 0.8) / 2, height / 2))
+    .force("center", d3.forceCenter(width / 3.5, height / 2))
     .force("collision", d3.forceCollide().radius(35));
 
 // ######################################

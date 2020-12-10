@@ -74,7 +74,6 @@ def save_to_database_lldp_data(lldp_neighbor_details):
 
     current_device = DeviceModel.objects.get(full_system_name=lldp_neighbor_details['lldp_local_hostname'])
     current_interfaces = DeviceInterface.objects.filter(device_model=current_device)
-
     current_interface = current_interfaces.filter(interface_description=lldp_neighbor_details['lldp_local_interface'])[
         0]
     current_interface.lldp_neighbor_hostname = lldp_neighbor_details['lldp_neighbor_hostname']
@@ -100,11 +99,9 @@ def format_lldp_data(devices):
     for device in devices:
         lldp_local_hostname = device.system.full_system_name  # CoreSwitch1
         lldp_neighbor_correlations = all_lldp_data[lldp_local_hostname][0]
-
-        for lldp_neighbor_interface, lldp_neighbor_hostname in lldp_neighbor_correlations.items():
+        for lldp_neighbor_hostname, lldp_neighbor_interface in lldp_neighbor_correlations.items():
             lldp_neighbor = all_lldp_data[lldp_neighbor_hostname]
-
-            for iner_lldp_neighbor_intf, iner_lldp_neighbor_host in lldp_neighbor[0].items():
+            for iner_lldp_neighbor_host, iner_lldp_neighbor_intf in lldp_neighbor[0].items():
                 if iner_lldp_neighbor_host == lldp_local_hostname:
                     lldp_neighbor_details = {
                         'lldp_local_hostname': lldp_local_hostname,
@@ -172,7 +169,6 @@ def parse_and_save_to_database(devices, user):
                     'interface_out_errors': intf.interface_out_errors,
                     'interface_ip': intf.interface_ip
                 }
-
                 interface_model = DeviceInterface(**interface)
                 interface_model.save()
 

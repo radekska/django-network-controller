@@ -101,7 +101,6 @@ class ManageNetworkView(ListView):
     def get(self, request, *args, **kwargs):
         properly_configured = check_if_properly_configured()
 
-        print(properly_configured)
         if not all(properly_configured.values()):
             context = properly_configured
         else:

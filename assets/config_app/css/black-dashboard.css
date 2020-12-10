@@ -233,10 +233,29 @@ img {
 }
 
 svg {
-    overflow: hidden;
-    vertical-align: middle;
-    display: block;
-    position: absolute;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 0.0625rem solid rgba(34, 42, 66, 0.05);
+    border-radius: 0.2857rem;
+}
+
+rect {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 0.0625rem solid rgba(34, 42, 66, 0.05);
+    border-radius: 0.2857rem;
+    fill:#1d253b;
+    stroke:#3e82f3;
+    stroke-width:5;
+    opacity:0.5
 }
 
 table {
