@@ -19,6 +19,7 @@ from visualize_app.backend.NetworkMapper import NetworkMapper
 from .backend.DeviceManager import DeviceManager
 from .backend.parse_model import parse_and_save_to_database, parse_trap_model
 from config_app.backend.helpers import get_available_devices
+from main_app.backend.helpers import check_if_properly_configured
 
 # Mixins
 from main_app.mixins.JSONResponseMixin import JSONResponseMixin
@@ -44,6 +45,9 @@ class ManageNetworkView(ListView):
     device_interfaces_output = None
     error_status_message = None
     warning_status_message = None
+
+    traps_engine_running = None
+    traps_enabled = None
 
     def _get_device_details(self, request):
         device_id = request.GET.get('device_id')
@@ -95,26 +99,34 @@ class ManageNetworkView(ListView):
         self.traps_engine_running = self.snmp_config.traps_activated
 
     def get(self, request, *args, **kwargs):
-        self._get_config_details(request)
+        properly_configured = check_if_properly_configured()
 
-        if 'device_id' in request.GET:
-            self._get_device_details(request)
-            self._get_traps_pages()
-        if 'get_devices_details' in request.GET:
-            self._refresh_device_list(request)
+        print(properly_configured)
+        if not all(properly_configured.values()):
+            context = properly_configured
+        else:
+            self._get_config_details(request)
 
-        context = dict(
-            devices_details_output=DeviceModel.objects.all(),
-            device_trap_models=self.device_trap_models,
-            device_detail_output=self.device_detail_output,
-            device_interfaces_output=self.device_interfaces_output,
-            error_status_message=self.error_status_message,
-            warning_status_message=self.warning_status_message,
-            traps_engine_running=self.traps_engine_running,
-            traps_enabled=self.traps_enabled,
-            page_object=self.page_object,
-            next_page=self.next_page
-        )
+            if 'device_id' in request.GET:
+                self._get_device_details(request)
+                self._get_traps_pages()
+            if 'get_devices_details' in request.GET:
+                self._refresh_device_list(request)
+
+            context = dict(
+                devices_details_output=DeviceModel.objects.all(),
+                device_trap_models=self.device_trap_models,
+                device_detail_output=self.device_detail_output,
+                device_interfaces_output=self.device_interfaces_output,
+                error_status_message=self.error_status_message,
+                warning_status_message=self.warning_status_message,
+                traps_engine_running=self.traps_engine_running,
+                traps_enabled=self.traps_enabled,
+                page_object=self.page_object,
+                next_page=self.next_page,
+                initial_configurations_applied=True,
+                initial_configurations=True,
+            )
 
         return render(request, self.template_name, context)
 
@@ -123,6 +135,7 @@ class AjaxTrapView(JSONResponseMixin, View):
     """
     This class based view handles all AJAX GET requests for Traps and Events table pagination.
     """
+
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             global paginator

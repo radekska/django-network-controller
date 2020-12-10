@@ -4,6 +4,10 @@ from manage_app.models import DeviceModel, DeviceInterface
 
 
 class NetworkMapper:
+    """
+    This class is responsible for generating and parsing data to JSON format to visualize discovered network.
+    """
+
     def __init__(self):
         self.device_models = DeviceModel.objects.all()
 

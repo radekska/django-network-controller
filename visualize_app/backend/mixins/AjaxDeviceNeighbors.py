@@ -7,6 +7,10 @@ from django.forms.models import model_to_dict
 
 
 class AjaxDeviceNeighborsView(JSONResponseMixin, View):
+    """
+    This class based view is responsible for handling AJAX GET requests. It takes from GET request a device_id data
+    and uses it to render neighbors data based on specified (from user perspective - topology clicked) device.
+    """
     def get(self, request, *args, **kwargs):
         if request.is_ajax():
             device_id = request.GET.get('device_id', None)

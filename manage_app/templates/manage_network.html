@@ -5,294 +5,317 @@
     <link rel="stylesheet" href="{% static 'manage_app/xterm/node_modules/xterm/css/xterm.css' %}"/>
 
     <div class="container">
-        {% if error_status_message %}
-            <div class="alert alert-warning alert-dismissible">
-                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                <strong>Warning!</strong> {{ error_status_message }}
-            </div>
-        {% endif %}
-        <div class="row">
-            <div class="card">
-                <div class="card-header">
-                    <div class="row">
-                        <div class="col">
-                            <h1 class="card-title">Manage Network Devices</h1>
-                        </div>
-                        <div class="col" id="trap_buttons">
-                            {% if traps_enabled and not traps_engine_running %}
-                                <div class="col">
-                                    <input type="submit" id="id_start_trap_engine" name="start_trap_engine"
-                                           value="Start Trap Engine"
-                                           class="btn btn-primary btn-customized"
-                                           style="margin: 20px;position: absolute; right: 0;">
-                                </div>
-                            {% elif traps_enabled and traps_engine_running %}
-                                <div class="col">
-                                    <input type="submit" id="id_stop_trap_engine" name="stop_trap_engine"
-                                           value="Stop Trap Engine"
-                                           class="btn btn-primary btn-customized"
-                                           style="margin: 20px;position: absolute; right: 0;">
-                                </div>
-                            {% endif %}
-                        </div>
+        {% if initial_configurations and initial_configurations_applied %}
 
-                    </div>
-
+            {% if error_status_message %}
+                <div class="alert alert-warning alert-dismissible">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <strong>Warning!</strong> {{ error_status_message }}
                 </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col">
-                            <div class="row">
-                                <div class="col">
-                                    <table class="table">
-                                        <thead>
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Device Name</th>
-                                            <th scope="col">Device Type</th>
-                                            <th scope="col">Management IP</th>
-                                            <th scope="col">No. Interfaces</th>
-                                            <th scope="col">Software</th>
-                                            <th scope="col">System Version</th>
-                                            <th scope="col">Location</th>
-                                        </tr>
-                                        </thead>
-
-                                        <tbody>
-                                        {% for device in devices_details_output %}
-                                            <tr>
-                                                <th scope="row">{{ device.id }}</th>
-                                                <td>
-                                                    <a href="?device_id={{ device.id }}">{{ device.system_name }}
-                                                    </a>
-                                                <td><p class="text-info">{{ device.device_type }} </p></td>
-                                                <td>{{ device.hostname }}</td>
-                                                <td>{{ device.if_number }}</td>
-                                                <td>{{ device.system_image }}</td>
-                                                <td>{{ device.system_version }}</td>
-                                                <td>{{ device.system_location }}</td>
-
-                                            </tr>
-                                        {% endfor %}
-                                        </tbody>
-                                    </table>
-
-                                </div>
+            {% endif %}
+            <div class="row">
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col">
+                                <h1 class="card-title">Manage Network Devices</h1>
                             </div>
-                            <div class="row">
-                                <form action="" method="get">
+                            <div class="col" id="trap_buttons">
+                                {% if traps_enabled and not traps_engine_running %}
                                     <div class="col">
-                                    <span class="text-info" id="scanning_span"
-                                          style="font-size: 15px"></span>
-                                        <input type="submit" name="get_devices_details" value="Refresh List"
+                                        <input type="submit" id="id_start_trap_engine" name="start_trap_engine"
+                                               value="Start Trap Engine"
                                                class="btn btn-primary btn-customized"
-                                               onclick="ScanningLabel();"
-                                        >
+                                               style="margin: 20px;position: absolute; right: 0;">
                                     </div>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% if device_detail_output or page_object %}
-            <div class="row">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="row">
-                            <div class="col">
-                                {% if device_detail_output %}
-                                    <h1 class="card-title">{{ device_detail_output.system_name }} - Remote Control</h1>
+                                {% elif traps_enabled and traps_engine_running %}
+                                    <div class="col">
+                                        <input type="submit" id="id_stop_trap_engine" name="stop_trap_engine"
+                                               value="Stop Trap Engine"
+                                               class="btn btn-primary btn-customized"
+                                               style="margin: 20px;position: absolute; right: 0;">
+                                    </div>
                                 {% endif %}
                             </div>
-                            <div class="col" id="id_session_buttons">
-                                {% if not device_detail_output.ssh_session %}
-                                    <input type="submit" id="id_ssh_session_start" value="Start SSH Session"
-                                           class="btn btn-primary btn-customized"
-                                           style="margin: 20px;position: absolute; right: 0;">
-                                {% elif device_detail_output.ssh_session %}
-                                    <input type="submit" id="id_ssh_session_stop" value="Stop SSH Session"
-                                           class="btn btn-primary btn-customized"
-                                           style="margin: 20px;position: absolute; right: 0;">
 
-                                {% endif %}
-
-                            </div>
                         </div>
+
                     </div>
                     <div class="card-body">
-                        <div id="terminal"></div>
-
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="card">
-                    <div class="card-header">
                         <div class="row">
                             <div class="col">
-                                <h3 class="card-title"> Device Details </h3>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <ul class="nav nav-tabs" id="device_details" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" id="system-tab" data-toggle="tab" href="#system"
-                                   role="tab"
-                                   aria-controls="home" aria-selected="true">System</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="interfaces-tab" data-toggle="tab" href="#interfaces"
-                                   role="tab"
-                                   aria-controls="profile" aria-selected="false">Interfaces</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" id="logs-tab" data-toggle="tab" href="#logs" role="tab"
-                                   aria-controls="profile" aria-selected="false">Traps and Events</a>
-                            </li>
-                        </ul>
-                        <div class="tab-content" id="device_details_content">
+                                <div class="row">
+                                    <div class="col">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">ID</th>
+                                                <th scope="col">Device Name</th>
+                                                <th scope="col">Device Type</th>
+                                                <th scope="col">Management IP</th>
+                                                <th scope="col">No. Interfaces</th>
+                                                <th scope="col">Software</th>
+                                                <th scope="col">System Version</th>
+                                                <th scope="col">Location</th>
+                                            </tr>
+                                            </thead>
 
-                            <div class="tab-pane fade show active" id="system" role="tabpanel"
-                                 aria-labelledby="system-tab">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title"><b>{{ device_detail_output.device_type }} System
-                                            Details</b></h3>
-                                    </div>
-                                    <div class="card-body">
-                                        <div class="row">
-                                            <div class="col">
-                                                <p><b class="text-info">System Name</b>
-                                                    : {{ device_detail_output.full_system_name }}</p>
-                                                <p><b class="text-info">Version</b>
-                                                    : {{ device_detail_output.system_version }}</p>
-                                                <p><b class="text-info">Image</b>
-                                                    : {{ device_detail_output.system_image }}</p>
-                                                <p><b class="text-info">Type</b>
-                                                    : {{ device_detail_output.system_type }}</p>
-                                                <p><b class="text-info">Contact</b>
-                                                    : {{ device_detail_output.system_contact }}</p>
-                                                <p><b class="text-info">Location</b>
-                                                    : {{ device_detail_output.system_location }}</p>
-                                                <p><b class="text-info">System Up From</b>
-                                                    : {{ device_detail_output.system_up_time }}
-                                                </p>
-                                            </div>
-                                        </div>
+                                            <tbody>
+                                            {% for device in devices_details_output %}
+                                                <tr>
+                                                    <th scope="row">{{ device.id }}</th>
+                                                    <td>
+                                                        <a href="?device_id={{ device.id }}">{{ device.system_name }}
+                                                        </a>
+                                                    <td><p class="text-info">{{ device.device_type }} </p></td>
+                                                    <td>{{ device.hostname }}</td>
+                                                    <td>{{ device.if_number }}</td>
+                                                    <td>{{ device.system_image }}</td>
+                                                    <td>{{ device.system_version }}</td>
+                                                    <td>{{ device.system_location }}</td>
+
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <form action="" method="get">
+                                        <div class="col">
+                                        <span class="text-info" id="scanning_span"
+                                              style="font-size: 15px"></span>
+                                            <input type="submit" name="get_devices_details" value="Refresh List"
+                                                   class="btn btn-primary btn-customized"
+                                                   onclick="ScanningLabel();"
+                                            >
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="tab-pane fade" id="interfaces" role="tabpanel"
-                                 aria-labelledby="interfaces-tab">
-                                {% for interface in device_interfaces_output %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% if device_detail_output or page_object %}
+                <div class="row">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    {% if device_detail_output %}
+                                        <h1 class="card-title">{{ device_detail_output.system_name }} - Remote
+                                            Control</h1>
+                                    {% endif %}
+                                </div>
+                                <div class="col" id="id_session_buttons">
+                                    {% if not device_detail_output.ssh_session %}
+                                        <input type="submit" id="id_ssh_session_start" value="Start SSH Session"
+                                               class="btn btn-primary btn-customized"
+                                               style="margin: 20px;position: absolute; right: 0;">
+                                    {% elif device_detail_output.ssh_session %}
+                                        <input type="submit" id="id_ssh_session_stop" value="Stop SSH Session"
+                                               class="btn btn-primary btn-customized"
+                                               style="margin: 20px;position: absolute; right: 0;">
+
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="terminal"></div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="row">
+                                <div class="col">
+                                    <h3 class="card-title"> Device Details </h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <ul class="nav nav-tabs" id="device_details" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="system-tab" data-toggle="tab" href="#system"
+                                       role="tab"
+                                       aria-controls="home" aria-selected="true">System</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="interfaces-tab" data-toggle="tab" href="#interfaces"
+                                       role="tab"
+                                       aria-controls="profile" aria-selected="false">Interfaces</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="logs-tab" data-toggle="tab" href="#logs" role="tab"
+                                       aria-controls="profile" aria-selected="false">Traps and Events</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="device_details_content">
+
+                                <div class="tab-pane fade show active" id="system" role="tabpanel"
+                                     aria-labelledby="system-tab">
                                     <div class="card">
                                         <div class="card-header">
-                                            <h3 class="card-title"><b>{{ interface.interface_description }} </b>
-                                            </h3>
+                                            <h3 class="card-title"><b>{{ device_detail_output.device_type }} System
+                                                Details</b></h3>
                                         </div>
                                         <div class="card-body">
-                                            <div class="card">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <p><b class="text-info">MAC
-                                                            Address</b>: {{ interface.interface_physical_addr }}
-                                                        </p>
-                                                        <p><b class="text-info">IP Address</b>
-                                                            : {{ interface.interface_ip }}</p>
-                                                        <p><b class="text-info">Bandwidth</b>
-                                                            : {{ interface.interface_speed }}
-                                                            Kbits/sec
-                                                        </p>
-                                                        <p><b class="text-info">Admin Status</b>
-                                                            : {{ interface.interface_admin_status }}
-
-                                                        </p>
-                                                        <p><b class="text-info">Operational Status</b>
-                                                            : {{ interface.interface_operational_status }}</p>
-                                                    </div>
-                                                    <div class="col">
-                                                        <p><b class="text-info">Input Unicast
-                                                            Packets</b>: {{ interface.interface_in_unicast_packets }}
-                                                        </p>
-                                                        <p><b class="text-info">Output Unicast
-                                                            Packets</b>: {{ interface.interface_out_unicast_packets }}
-                                                        </p>
-                                                        <p><b class="text-info">Input Errors</b>
-                                                            : {{ interface.interface_in_errors }}
-                                                        </p>
-                                                        <p><b class="text-info">Output Errors</b>
-                                                            : {{ interface.interface_out_errors }}
-                                                        </p>
-                                                        <p><b class="text-info">MTU</b>
-                                                            : {{ interface.interface_mtu }} bytes</p>
-                                                    </div>
+                                            <div class="row">
+                                                <div class="col">
+                                                    <p><b class="text-info">System Name</b>
+                                                        : {{ device_detail_output.full_system_name }}</p>
+                                                    <p><b class="text-info">Version</b>
+                                                        : {{ device_detail_output.system_version }}</p>
+                                                    <p><b class="text-info">Image</b>
+                                                        : {{ device_detail_output.system_image }}</p>
+                                                    <p><b class="text-info">Type</b>
+                                                        : {{ device_detail_output.system_type }}</p>
+                                                    <p><b class="text-info">Contact</b>
+                                                        : {{ device_detail_output.system_contact }}</p>
+                                                    <p><b class="text-info">Location</b>
+                                                        : {{ device_detail_output.system_location }}</p>
+                                                    <p><b class="text-info">System Up From</b>
+                                                        : {{ device_detail_output.system_up_time }}
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                {% endfor %}
-                            </div>
-                            <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
-                                <div class="card">
-                                    <div class="card-body">
-                                        {% if not warning_status_message %}
-                                            <div class="row">
-                                                <div class="col">
-                                                    <div class="pagination">
-                                                        <span class="step-links" id="links">
-                                                            <span class="current" id="id_page_current">
-                                                            Page {{ page_object.number }} of {{ page_object.paginator.num_pages }}.
-                                                            </span>
-                                                            {% if next_page %}
-                                                                <a href="#" id="id_page_first"></a>
-                                                                <a href="#" id="id_page_previous" data=""></a>
+                                </div>
+                                <div class="tab-pane fade" id="interfaces" role="tabpanel"
+                                     aria-labelledby="interfaces-tab">
+                                    {% for interface in device_interfaces_output %}
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <h3 class="card-title"><b>{{ interface.interface_description }} </b>
+                                                </h3>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="card">
+                                                    <div class="row">
+                                                        <div class="col">
+                                                            <p><b class="text-info">MAC
+                                                                Address</b>: {{ interface.interface_physical_addr }}
+                                                            </p>
+                                                            <p><b class="text-info">IP Address</b>
+                                                                : {{ interface.interface_ip }}</p>
+                                                            <p><b class="text-info">Bandwidth</b>
+                                                                : {{ interface.interface_speed }}
+                                                                Kbits/sec
+                                                            </p>
+                                                            <p><b class="text-info">Admin Status</b>
+                                                                : {{ interface.interface_admin_status }}
 
-                                                                <a href="#" id="id_page_next"
-                                                                   data="{{ page_object.next_page_number }}">next</a>
-                                                                <a href="#" id="id_page_last"
-                                                                   data="{{ page_object.paginator.num_pages }}">last &raquo;</a>
-                                                            {% endif %}
-                                                        </span>
+                                                            </p>
+                                                            <p><b class="text-info">Operational Status</b>
+                                                                : {{ interface.interface_operational_status }}</p>
+                                                        </div>
+                                                        <div class="col">
+                                                            <p><b class="text-info">Input Unicast
+                                                                Packets</b>: {{ interface.interface_in_unicast_packets }}
+                                                            </p>
+                                                            <p><b class="text-info">Output Unicast
+                                                                Packets</b>: {{ interface.interface_out_unicast_packets }}
+                                                            </p>
+                                                            <p><b class="text-info">Input Errors</b>
+                                                                : {{ interface.interface_in_errors }}
+                                                            </p>
+                                                            <p><b class="text-info">Output Errors</b>
+                                                                : {{ interface.interface_out_errors }}
+                                                            </p>
+                                                            <p><b class="text-info">MTU</b>
+                                                                : {{ interface.interface_mtu }} bytes</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <table class="table" id="trap_table">
-                                                <thead>
-                                                <tr>
-                                                    <th scope="col">ID</th>
-                                                    <th scope="col">Datetime</th>
-                                                    <th scope="col">Agent Address</th>
-                                                    <th scope="col">Agent Port</th>
-                                                    <th scope="col">Trap Details</th>
-                                                </tr>
-                                                </thead>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                <div class="tab-pane fade" id="logs" role="tabpanel" aria-labelledby="logs-tab">
+                                    <div class="card">
+                                        <div class="card-body">
+                                            {% if not warning_status_message %}
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="pagination">
+                                                            <span class="step-links" id="links">
+                                                                <span class="current" id="id_page_current">
+                                                                Page {{ page_object.number }} of {{ page_object.paginator.num_pages }}.
+                                                                </span>
+                                                                {% if next_page %}
+                                                                    <a href="#" id="id_page_first"></a>
+                                                                    <a href="#" id="id_page_previous" data=""></a>
 
-                                                <tbody>
-                                                {% for trap in page_object %}
-                                                    <tr>
-                                                        <th scope="row">{{ trap.id }}</th>
-                                                        <td style="width: 160px">{{ trap.trap_date }}</td>
-                                                        <td>{{ trap.trap_address }}</td>
-                                                        <td>{{ trap.trap_port }}</td>
-                                                        <td>{{ trap.trap_string_data }}</td>
-                                                    </tr>
-                                                {% endfor %}
-                                                </tbody>
-                                            </table>
-                                            </div>
-                                        {% else %}
-                                            <div class="row">
-                                                <div class="col">
-                                                    <h4 class="text-info text-center"> {{ warning_status_message }}</h4>
+                                                                    <a href="#" id="id_page_next"
+                                                                       data="{{ page_object.next_page_number }}">next</a>
+                                                                    <a href="#" id="id_page_last"
+                                                                       data="{{ page_object.paginator.num_pages }}">last &raquo;</a>
+                                                                {% endif %}
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        {% endif %}
+                                                <table class="table" id="trap_table">
+                                                    <thead>
+                                                    <tr>
+                                                        <th scope="col">ID</th>
+                                                        <th scope="col">Datetime</th>
+                                                        <th scope="col">Agent Address</th>
+                                                        <th scope="col">Agent Port</th>
+                                                        <th scope="col">Trap Details</th>
+                                                    </tr>
+                                                    </thead>
+
+                                                    <tbody>
+                                                    {% for trap in page_object %}
+                                                        <tr>
+                                                            <th scope="row">{{ trap.id }}</th>
+                                                            <td style="width: 160px">{{ trap.trap_date }}</td>
+                                                            <td>{{ trap.trap_address }}</td>
+                                                            <td>{{ trap.trap_port }}</td>
+                                                            <td>{{ trap.trap_string_data }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            {% else %}
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <h4 class="text-info text-center"> {{ warning_status_message }}</h4>
+                                                    </div>
+                                                </div>
+                                            {% endif %}
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+            {% endif %}
+        {% elif not initial_configurations and not initial_configurations_applied %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h1 class="text-danger text-center w-100">No initial configurations found!</h1>
+                        <p class="text-info text-center w-100">Please check documentation for more help.</p>
+                    </div>
+                </div>
+            </div>
+        {% elif initial_configurations and not initial_configurations_applied %}
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <h1 class="text-danger text-center w-100">Initial configurations not applied!</h1>
+                        <p class="text-info text-center w-100">Please check documentation for more help.</p>
                     </div>
                 </div>
             </div>
