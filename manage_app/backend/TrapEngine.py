@@ -77,7 +77,7 @@ class TrapEngine:
                 varBinds = pMod.apiTrapPDU.getVarBinds(reqPDU)
 
                 if not self._database_validator():
-                    trap_model = DeviceTrapModel(**trap_model_parameters)
+                    trap_model = DeviceTrapModel(**self.trap_model_parameters)
                     trap_model.save()
 
                     for trap_oid, trap_data in varBinds:

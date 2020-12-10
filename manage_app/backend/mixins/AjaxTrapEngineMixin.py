@@ -56,8 +56,9 @@ class AjaxTrapEngineView(JSONResponseMixin, View):
         self.snmp_config.save()
 
     def _post_stop_trap_engine(self):
+        self.snmp_config.traps_activated = False
+        self.snmp_config.save()
         global task
         task.revoke(terminate=True, signal='SIGUSR1')
 
-        self.snmp_config.traps_activated = False
-        self.snmp_config.save()
+
