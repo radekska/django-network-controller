@@ -1,1 +1,115 @@
-{"nodes": [{"group": "1", "id": "CoreSwitch2", "object_id": 210}, {"group": "1", "id": "AccessSwitch2", "object_id": 211}, {"group": "1", "id": "AccessSwitch1", "object_id": 212}, {"group": "2", "id": "EdgeRouter", "object_id": 213}, {"group": "1", "id": "CoreSwitch1", "object_id": 214}], "links": [{"source": "CoreSwitch2", "target": "EdgeRouter", "value": 10, "interface_id": 1048}, {"source": "CoreSwitch2", "target": "CoreSwitch1", "value": 10, "interface_id": 1049}, {"source": "CoreSwitch2", "target": "AccessSwitch2", "value": 10, "interface_id": 1050}, {"source": "CoreSwitch2", "target": "AccessSwitch1", "value": 10, "interface_id": 1051}, {"source": "AccessSwitch2", "target": "CoreSwitch1", "value": 10, "interface_id": 1052}, {"source": "AccessSwitch2", "target": "CoreSwitch2", "value": 10, "interface_id": 1053}, {"source": "AccessSwitch1", "target": "CoreSwitch1", "value": 10, "interface_id": 1057}, {"source": "AccessSwitch1", "target": "CoreSwitch2", "value": 10, "interface_id": 1059}, {"source": "EdgeRouter", "target": "CoreSwitch2", "value": 10, "interface_id": 1063}, {"source": "EdgeRouter", "target": "CoreSwitch1", "value": 10, "interface_id": 1064}, {"source": "CoreSwitch1", "target": "CoreSwitch2", "value": 10, "interface_id": 1068}, {"source": "CoreSwitch1", "target": "AccessSwitch1", "value": 10, "interface_id": 1069}, {"source": "CoreSwitch1", "target": "AccessSwitch2", "value": 10, "interface_id": 1070}, {"source": "CoreSwitch1", "target": "EdgeRouter", "value": 10, "interface_id": 1071}]}
+{
+  "nodes": [
+    {
+      "group": "1",
+      "id": "CoreSwitch2",
+      "object_id": 210
+    },
+    {
+      "group": "1",
+      "id": "AccessSwitch2",
+      "object_id": 211
+    },
+    {
+      "group": "1",
+      "id": "AccessSwitch1",
+      "object_id": 212
+    },
+    {
+      "group": "2",
+      "id": "EdgeRouter",
+      "object_id": 213
+    },
+    {
+      "group": "1",
+      "id": "CoreSwitch1",
+      "object_id": 214
+    }
+  ],
+  "links": [
+    {
+      "source": "CoreSwitch2",
+      "target": "EdgeRouter",
+      "value": 10,
+      "interface_id": 1048
+    },
+    {
+      "source": "CoreSwitch2",
+      "target": "CoreSwitch1",
+      "value": 10,
+      "interface_id": 1049
+    },
+    {
+      "source": "CoreSwitch2",
+      "target": "AccessSwitch2",
+      "value": 10,
+      "interface_id": 1050
+    },
+    {
+      "source": "CoreSwitch2",
+      "target": "AccessSwitch1",
+      "value": 10,
+      "interface_id": 1051
+    },
+    {
+      "source": "AccessSwitch2",
+      "target": "CoreSwitch1",
+      "value": 10,
+      "interface_id": 1052
+    },
+    {
+      "source": "AccessSwitch2",
+      "target": "CoreSwitch2",
+      "value": 10,
+      "interface_id": 1053
+    },
+    {
+      "source": "AccessSwitch1",
+      "target": "CoreSwitch1",
+      "value": 10,
+      "interface_id": 1057
+    },
+    {
+      "source": "AccessSwitch1",
+      "target": "CoreSwitch2",
+      "value": 10,
+      "interface_id": 1059
+    },
+    {
+      "source": "EdgeRouter",
+      "target": "CoreSwitch2",
+      "value": 10,
+      "interface_id": 1063
+    },
+    {
+      "source": "EdgeRouter",
+      "target": "CoreSwitch1",
+      "value": 10,
+      "interface_id": 1064
+    },
+    {
+      "source": "CoreSwitch1",
+      "target": "CoreSwitch2",
+      "value": 10,
+      "interface_id": 1068
+    },
+    {
+      "source": "CoreSwitch1",
+      "target": "AccessSwitch1",
+      "value": 10,
+      "interface_id": 1069
+    },
+    {
+      "source": "CoreSwitch1",
+      "target": "AccessSwitch2",
+      "value": 10,
+      "interface_id": 1070
+    },
+    {
+      "source": "CoreSwitch1",
+      "target": "EdgeRouter",
+      "value": 10,
+      "interface_id": 1071
+    }
+  ]
+}
