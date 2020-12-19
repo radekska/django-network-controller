@@ -8,7 +8,7 @@ from config_app.models import ConfigParameters
 class SSHConnectionHandler:
     """
     This class is used to asynchronously establish an SSH session from app backend to specific network device,
-    Further used to exchange data between javascript websocket and django channel session.ś
+    Further used to exchange data between javascript websocket and django channel session.
     """
 
     @classmethod

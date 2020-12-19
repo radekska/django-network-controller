@@ -10,9 +10,3 @@ function RemoveSNMPConfig() {
     $("#remove_span").text('Removing SNMPv3 Configs...')
 }
 
-// function ShowDeviceDetails() {
-//     $("#remove_span").text('Removing SNMPv3 Configs...')
-//
-// }
-
-

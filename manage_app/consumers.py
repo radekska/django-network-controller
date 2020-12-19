@@ -16,7 +16,7 @@ from manage_app.models import DeviceModel
 class SSHConsumer(AsyncConsumer):
     """
     This class is inherits from AsyncConsumer class from channels.consumer module and it is responsible for handling all
-    asynchronous traffic coming from javascript frontend web socket. (xterm SSH web terminal)
+    asynchronous traffic coming from javascript frontend web socket as well as forwarding it further to Network Device. (xterm SSH web terminal)
     """
     socket_opened = False
 

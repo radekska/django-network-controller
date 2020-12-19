@@ -17,6 +17,7 @@ class AjaxSSHSessionView(JSONResponseMixin, View):
         if request.is_ajax():
             device_id = request.POST.get('device_id', None)
             method = request.POST.get('button')
+
             if device_id:
                 if method == 'start':
                     device_model = DeviceModel.objects.get(id=device_id)
@@ -25,6 +26,7 @@ class AjaxSSHSessionView(JSONResponseMixin, View):
 
                     json_data = dict(device_id=device_id, status='Session started')
                     return self.render_to_response(json_data)
+
                 elif method == 'stop':
                     device_model = DeviceModel.objects.get(id=device_id)
                     device_model.ssh_session = False
