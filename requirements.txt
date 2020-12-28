@@ -16,7 +16,10 @@ click-didyoumean==0.0.3
 click-plugins==1.1.1
 click-repl==0.1.6
 colorama==0.4.4
+configparser==5.0.1
 constantly==15.1.0
+coverage==5.3.1
+crayons==0.4.0
 cryptography==3.3.1
 daphne==3.0.1
 Django==3.1.4
@@ -64,6 +67,7 @@ pytz==2020.4
 PyYAML==5.3.1
 requests==2.25.1
 scp==0.13.3
+selenium==3.141.0
 service-identity==18.1.0
 six==1.15.0
 sqlparse==0.4.1
@@ -76,5 +80,6 @@ txaio==20.4.1
 urllib3==1.26.2
 vine==5.0.0
 wcwidth==0.2.5
+webdriver-manager==3.2.2
 yamlordereddictloader==0.4.0
 zope.interface==5.2.0
