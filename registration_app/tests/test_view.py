@@ -7,7 +7,10 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 
 from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+
 from webdriver_manager.chrome import ChromeDriverManager
+
 
 
 # giving pytest access to database.
@@ -24,7 +27,9 @@ class TestRegistrationView(TestCase):
 
 class TestRegistrationSignUp(unittest.TestCase):
     def test_post_request(self):
-        self.driver = webdriver.Chrome(ChromeDriverManager().install())
+        options = Options()
+        options.headless = True
+        self.driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=options)
 
         self.driver.get("http://localhost:8000/registration/")
         self.driver.find_element_by_id('username').send_keys("test_username")
