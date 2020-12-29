@@ -27,6 +27,13 @@ jobs:
           - "8000:8000"
         depends_on:
           - db
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+          with:
+            python-version: 3.8
   
 #jobs:
 #  build:
