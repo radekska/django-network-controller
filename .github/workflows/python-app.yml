@@ -39,6 +39,7 @@ jobs:
         pytest -v
 
   start:
+    runs-on: ubuntu-latest
     needs: build
     steps:
       - name: Run Django server
