@@ -27,6 +27,7 @@ django-celery-results==2.0.0
 dnspython==2.0.0
 easysnmp==0.2.5
 future==0.18.2
+h11==0.11.0
 hyperlink==20.0.1
 idna==2.10
 incremental==17.5.0
@@ -63,6 +64,7 @@ pysmi==0.3.4
 pysnmp==4.4.12
 pytest==6.2.1
 pytest-django==4.1.0
+pytest-ordering==0.6
 pytz==2020.4
 PyYAML==5.3.1
 requests==2.25.1
