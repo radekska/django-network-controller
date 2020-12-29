@@ -4,6 +4,7 @@ from django.test import Client
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.run(order=2)
 class TestBackendView:
     def setup_method(self):
         self.client = Client()

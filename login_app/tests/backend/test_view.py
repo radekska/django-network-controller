@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.run(order=3)
 class TestLoginView:
     def setup_method(self):
         self.client = Client()
@@ -23,4 +24,3 @@ class TestLoginView:
 
         response = self.client.post(path=self.path, data=login_data)
         assert response.status_code == 200
-

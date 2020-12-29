@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.run(order=1)
 class TestUserModel:
     def setup_method(self):
         self.test_user = User.objects.create_user(username='pytest_user', email='pytest_user@gmail.com',
@@ -15,3 +16,4 @@ class TestUserModel:
         assert self.test_user.username == 'pytest_user'
         assert self.test_user.email == 'pytest_user@gmail.com'
         assert isinstance(self.test_user.password, str)
+
