@@ -46,3 +46,12 @@ jobs:
         run: |
           python manage.py runserver
 
+  test:
+    runs-on: ubuntu-latest
+    needs: start
+    steps:
+      - name: Test with pytest
+        run: |
+          pytest -v
+
+
