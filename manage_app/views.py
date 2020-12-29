@@ -4,10 +4,9 @@ import logging
 # Django
 from django.shortcuts import render
 from django.contrib.auth.models import User
-from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.core import serializers
-from django.http import JsonResponse, Http404
+from django.http import Http404
 from django.views.generic import ListView, View
 
 # Models
@@ -15,7 +14,7 @@ from config_app.models import ConfigParameters, SNMPConfigParameters
 from manage_app.models import DeviceModel, DeviceInterface, DeviceTrapModel, VarBindModel
 
 # Backend
-from visualize_app.backend.NetworkMapper import NetworkMapper
+from visualize_app.backend import NetworkMapper
 from .backend.DeviceManager import DeviceManager
 from .backend.parse_model import parse_and_save_to_database, parse_trap_model
 from config_app.backend.helpers import get_available_devices
