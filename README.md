@@ -37,6 +37,23 @@ Next part of it is a <i>SNMP Config</i> which is used to generate proper Cisco I
 - Enable Traps Functionality
 
 This section includes as well two tables with created configurations for visibility.
-Last part of this section is to choosing right configurations which should be applied on
+Last part of this section is choosing of right configurations which should be applied on
 network devices, scanning local network for available devices and then finally applying
 mentioned SNMPv3 configurations.
+
+
+## Technologies
+Project is created with:
+- Python - 3.8.1
+- Django - 3.1.1
+- Django Channels - 3.0.2
+- Django Celery - 4.4.7
+- RabbitMQ - 3.8.9
+- Netmiko - 3.3.0
+- Napalm - 3.2.0  
+- SNMP - 3.0  
+- EasySNMP - 4.4.12  
+- PySNMP - 0.2.5  
+- jQuery - 3.3.1  
+- CSS - 2.1  
+- Bootstrap - 4.3.1
