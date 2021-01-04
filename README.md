@@ -41,6 +41,7 @@ Last part of this section is choosing of right configurations which should be ap
 network devices, scanning local network for available devices and then finally applying
 mentioned SNMPv3 configurations.
 
+TBD
 
 ## Technologies
 Project is created with:
@@ -74,5 +75,9 @@ $ source <name_of_your_venv>/bin/activate
 # install Python 3 all dependencies
 $ python3 -m pip install -r requirements.txt 
 
+# run Network Controller
+$ python3 manage.py runserver
+
+# TBD - rabbitmq 
 
 ```
