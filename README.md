@@ -57,3 +57,22 @@ Project is created with:
 - jQuery - 3.3.1  
 - CSS - 2.1  
 - Bootstrap - 4.3.1
+
+## Setup
+In order to properly setup and run network controller, follow below steps:  
+(Checked on macOS High Sierra 10.13.6)
+```
+# clone to your local workspace
+$ git clone https://github.com/radekska/NetworkController.git .
+
+# create virtual environment
+$ python3 -m venv <name_of_your_venv>
+
+# activate virtual environment
+$ source <name_of_your_venv>/bin/activate
+
+# install Python 3 all dependencies
+$ python3 -m pip install -r requirements.txt 
+
+
+```

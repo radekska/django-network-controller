@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.views.generic import ListView
 from django.contrib.auth.models import User
 
-from visualize_app.backend import NetworkMapper
+from visualize_app.backend.NetworkMapper import NetworkMapper
 from main_app.backend.helpers import check_if_properly_configured
 
 
