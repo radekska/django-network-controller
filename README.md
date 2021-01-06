@@ -75,9 +75,40 @@ $ source <name_of_your_venv>/bin/activate
 # install Python 3 all dependencies
 $ python3 -m pip install -r requirements.txt 
 
-# run Network Controller
+# install RabbitMQ broker for asynchronous tasks
+
+##### For macOS #####
+$ brew install rabbitmq
+$ export PATH=$PATH:/usr/local/sbin
+
+# Start server (Mac)
+$ sudo rabbitmq-server -detached #-detached flag indicates the server to run in the background
+
+# Add user settings (optional)
+$ sudo rabbitmq-server -detached
+$ sudo rabbitmqctl add_user myuser mypassword
+$ sudo rabbitmqctl add_vhost myvhost
+$ sudo rabbitmqctl set_permissions -p myvhost myuser ".*" ".*" ".*"
+
+#####################
+
+##### For Ubuntu #####
+$ apt-get install -y erlang
+$ apt-get install rabbitmq-server
+
+# Then enable and start the RabbitMQ service:
+$ systemctl enable rabbitmq-server
+$ systemctl start rabbitmq-server
+
+# Check rabbitmq server status
+$ systemctl status rabbitmq-server
+
+#####################
+
+# while message broker is running start up a Celery process
+$ sudo celery -A main_app worker -l info
+
+# finally run Network Controller 
 $ python3 manage.py runserver
 
-# TBD - rabbitmq 
 
-```
