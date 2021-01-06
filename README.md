@@ -41,7 +41,19 @@ Last part of this section is choosing of right configurations which should be ap
 network devices, scanning local network for available devices and then finally applying
 mentioned SNMPv3 configurations.
 
-TBD
+## Management
+This section is focused on providing details about our local area network. We can also use it to manage and configure specific devices via web-based SSH terminal session.
+The first part of this section is designed with two main buttons - "Refresh List" and "Start/Stop Trap Engine" button. 
+First one runs a SNMP query to all devices in our local network and then populates table with received data. 
+Second button allows to monitor network by using SNMP traps (works only if "enable traps" field was marked in configure section). 
+When user clicks on specific device name new fields will pop up. First field is for generating and establishing remote SSH session with chosen device. 
+User can easily configure device or check it's details without using third party terminals. Second field provides device details based on system and interfaces MIBs. 
+Third tab includes table which is populated with mentioned earlier SNMP traps when SNMP engine enabled.
+Manage network section is a core part of this project as user is able to obtain deep details about specified network.
+
+## Visualization
+The last, but not least section of this project is focused on generating nice and user friendly, dynamic network topology with little help of initially configured LLDP protocol. 
+When user clicks on chosen device new window will pop up with all neighbor(s) details.
 
 ## Technologies
 Project is created with:
@@ -110,5 +122,7 @@ $ sudo celery -A main_app worker -l info
 
 # finally run Network Controller 
 $ python3 manage.py runserver
-
+```
+## Author
+- Radosław Skałbania - [radekska](https://github.com/radekska)
 
