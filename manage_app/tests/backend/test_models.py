@@ -48,15 +48,41 @@ def test_device_interface(test_user, test_device):
     return DeviceInterface.objects.create(**test_data)
 
 
+@pytest.fixture
+def device_trap_model(test_device):
+    test_data = dict(
+        device_model=test_device,
+        trap_date="2021/02/21",
+        trap_domain="TEST DOMAIN",
+        trap_address="1.1.1.1",
+        trap_port="165",
+        trap_string_data="TEST TRAP DATA"
+    )
+    return DeviceTrapModel.objects.create(**test_data)
+
+
+@pytest.fixture
+def trap_bind_model(device_trap_model):
+    test_data = dict(
+        trap_model=device_trap_model,
+        trap_oid="TEST OID",
+        trap_data="TEST TRAP DATA",
+    )
+
+    return VarBindModel.objects.create(**test_data)
+
+
+@pytest.mark.run(order=10)
 @pytest.mark.django_db(transaction=True)
-def test_transaction_true_db_fixture(test_user, test_device, test_device_interface):
+def test_transaction_true_db_fixture(test_user, test_device, test_device_interface, device_trap_model):
     assert isinstance(test_user, User)
     assert isinstance(test_device, DeviceModel)
     assert isinstance(test_device_interface, DeviceInterface)
+    assert isinstance(device_trap_model, DeviceTrapModel)
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=7)
+@pytest.mark.run(order=11)
 class TestDeviceModel:
     def test_device_model(self, test_user, test_device):
         assert test_device.user == test_user
@@ -75,7 +101,7 @@ class TestDeviceModel:
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=8)
+@pytest.mark.run(order=12)
 class TestDeviceInterface:
     def test_device_interface(self, test_user, test_device, test_device_interface):
         assert test_device_interface.user == test_user
@@ -88,3 +114,24 @@ class TestDeviceInterface:
         assert test_device_interface.interface_admin_status == "Down"
         assert test_device_interface.interface_operational_status == "Down"
         assert test_device_interface.interface_ip == "1.1.1.1"
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.run(order=13)
+class TestDeviceTrapModel:
+    def test_device_trap_model(self, test_device, device_trap_model):
+        assert device_trap_model.device_model == test_device
+        assert device_trap_model.trap_date == "2021/02/21"
+        assert device_trap_model.trap_domain == "TEST DOMAIN"
+        assert device_trap_model.trap_address == "1.1.1.1"
+        assert device_trap_model.trap_port == "165"
+        assert device_trap_model.trap_string_data == "TEST TRAP DATA"
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.run(order=14)
+class TestVarBindModel:
+    def test_var_bind_model(self, device_trap_model, trap_bind_model):
+        assert trap_bind_model.trap_model == device_trap_model
+        assert trap_bind_model.trap_oid == "TEST OID"
+        assert trap_bind_model.trap_data == "TEST TRAP DATA"

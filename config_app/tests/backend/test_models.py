@@ -51,6 +51,7 @@ def snmp_config_parameters(test_user):
 
 
 @pytest.mark.django_db(transaction=True)
+@pytest.mark.run(order=5)
 def test_transaction_true_db_fixture(test_user, config_parameters, available_devices, snmp_config_parameters):
     assert isinstance(test_user, User)
     assert isinstance(config_parameters, ConfigParameters)
@@ -59,7 +60,7 @@ def test_transaction_true_db_fixture(test_user, config_parameters, available_dev
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=4)
+@pytest.mark.run(order=6)
 class TestConfigParametersModel:
     def test_model(self, config_parameters, test_user):
         assert config_parameters.user == test_user
@@ -72,7 +73,7 @@ class TestConfigParametersModel:
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=5)
+@pytest.mark.run(order=7)
 class TestAvailableDevicesModel:
     def test_model(self, test_user, available_devices):
         assert available_devices.user == test_user
@@ -80,7 +81,7 @@ class TestAvailableDevicesModel:
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=6)
+@pytest.mark.run(order=8)
 class TestSNMPConfigParametersModel:
     def test_model(self, test_user, snmp_config_parameters):
         assert snmp_config_parameters.user == test_user

@@ -8,13 +8,14 @@ def test_user():
                                     password='pytest_password')
 
 
+@pytest.mark.run(order=1)
 @pytest.mark.django_db(transaction=True)
 def test_transaction_true_db_fixture(test_user):
     assert isinstance(test_user, User)
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=1)
+@pytest.mark.run(order=2)
 class TestUserModel:
     def test_user_creation(self, test_user):
         assert isinstance(test_user, User)

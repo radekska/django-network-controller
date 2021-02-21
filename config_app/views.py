@@ -144,6 +144,7 @@ class ConfigNetworkView(ListView):
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        print(request.POST)
         if 'add_access_config' in request.POST:
             self._post_access_config(request)
         elif 'add_snmp_config' in request.POST:

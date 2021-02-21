@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=3)
+@pytest.mark.run(order=4)
 class TestLoginView:
     def setup_method(self):
         self.client = Client()

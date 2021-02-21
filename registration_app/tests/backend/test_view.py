@@ -3,7 +3,7 @@ from django.test import Client
 
 
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=2)
+@pytest.mark.run(order=3)
 class TestBackendView:
     def setup_method(self):
         self.client = Client()
