@@ -1,94 +1,96 @@
 import pytest
-
 from django.contrib.auth.models import User
 from config_app.models import ConfigParameters, SNMPConfigParameters, AvailableDevices
 
-pytestmark = pytest.mark.django_db
+
+@pytest.fixture
+def test_user() -> User:
+    return User.objects.create_user(username='pytest_user', email='pytest_user@gmail.com',
+                                    password='pytest_password')
 
 
+@pytest.fixture
+def config_parameters(test_user) -> ConfigParameters:
+    config_data = dict(
+        user=test_user,
+        login_username='test_user_123',
+        login_password='test_password_123',
+        network_ip='127.0.0.1',
+        network_device_os='IOS',
+        secret='test_secret_123',
+        subnet_cidr='24'
+    )
+    return ConfigParameters.objects.create(**config_data)
+
+
+@pytest.fixture
+def available_devices(test_user) -> AvailableDevices:
+    test_data = dict(
+        user=test_user,
+        network_address="192.168.0.2"
+    )
+    return AvailableDevices.objects.create(**test_data)
+
+
+@pytest.fixture
+def snmp_config_parameters(test_user):
+    data = dict(
+        user=test_user,
+        group_name='TEST_GROUP',
+        snmp_user='TEST_SNMP_USER',
+        snmp_password='TEST_SNMP_PASSWORD',
+        snmp_auth_protocol='TEST_AUTH_PROTOCOL',
+        snmp_privacy_protocol='TEST_PRIVACY_PROTOCOL',
+        snmp_encrypt_key='TEST_ENCRYPT_KEY',
+        snmp_host='127.0.0.1',
+        server_location='TEST_LOCATION',
+        contact_details='TEST_CONTACT_DETAILS',
+        enable_traps=True)
+
+    return SNMPConfigParameters.objects.create(**data)
+
+
+@pytest.mark.django_db(transaction=True)
+def test_transaction_true_db_fixture(test_user, config_parameters, available_devices, snmp_config_parameters):
+    assert isinstance(test_user, User)
+    assert isinstance(config_parameters, ConfigParameters)
+    assert isinstance(available_devices, AvailableDevices)
+    assert isinstance(snmp_config_parameters, SNMPConfigParameters)
+
+
+@pytest.mark.django_db(transaction=True)
 @pytest.mark.run(order=4)
 class TestConfigParametersModel:
-    def setup_method(self):
-        self.user = User.objects.get(username='test_username')
-
-        config_data = dict(
-            user=self.user,
-            login_username='test_user_123',
-            login_password='test_password_123',
-            network_ip='127.0.0.1',
-            network_device_os='IOS',
-            secret='test_secret_123',
-            subnet_cidr='24'
-        )
-        self.config_parameters = ConfigParameters.objects.create(**config_data)
-
-    def test_model(self):
-        assert self.config_parameters.user == self.user
-        assert self.config_parameters.login_username == 'test_user_123'
-        assert self.config_parameters.login_password == 'test_password_123'
-        assert self.config_parameters.network_ip == '127.0.0.1'
-        assert self.config_parameters.network_device_os == 'IOS'
-        assert self.config_parameters.secret == 'test_secret_123'
-        assert self.config_parameters.subnet_cidr == '24'
+    def test_model(self, config_parameters, test_user):
+        assert config_parameters.user == test_user
+        assert config_parameters.login_username == 'test_user_123'
+        assert config_parameters.login_password == 'test_password_123'
+        assert config_parameters.network_ip == '127.0.0.1'
+        assert config_parameters.network_device_os == 'IOS'
+        assert config_parameters.secret == 'test_secret_123'
+        assert config_parameters.subnet_cidr == '24'
 
 
+@pytest.mark.django_db(transaction=True)
 @pytest.mark.run(order=5)
 class TestAvailableDevicesModel:
-    def setup_method(self):
-        self.user = User.objects.get(username='test_username')
-        self.ip_address = '192.168.0.2'
-
-        data = dict(
-            user=self.user,
-            network_address=self.ip_address
-        )
-
-        self.available_device = AvailableDevices.objects.create(**data)
-
-    def test_model(self):
-        assert self.available_device.user == self.user
-        assert self.available_device.network_address == self.ip_address
+    def test_model(self, test_user, available_devices):
+        assert available_devices.user == test_user
+        assert available_devices.network_address == "192.168.0.2"
 
 
+@pytest.mark.django_db(transaction=True)
 @pytest.mark.run(order=6)
 class TestSNMPConfigParametersModel:
-    def setup_method(self):
-        self.user = User.objects.get(username='test_username')
-        self.group_name = 'TEST_GROUP'
-        self.snmp_user = 'TEST_SNMP_USER'
-        self.snmp_password = 'TEST_SNMP_PASSWORD'
-        self.snmp_auth_protocol = 'TEST_AUTH_PROTOCOL'
-        self.snmp_privacy_protocol = 'TEST_PRIVACY_PROTOCOL'
-        self.snmp_encrypt_key = 'TEST_ENCRYPT_KEY'
-        self.snmp_host = '127.0.0.1'
-        self.server_location = 'TEST_LOCATION'
-        self.contact_details = 'TEST_CONTACT_DETAILS'
-        self.enable_traps = True
-
-        data = dict(
-            user=self.user,
-            group_name=self.group_name,
-            snmp_user=self.snmp_user,
-            snmp_password=self.snmp_password,
-            snmp_auth_protocol=self.snmp_auth_protocol,
-            snmp_privacy_protocol=self.snmp_privacy_protocol,
-            snmp_encrypt_key=self.snmp_encrypt_key,
-            snmp_host=self.snmp_host,
-            server_location=self.server_location,
-            contact_details=self.contact_details,
-            enable_traps=self.enable_traps)
-
-        self.snmp_config_parameters = SNMPConfigParameters.objects.create(**data)
-
-    def test_model(self):
-        assert self.snmp_config_parameters.user == self.user
-        assert self.snmp_config_parameters.group_name == self.group_name
-        assert self.snmp_config_parameters.snmp_user == self.snmp_user
-        assert self.snmp_config_parameters.snmp_password == self.snmp_password
-        assert self.snmp_config_parameters.snmp_auth_protocol == self.snmp_auth_protocol
-        assert self.snmp_config_parameters.snmp_privacy_protocol == self.snmp_privacy_protocol
-        assert self.snmp_config_parameters.snmp_encrypt_key == self.snmp_encrypt_key
-        assert self.snmp_config_parameters.snmp_host == self.snmp_host
-        assert self.snmp_config_parameters.server_location == self.server_location
-        assert self.snmp_config_parameters.contact_details == self.contact_details
-        assert self.snmp_config_parameters.enable_traps == self.enable_traps
+    def test_model(self, test_user, snmp_config_parameters):
+        assert snmp_config_parameters.user == test_user
+        assert snmp_config_parameters.group_name == 'TEST_GROUP'
+        assert snmp_config_parameters.snmp_user == 'TEST_SNMP_USER'
+        assert snmp_config_parameters.snmp_password == 'TEST_SNMP_PASSWORD'
+        assert snmp_config_parameters.snmp_auth_protocol == 'TEST_AUTH_PROTOCOL'
+        assert snmp_config_parameters.snmp_privacy_protocol == 'TEST_PRIVACY_PROTOCOL'
+        assert snmp_config_parameters.snmp_encrypt_key == 'TEST_ENCRYPT_KEY'
+        assert snmp_config_parameters.snmp_host == '127.0.0.1'
+        assert snmp_config_parameters.server_location == 'TEST_LOCATION'
+        assert snmp_config_parameters.contact_details == 'TEST_CONTACT_DETAILS'
+        assert snmp_config_parameters.enable_traps is True

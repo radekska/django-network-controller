@@ -2,10 +2,8 @@ import pytest
 from django.test import Client
 from django.contrib.auth.models import User
 
-# giving pytest access to database.
-pytestmark = pytest.mark.django_db
 
-
+@pytest.mark.django_db(transaction=True)
 @pytest.mark.run(order=3)
 class TestLoginView:
     def setup_method(self):
