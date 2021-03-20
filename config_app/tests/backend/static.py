@@ -1,8 +1,8 @@
 CORRECT_LOGIN_USERNAME = "test_user"
 CORRECT_LOGIN_PASSWORD = "test_password"
 CORRECT_SECRET = "secret_password"
-CORRECT_NETWORK_IP = "1.1.1.1"
-CORRECT_CIDR = "24"
+CORRECT_NETWORK_IP = "127.0.0.1"
+CORRECT_CIDR = "32"
 CORRECT_NETWORK_DEVICE_OS = "Test OS"
 ADD_ACCESS_CONFIG = "Add"
 
@@ -32,4 +32,4 @@ ENTER_AT_LEAST_8_CHARS = "Ensure this value has at least 8 characters"
 INVALID_SNMP_PASSWORD = 'pass'
 INVALID_CONTACT_DETAILS = 'test_contact'
 
-DEVICES_AVAILABLE = "254 device(s) available!"
+DEVICES_AVAILABLE = "1 device(s) available!"
