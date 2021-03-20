@@ -146,22 +146,48 @@ class TestSNMPConfigView:
 
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.run(order=11)
-class TestNetworkScanner:
+class TestNetworkAutomation:
     def setup_method(self):
         self.client = Client()
         self.path = "/dashboard/config_network/"
         self.access_config_view = TestAccessConfigView()
-        self.access_config_view.setup_method()
+        self.snmp_config_view = TestSNMPConfigView()
 
-    def test_scan_network_button(self, test_user):
+        self.access_config_view.setup_method()
+        self.snmp_config_view.setup_method()
+
+    def test_scan_network_button(self, test_user, config_id=5):
         self.client.force_login(test_user)
         self.access_config_view.test_post_add_access_config(test_user)
-        data = dict(
-            id='5',
+
+        scan_data = dict(
+            id=config_id,
             available_hosts='Scan Network'
         )
-        response = self.client.post(self.path, data=data)
+        response = self.client.post(self.path, data=scan_data)
         received_content = response.content.decode('utf-8')
 
         assert response.status_code == 200
         assert static.DEVICES_AVAILABLE in received_content
+
+    def post_request_buttons(self, test_user, button_name):
+        self.client.force_login(test_user)
+        self.access_config_view.test_post_add_access_config(test_user)
+        self.snmp_config_view.test_post_add_snmp_config(test_user)
+        self.test_scan_network_button(test_user, config_id=6)
+
+        request_data = dict(
+            id=['6', '5'],
+            run_snmp_config=button_name
+        )
+
+        response = self.client.post(self.path, data=request_data)
+        received_content = response.content.decode('utf-8')
+
+        return response.status_code, received_content
+
+    def test_configure_and_rollback_buttons(self, test_user):
+        for button in static.BUTTONS:
+            status_code, content = self.post_request_buttons(test_user, button)
+            assert status_code == 200
+            assert static.SNMP_AUTH_FAILED in content

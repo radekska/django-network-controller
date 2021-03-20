@@ -33,3 +33,5 @@ INVALID_SNMP_PASSWORD = 'pass'
 INVALID_CONTACT_DETAILS = 'test_contact'
 
 DEVICES_AVAILABLE = "1 device(s) available!"
+SNMP_AUTH_FAILED = "127.0.0.1: Authentication failed."
+BUTTONS = ('Configure', 'Rollback')
