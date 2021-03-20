@@ -31,3 +31,5 @@ ENTER_AT_LEAST_8_CHARS = "Ensure this value has at least 8 characters"
 
 INVALID_SNMP_PASSWORD = 'pass'
 INVALID_CONTACT_DETAILS = 'test_contact'
+
+DEVICES_AVAILABLE = "254 device(s) available!"

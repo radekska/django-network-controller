@@ -72,9 +72,8 @@ class TestAccessConfigView:
         assert static.CORRECT_NETWORK_DEVICE_OS in received_content
 
 
-# noinspection DuplicatedCode
 @pytest.mark.django_db(transaction=True)
-@pytest.mark.run(order=9)
+@pytest.mark.run(order=10)
 class TestSNMPConfigView:
     def setup_method(self):
         self.client = Client()
@@ -85,7 +84,7 @@ class TestSNMPConfigView:
         response = self.client.get(path=self.path)
         assert response.status_code == 200
 
-    def test_post_request(self, test_user):
+    def test_post_add_snmp_config(self, test_user):
         self.client.force_login(test_user)
         test_data = dict(
             group_name=static.VALID_GROUP_NAME,
@@ -127,3 +126,42 @@ class TestSNMPConfigView:
         assert static.ENTER_VALID_IP in received_content
         assert static.ENTER_VALID_EMAIL in received_content
         assert static.ADD_SNMP_CONFIG_SUC not in received_content
+
+    def test_snmp_configuration_list_details(self, test_user):
+        self.client.force_login(test_user)
+        self.test_post_add_snmp_config(test_user)
+        response = self.client.get(self.path)
+        received_content = response.content.decode('utf-8')
+        assert static.VALID_GROUP_NAME in received_content
+        assert static.VALID_SNMP_USER in received_content
+        assert static.VALID_SNMP_PASSWORD in received_content
+        assert static.VALID_SNMP_ENCRYPT_KEY in received_content
+        assert static.VALID_SNMP_HOST in received_content
+        assert static.VALID_SNMP_AUTH_PROTOCOL in received_content
+        assert static.VALID_SNMP_PRIVACY_PROTOCOL in received_content
+        assert static.VALID_SERVER_LOCATION in received_content
+        assert static.VALID_CONTACT_DETAILS in received_content
+        assert static.VALID_ADD_SNMP_CONFIG in received_content
+
+
+@pytest.mark.django_db(transaction=True)
+@pytest.mark.run(order=11)
+class TestNetworkScanner:
+    def setup_method(self):
+        self.client = Client()
+        self.path = "/dashboard/config_network/"
+        self.access_config_view = TestAccessConfigView()
+        self.access_config_view.setup_method()
+
+    def test_scan_network_button(self, test_user):
+        self.client.force_login(test_user)
+        self.access_config_view.test_post_add_access_config(test_user)
+        data = dict(
+            id='5',
+            available_hosts='Scan Network'
+        )
+        response = self.client.post(self.path, data=data)
+        received_content = response.content.decode('utf-8')
+
+        assert response.status_code == 200
+        assert static.DEVICES_AVAILABLE in received_content
