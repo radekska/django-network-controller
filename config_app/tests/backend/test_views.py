@@ -1,4 +1,5 @@
 import pytest
+from config_app.tests.backend import static
 from django.test import Client
 from django.contrib.auth.models import User
 
@@ -24,39 +25,54 @@ class TestAccessConfigView:
     def test_post_add_access_config(self, test_user):
         self.client.force_login(test_user)
         test_data = dict(
-            login_username="test_user",
-            login_password="test_password",
-            secret="secret_password",
-            network_ip="1.1.1.1",
-            subnet_cidr="24",
-            network_device_os="Test OS",
-            add_access_config="Add"
+            login_username=static.CORRECT_LOGIN_USERNAME,
+            login_password=static.CORRECT_LOGIN_PASSWORD,
+            secret=static.CORRECT_SECRET,
+            network_ip=static.CORRECT_NETWORK_IP,
+            subnet_cidr=static.CORRECT_CIDR,
+            network_device_os=static.CORRECT_NETWORK_DEVICE_OS,
+            add_access_config=static.ADD_ACCESS_CONFIG
         )
 
         response = self.client.post(self.path, data=test_data)
+        received_content = response.content.decode('utf-8')
         assert response.status_code == 200
-        assert ' This field is required.' not in response.content.decode(
-            'utf-8')
+        assert static.FIELD_REQUIRED not in received_content
+        assert static.ADD_ACCESS_CONFIG_SUC in received_content
 
     def test_post_invalid_access_config(self, test_user):
         self.client.force_login(test_user)
         invalid_test_data = dict(
-            login_username="test_user",
-            login_password="test_password",
-            secret="secret_password",
-            network_ip="11111",
-            subnet_cidr="35",
-            network_device_os="Test OS",
-            add_access_config="Add"
+            login_username=static.CORRECT_LOGIN_USERNAME,
+            login_password=static.CORRECT_LOGIN_PASSWORD,
+            secret=static.CORRECT_SECRET,
+            network_ip=static.INCORRECT_NETWORK_IP,
+            subnet_cidr=static.INCORRECT_CIDR,
+            network_device_os=static.CORRECT_NETWORK_DEVICE_OS,
+            add_access_config=static.ADD_ACCESS_CONFIG
         )
 
         response = self.client.post(self.path, data=invalid_test_data)
         received_content = response.content.decode('utf-8')
         assert response.status_code == 200
-        assert "Enter a valid IPv4 or IPv6 address." in received_content
-        assert "Ensure this value is less than or equal to 32." in received_content
+        assert static.ENTER_VALID_IP in received_content
+        assert static.ENTER_VALID_CIDR in received_content
+
+    def test_access_configuration_list_details(self, test_user):
+        self.client.force_login(test_user)
+        self.test_post_add_access_config(test_user)
+        response = self.client.get(self.path)
+        received_content = response.content.decode('utf-8')
+
+        assert static.CORRECT_LOGIN_USERNAME in received_content
+        assert static.CORRECT_LOGIN_PASSWORD in received_content
+        assert static.CORRECT_SECRET in received_content
+        assert static.CORRECT_NETWORK_IP in received_content
+        assert static.CORRECT_CIDR in received_content
+        assert static.CORRECT_NETWORK_DEVICE_OS in received_content
 
 
+# noinspection DuplicatedCode
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.run(order=9)
 class TestSNMPConfigView:
@@ -72,42 +88,42 @@ class TestSNMPConfigView:
     def test_post_request(self, test_user):
         self.client.force_login(test_user)
         test_data = dict(
-            group_name='test_group',
-            snmp_user='test_user',
-            snmp_password='test_pass',
-            snmp_encrypt_key='test_key',
-            snmp_host='192.168.1.106',
-            snmp_auth_protocol='MD5',
-            snmp_privacy_protocol='AES 128',
-            server_location='test_location',
-            contact_details='test_contact@gmail.com',
-            add_snmp_config='Add'
+            group_name=static.VALID_GROUP_NAME,
+            snmp_user=static.VALID_SNMP_USER,
+            snmp_password=static.VALID_SNMP_PASSWORD,
+            snmp_encrypt_key=static.VALID_SNMP_ENCRYPT_KEY,
+            snmp_host=static.VALID_SNMP_HOST,
+            snmp_auth_protocol=static.VALID_SNMP_AUTH_PROTOCOL,
+            snmp_privacy_protocol=static.VALID_SNMP_PRIVACY_PROTOCOL,
+            server_location=static.VALID_SERVER_LOCATION,
+            contact_details=static.VALID_CONTACT_DETAILS,
+            add_snmp_config=static.VALID_ADD_SNMP_CONFIG
         )
         response = self.client.post(self.path, data=test_data)
         response_content = response.content.decode('utf-8')
         assert response.status_code == 200
-        assert "SNMPv3 Configuration Added Successfully!" in response_content
-        assert "This Field Is Required." not in response_content
+        assert static.ADD_SNMP_CONFIG_SUC in response_content
+        assert static.FIELD_REQUIRED not in response_content
 
     def test_post_invalid_snmp_config(self, test_user):
         self.client.force_login(test_user)
         invalid_test_data = dict(
-            group_name='test_group',
-            snmp_user='test_user',
-            snmp_password='short',
-            snmp_encrypt_key='test_key',
-            snmp_host='111111wrong',
-            snmp_auth_protocol='MD5',
-            snmp_privacy_protocol='AES 128',
-            server_location='test_location',
-            contact_details='not_valid_email',
-            add_snmp_config='Add'
+            group_name=static.VALID_GROUP_NAME,
+            snmp_user=static.VALID_SNMP_USER,
+            snmp_password=static.INVALID_SNMP_PASSWORD,
+            snmp_encrypt_key=static.VALID_SNMP_ENCRYPT_KEY,
+            snmp_host=static.INCORRECT_NETWORK_IP,
+            snmp_auth_protocol=static.VALID_SNMP_AUTH_PROTOCOL,
+            snmp_privacy_protocol=static.VALID_SNMP_PRIVACY_PROTOCOL,
+            server_location=static.VALID_SERVER_LOCATION,
+            contact_details=static.INVALID_CONTACT_DETAILS,
+            add_snmp_config=static.VALID_ADD_SNMP_CONFIG
         )
 
         response = self.client.post(self.path, data=invalid_test_data)
         received_content = response.content.decode('utf-8')
         assert response.status_code == 200
-        assert "Ensure this value has at least 8 characters" in received_content
-        assert "Enter a valid IPv4 or IPv6 address." in received_content
-        assert "Enter a valid email address." in received_content
-        assert "SNMPv3 Configuration Added Successfully!" not in response_content
+        assert static.ENTER_AT_LEAST_8_CHARS in received_content
+        assert static.ENTER_VALID_IP in received_content
+        assert static.ENTER_VALID_EMAIL in received_content
+        assert static.ADD_SNMP_CONFIG_SUC not in received_content
