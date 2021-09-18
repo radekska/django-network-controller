@@ -67,7 +67,7 @@ def parse_snmp_config(object_id):
     """
 
     configure_commands = list()
-    snmp_config = SNMPConfigParameters.objects.filter(id=object_id)[0]
+    snmp_config = SNMPConfigParameters.objects.get(id=object_id)
     basic_command = "snmp-server"
 
     configure_commands.append("lldp run")

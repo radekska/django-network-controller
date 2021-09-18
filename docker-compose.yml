@@ -1,0 +1,23 @@
+services:
+  network-contorller:
+    build:
+      context: "./"
+      dockerfile: "./dockerfiles/network-controller/Dockerfile"
+    ports:
+      - 8000:8000
+    volumes:
+      - ".:/network-controller-app"
+
+  rabbit-mq:
+    build:
+      context: "./"
+      dockerfile: "./dockerfiles/rabbitmq/Dockerfile"
+
+  celery:
+    build:
+      context: "./"
+      dockerfile: "dockerfiles/celery/Dockerfile"
+    volumes:
+    - ".:/network-controller-app"
+
+
