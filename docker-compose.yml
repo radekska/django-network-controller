@@ -8,7 +8,16 @@ services:
     volumes:
       - ".:/network-controller-app"
 
-#  rabbit-mq:
-#
-#  celery:
-#
+  rabbit-mq:
+    build:
+      context: "./"
+      dockerfile: "./dockerfiles/rabbitmq/Dockerfile"
+
+  celery:
+    build:
+      context: "./"
+      dockerfile: "dockerfiles/celery/Dockerfile"
+    volumes:
+    - ".:/network-controller-app"
+
+
